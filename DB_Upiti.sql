@@ -1,9 +1,7 @@
 CREATE DATABASE IF NOT EXISTS trailsync;
 USE trailsync;
 
--- =========================
--- USERS
--- =========================
+
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     korisnickoIme VARCHAR(50) NOT NULL UNIQUE,
@@ -17,9 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- =========================
--- MOUNTAINS
--- =========================
+
 CREATE TABLE IF NOT EXISTS mountains (
     id INT AUTO_INCREMENT PRIMARY KEY,
     naziv VARCHAR(100) NOT NULL UNIQUE,
@@ -30,9 +26,7 @@ CREATE TABLE IF NOT EXISTS mountains (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- =========================
--- TRAILS
--- =========================
+
 CREATE TABLE IF NOT EXISTS trails (
     id INT AUTO_INCREMENT PRIMARY KEY,
     mountain_id INT NOT NULL,
@@ -54,18 +48,14 @@ CREATE TABLE IF NOT EXISTS trails (
         ON UPDATE CASCADE
 );
 
--- =========================
--- TERRAIN TAGS
--- =========================
+
 CREATE TABLE IF NOT EXISTS terrain_tags (
     id INT AUTO_INCREMENT PRIMARY KEY,
     naziv VARCHAR(50) NOT NULL UNIQUE,
     opis TEXT NULL
 );
 
--- =========================
--- TRAIL_TAGS (M:N trails <-> terrain_tags)
--- =========================
+
 CREATE TABLE IF NOT EXISTS trail_tags (
     trail_id INT NOT NULL,
     terrain_tag_id INT NOT NULL,
@@ -83,9 +73,7 @@ CREATE TABLE IF NOT EXISTS trail_tags (
         ON UPDATE CASCADE
 );
 
--- =========================
--- USER_TRAILS (M:N users <-> trails)
--- =========================
+
 CREATE TABLE IF NOT EXISTS user_trails (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -107,9 +95,7 @@ CREATE TABLE IF NOT EXISTS user_trails (
         ON UPDATE CASCADE
 );
 
--- =========================
--- ASCENTS
--- =========================
+
 CREATE TABLE IF NOT EXISTS ascents (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -136,9 +122,7 @@ CREATE TABLE IF NOT EXISTS ascents (
         ON UPDATE CASCADE
 );
 
--- =========================
--- HIKES
--- =========================
+
 CREATE TABLE IF NOT EXISTS hikes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     trail_id INT NOT NULL,
@@ -161,9 +145,7 @@ CREATE TABLE IF NOT EXISTS hikes (
         ON UPDATE CASCADE
 );
 
--- =========================
--- HIKE_PARTICIPANTS (M:N users <-> hikes)
--- =========================
+
 CREATE TABLE IF NOT EXISTS hike_participants (
     id INT AUTO_INCREMENT PRIMARY KEY,
     hike_id INT NOT NULL,
@@ -184,9 +166,7 @@ CREATE TABLE IF NOT EXISTS hike_participants (
         ON UPDATE CASCADE
 );
 
--- =========================
--- AUDIT LOGS
--- =========================
+
 CREATE TABLE IF NOT EXISTS audit_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
