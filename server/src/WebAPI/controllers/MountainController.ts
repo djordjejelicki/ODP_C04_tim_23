@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 import { IMountainService } from "../../Domain/services/mountains/IMountainService";
 import { authenticate } from "../../Middlewares/authentification/AuthMiddleware";
 import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
+import { UserRole } from "../../Domain/enums/UserRole";
 import { monitorEventLoopDelay } from "node:perf_hooks";
 
 export class MountainController {
@@ -17,7 +18,7 @@ export class MountainController {
     private  initializeRoutes(): void {
         this.router.get("/mountains", this.getAll.bind(this));
         this.router.get("/mountains/:id", this.getById.bind(this));
-        this.router.post("/mountains", authenticate, authorize("admin"), this.create.bind(this));
+        this.router.post("/mountains", authenticate, authorize(UserRole.ADMIN), this.create.bind(this));
     }
     
     private async getAll(req: Request, res: Response): Promise<void> {

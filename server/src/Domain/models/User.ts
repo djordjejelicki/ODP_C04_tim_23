@@ -1,9 +1,11 @@
+import { UserRole } from "../enums/UserRole";
+
 export class User {
   public constructor(
     public id: number = 0,
     public korisnickoIme: string = '',
     public email: string = '',
-    public uloga: string = 'hiker',
+    public uloga: UserRole = UserRole.HIKER,
     public lozinka: string = '',
     public ime: string = '',
     public prezime: string = '',

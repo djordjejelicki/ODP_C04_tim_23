@@ -2,6 +2,9 @@ import { Request, Response, Router } from "express";
 import { ITrailService } from "../../Domain/services/trails/ITrailService"; 
 import { authenticate } from "../../Middlewares/authentification/AuthMiddleware";
 import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
+import { UserRole } from "../../Domain/enums/UserRole";
+import { validateTrail } from "../validators/TrailValidator";
+import { TrailDifficulty } from "../../Domain/enums/TrailDifficulty";
 
 export class TrailController {
     private router: Router;
@@ -16,7 +19,7 @@ export class TrailController {
     private initializeRoutes(): void {
         this.router.get("/trails", this.getAll.bind(this));
         this.router.get("/trails/:id", this.getById.bind(this));
-        this.router.post("/trails",authenticate,authorize("admin"),this.create.bind(this));
+        this.router.post("/trails",authenticate,authorize(UserRole.ADMIN),this.create.bind(this));
     }
 
     private async getAll(req: Request, res: Response): Promise<void> {
@@ -57,14 +60,30 @@ export class TrailController {
                 slika_url
             } = req.body;
 
-            const trail = await this.trailService.createRuta(
-                mountain_id,
+            const result = validateTrail(
+                Number(mountain_id),
                 naziv,
                 opis ?? null,
-                duzina_km,
+                Number(duzina_km),
                 tezina,
-                trajanje_min,
-                visinski_uspon_m,
+                Number(trajanje_min),
+                Number(visinski_uspon_m),
+                slika_url
+            );
+
+            if (!result.valid){
+                res.status(400).json({ success: false, message: result.message });
+                return;
+            }
+
+            const trail = await this.trailService.createRuta(
+                Number(mountain_id),
+                naziv,
+                opis ?? null,
+                Number(duzina_km),
+                tezina as TrailDifficulty,
+                Number(trajanje_min),
+                Number(visinski_uspon_m),
                 slika_url
             );
 

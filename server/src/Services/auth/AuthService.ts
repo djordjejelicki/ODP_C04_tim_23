@@ -2,6 +2,7 @@ import { UserAuthDataDto } from "../../Domain/DTOs/auth/UserAuthDataDto";
 import { User } from "../../Domain/models/User";
 import { IUserRepository } from "../../Domain/repositories/users/IUserRepository";
 import { IAuthService } from "../../Domain/services/auth/IAuthService";
+import { UserRole } from "../../Domain/enums/UserRole";
 import bcrypt from "bcryptjs";
 
 export class AuthService implements IAuthService {
@@ -40,7 +41,7 @@ export class AuthService implements IAuthService {
         0,
         korisnickoIme,
         email,
-        'hiker',
+        UserRole.HIKER,
         hashedPassword,
         ime,
         prezime,

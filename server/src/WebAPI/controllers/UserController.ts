@@ -3,6 +3,7 @@ import { IUserService } from "../../Domain/services/users/IUserService";
 import { UserDto } from "../../Domain/DTOs/users/UserDto";
 import { authenticate } from "../../Middlewares/authentification/AuthMiddleware";
 import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
+import { UserRole } from "../../Domain/enums/UserRole";
 
 export class UserController {
   private router: Router;
@@ -17,7 +18,7 @@ export class UserController {
   private initializeRoutes(): void {
     // ostale metode, npr. /api/v1/user/1 <--- user po ID-ju 1
     //  HTTP method, path,    middlewares,...                   connected method
-    this.router.get("/users", authenticate, authorize("admin"), this.korisnici.bind(this));
+    this.router.get("/users", authenticate, authorize(UserRole.ADMIN), this.korisnici.bind(this));
   }
 
   /**

@@ -21,6 +21,12 @@ import { ITrailService } from './Domain/services/trails/ITrailService';
 import { TrailService } from './Services/trails/TrailService';
 import { TrailController } from './WebAPI/controllers/TrailController';
 
+import { ITerrainTagRepository } from './Domain/repositories/terrainTags/ITerrainTagRepository';
+import { TerrainTagRepository } from './Database/repositories/terrainTags/TerrainTagRepository';
+import { ITerrrainTagService } from './Domain/services/terrainTags/ITerrainTagService';
+import { TerrainTagService } from './Services/terrainTags/TerrainTagService';
+import { TerrainTagController } from './WebAPI/controllers/TerrainTagController';
+
 require('dotenv').config();
 
 const app = express();
@@ -32,23 +38,27 @@ app.use(express.json());
 const userRepository: IUserRepository = new UserRepository();
 const mountainRepository : IMountainRepository = new MountainRepository();
 const trailRepository : ITrailRepository = new TrailRepository();
+const terrainTagRepository : ITerrainTagRepository = new TerrainTagRepository();
 
 // Services
 const authService: IAuthService = new AuthService(userRepository);
 const userService: IUserService = new UserService(userRepository);
 const mountainService: IMountainService = new MountainService(mountainRepository);
 const trailService: ITrailService = new TrailService(trailRepository);
+const terrainTagService: ITerrrainTagService = new TerrainTagService(terrainTagRepository);
 
 // WebAPI routes
 const authController = new AuthController(authService);
 const userController = new UserController(userService);
 const mountainController = new MountainController(mountainService);
 const trailController = new TrailController(trailService);
+const terrainTagController = new TerrainTagController(terrainTagService);
 
 // Registering routes
 app.use('/api/v1', authController.getRouter());
 app.use('/api/v1', userController.getRouter());
 app.use('/api/v1', mountainController.getRouter());
 app.use('/api/v1', trailController.getRouter());
+app.use('/api/v1', terrainTagController.getRouter());
 
 export default app;

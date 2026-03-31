@@ -1,3 +1,4 @@
+import { TrailDifficulty } from "../../Domain/enums/TrailDifficulty";
 import { Trail } from "../../Domain/models/Trail";
 import { ITrailRepository } from "../../Domain/repositories/trails/ITrailRepository";
 import { ITrailService } from "../../Domain/services/trails/ITrailService";
@@ -13,7 +14,7 @@ export class TrailService implements ITrailService {
         return await this.trailRepository.getById(id);
     }
 
-    async createRuta(mountain_id: number, naziv: string, opis: string | null, duzina_km: number, tezina: "easy" | "moderate" | "hard" | "expert", trajanje_min: number, visinski_uspon_m: number, slika_url: string): Promise<Trail> {
+    async createRuta(mountain_id: number, naziv: string, opis: string | null, duzina_km: number, tezina: TrailDifficulty, trajanje_min: number, visinski_uspon_m: number, slika_url: string): Promise<Trail> {
         const novaRuta = new Trail(
             0, 
             mountain_id,

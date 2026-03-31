@@ -1,3 +1,5 @@
+import { TrailDifficulty } from "../enums/TrailDifficulty";
+
 export class Trail {
   public constructor(
     public id: number = 0,
@@ -5,7 +7,7 @@ export class Trail {
     public naziv: string = '',
     public opis: string | null = null,
     public duzina_km: number = 0,
-    public tezina: 'easy' | 'moderate' | 'hard' | 'expert' = 'easy',
+    public tezina: TrailDifficulty = TrailDifficulty.EASY,
     public trajanje_min: number = 0,
     public visinski_uspon_m: number = 0,
     public slika_url: string = '',
