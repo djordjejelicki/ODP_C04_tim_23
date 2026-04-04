@@ -27,6 +27,9 @@ import { ITerrrainTagService } from './Domain/services/terrainTags/ITerrainTagSe
 import { TerrainTagService } from './Services/terrainTags/TerrainTagService';
 import { TerrainTagController } from './WebAPI/controllers/TerrainTagController';
 
+import { ITrailTagRepository } from './Domain/repositories/trailTags/ITrailTagRepository';
+import { TrailTagRepository } from './Database/repositories/trailTags/TrailTagRepository';
+
 require('dotenv').config();
 
 const app = express();
@@ -39,12 +42,13 @@ const userRepository: IUserRepository = new UserRepository();
 const mountainRepository : IMountainRepository = new MountainRepository();
 const trailRepository : ITrailRepository = new TrailRepository();
 const terrainTagRepository : ITerrainTagRepository = new TerrainTagRepository();
+const trailTagRepository: ITrailTagRepository = new TrailTagRepository();
 
 // Services
 const authService: IAuthService = new AuthService(userRepository);
 const userService: IUserService = new UserService(userRepository);
 const mountainService: IMountainService = new MountainService(mountainRepository);
-const trailService: ITrailService = new TrailService(trailRepository);
+const trailService: ITrailService = new TrailService(trailRepository, trailTagRepository);
 const terrainTagService: ITerrrainTagService = new TerrainTagService(terrainTagRepository);
 
 // WebAPI routes

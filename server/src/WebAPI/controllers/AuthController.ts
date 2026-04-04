@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { IAuthService } from '../../Domain/services/auth/IAuthService';
+import { validateLogin, validateRegister } from '../validators/authValidator';
 import jwt from "jsonwebtoken";
 
 export class AuthController {
@@ -25,13 +26,12 @@ export class AuthController {
     try {
       const { korisnickoIme, lozinka } = req.body;
 
-      // TODO: Validacija input parametara
-      // const rezultat = authPrijavaValidator(korisnickoIme, lozinka);
+      const rezultat = validateLogin(korisnickoIme, lozinka);
 
-      // if (!rezultat.uspesno) {
-      //   res.status(400).json({ success: false, message: rezultat.poruka });
-      //   return;
-      // }
+      if (!rezultat.valid) {
+        res.status(400).json({ success: false, message: rezultat.message });
+        return;
+      }
 
       const result = await this.authService.prijava(korisnickoIme, lozinka);
 
@@ -65,13 +65,12 @@ export class AuthController {
     try {
       const { korisnickoIme, email, lozinka, ime, prezime } = req.body;
       
-      // TODO: Validator podataka za registraciju
-      // const rezultat = authRegistracijaValidator(korisnickoIme, lozinka);
+      const rezultat = validateRegister(korisnickoIme, email, lozinka, ime, prezime);
 
-      // if (!rezultat.uspesno) {
-      //   res.status(400).json({ success: false, message: rezultat.poruka });
-      //   return;
-      // }
+      if (!rezultat.valid) {
+        res.status(400).json({ success: false, message: rezultat.message });
+        return;
+      }
 
       const result = await this.authService.registracija(
         korisnickoIme, email, lozinka, ime, prezime 

@@ -57,7 +57,8 @@ export class TrailController {
                 tezina,
                 trajanje_min,
                 visinski_uspon_m,
-                slika_url
+                slika_url,
+                terrain_tag_ids
             } = req.body;
 
             const result = validateTrail(
@@ -68,7 +69,8 @@ export class TrailController {
                 tezina,
                 Number(trajanje_min),
                 Number(visinski_uspon_m),
-                slika_url
+                slika_url,
+                Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : []
             );
 
             if (!result.valid){
@@ -84,7 +86,8 @@ export class TrailController {
                 tezina as TrailDifficulty,
                 Number(trajanje_min),
                 Number(visinski_uspon_m),
-                slika_url
+                slika_url,
+                Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : []
             );
 
             if (trail.id === 0){

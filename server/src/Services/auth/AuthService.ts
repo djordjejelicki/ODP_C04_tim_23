@@ -33,6 +33,12 @@ export class AuthService implements IAuthService {
       return new UserAuthDataDto(); // Korisnik već postoji
     }
 
+    const existingEmail = await this.userRepository.getByEmail(email);
+
+    if (existingEmail.id !== 0){
+      return new UserAuthDataDto();
+    }
+
     // Hash-ujemo lozinku pre čuvanja
     const hashedPassword = await bcrypt.hash(lozinka, this.saltRounds);
 

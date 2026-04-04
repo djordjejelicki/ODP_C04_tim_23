@@ -10,7 +10,8 @@ export const validateTrail = (
     tezina: string,
     trajanje_min: number,
     visinski_uspon_m: number,
-    slika_url: string
+    slika_url: string,
+    terrain_tag_ids: number[]
 ): ValidationResault => {
     if (!Number.isInteger(mountain_id) || mountain_id <= 0){
         return { valid: false, message: "Planina nije validna." };
@@ -43,6 +44,9 @@ export const validateTrail = (
     if (typeof slika_url !== "string" || slika_url.trim().length === 0 || slika_url.length > 255){
         return { valid: false, message: "Slika rute je obavezna" }
     }
-
+    
+    if (!Array.isArray(terrain_tag_ids) || terrain_tag_ids.length === 0) {
+        return { valid: false, message: "Ruta mora imati bar jedan tip terena"}
+    }
     return {valid: true, message: ""};
 }

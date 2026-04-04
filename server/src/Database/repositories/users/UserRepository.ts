@@ -178,4 +178,37 @@ export class UserRepository implements IUserRepository {
       return false;
     }
   }
+
+  async getByEmail(email: string): Promise<User> {
+    try{
+      const query = `
+        SELECT id, korisnickoIme, email, uloga, lozinka, ime, prezime, bio, avatar_url, created_at
+        FROM users
+        WHERE email = ?
+      `;
+
+      const [rows] = await db.execute<RowDataPacket[]>(query, [email]);
+      if (rows.length > 0) {
+        const row = rows[0];
+        return new User(
+          row.id,
+          row.korisnickoIme,
+          row.email,
+          row.uloga,
+          row.lozinka,
+          row.ime,
+          row.prezime,
+          row.bio,
+          row.avatar_url,
+          row.created_at
+        );
+      }
+
+    return new User();
+
+    } catch (error) {
+      console.log("getByEmail error: ", error);
+      return new User();
+    }
+  }
 }
