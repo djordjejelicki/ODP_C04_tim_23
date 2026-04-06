@@ -36,7 +36,7 @@ export class AuthController {
       const result = await this.authService.prijava(korisnickoIme, lozinka);
 
       // Proveravamo da li je prijava uspešna
-      if (result.id !== 0) {
+      if (result.success) {
         // Kreiranje jwt tokena
         const token = jwt.sign(
           { 
@@ -45,10 +45,10 @@ export class AuthController {
             uloga: result.uloga,
           }, process.env.JWT_SECRET ?? "", { expiresIn: '6h' });
 
-        res.status(200).json({success: true, message: 'Uspešna prijava', data: token});
+        res.status(200).json({success: true, message: result.message, data: token});
         return;
       } else {
-        res.status(401).json({success: false, message: 'Неисправно корисничко име или лозинка'});
+        res.status(401).json({success: false, message: result.message});
         return;
       }
     } catch (error) {
@@ -77,7 +77,7 @@ export class AuthController {
       );
       
       // Proveravamo da li je registracija uspešna
-      if (result.id !== 0) {
+      if (result.success) {
         // Kreiranje jwt tokena
         const token = jwt.sign(
           { 
@@ -87,14 +87,15 @@ export class AuthController {
           }, process.env.JWT_SECRET ?? "", { expiresIn: '6h' });
 
 
-        res.status(201).json({success: true, message: 'Uspešna registracija', data: token});
+        res.status(201).json({success: true, message: result.message, data: token});
       } else {
-        res.status(401).json({success: false, message: 'Регистрација није успела. Корисничко име већ постоји.', });
+        res.status(401).json({success: false, message: result.message });
       }
     } catch (error) {
       res.status(500).json({success: false, message: error});
     }
   }
+
 
   /**
    * Getter za router

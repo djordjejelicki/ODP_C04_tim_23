@@ -1,4 +1,4 @@
-import { UserAuthDataDto } from "../../DTOs/auth/UserAuthDataDto";
+import { AuthResultDto } from "../../DTOs/auth/AuthResultDto";
 
 export interface IAuthService {
     /**
@@ -7,8 +7,9 @@ export interface IAuthService {
      * @param lozinka - Lozinka korisnika.
      * @returns Podatke o korisniku ako je prijava uspešna, ili prazan objekat ako nije.
      */
-  prijava(korisnickoIme: string, lozinka: string): Promise<UserAuthDataDto>;
+  prijava(korisnickoIme: string, lozinka: string): Promise<AuthResultDto>;
 
+  
   /**
    * Registruje novog korisnika sa datim korisničkim imenom i lozinkom.
    * @param korisnickoIme - Korisničko ime korisnika.
@@ -22,5 +23,5 @@ export interface IAuthService {
     lozinka: string,
     ime: string,
     prezime: string
-  ): Promise<UserAuthDataDto>;
+  ): Promise<AuthResultDto>;
 }
