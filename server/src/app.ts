@@ -30,6 +30,12 @@ import { TerrainTagController } from './WebAPI/controllers/TerrainTagController'
 import { ITrailTagRepository } from './Domain/repositories/trailTags/ITrailTagRepository';
 import { TrailTagRepository } from './Database/repositories/trailTags/TrailTagRepository';
 
+import { IUserTrailRepository } from './Domain/repositories/userTrails/IUserTrailRepository';
+import { UserTrailRepository } from './Database/repositories/userTrails/UserTrailRepository';
+import { IUserTrailService } from './Domain/services/userTrails/IUserTrailService';
+import { UserTrailService } from './Services/userTrails/UserTrailService';
+import { UserTrailController } from './WebAPI/controllers/UserTrailController';
+
 require('dotenv').config();
 
 const app = express();
@@ -43,6 +49,7 @@ const mountainRepository : IMountainRepository = new MountainRepository();
 const trailRepository : ITrailRepository = new TrailRepository();
 const terrainTagRepository : ITerrainTagRepository = new TerrainTagRepository();
 const trailTagRepository: ITrailTagRepository = new TrailTagRepository();
+const userTrailRepository: IUserTrailRepository = new UserTrailRepository();
 
 // Services
 const authService: IAuthService = new AuthService(userRepository);
@@ -50,6 +57,7 @@ const userService: IUserService = new UserService(userRepository);
 const mountainService: IMountainService = new MountainService(mountainRepository);
 const trailService: ITrailService = new TrailService(trailRepository, trailTagRepository);
 const terrainTagService: ITerrrainTagService = new TerrainTagService(terrainTagRepository);
+const userTrailService: IUserTrailService = new UserTrailService(userTrailRepository);
 
 // WebAPI routes
 const authController = new AuthController(authService);
@@ -57,6 +65,7 @@ const userController = new UserController(userService);
 const mountainController = new MountainController(mountainService);
 const trailController = new TrailController(trailService);
 const terrainTagController = new TerrainTagController(terrainTagService);
+const userTrailController = new UserTrailController(userTrailService);
 
 // Registering routes
 app.use('/api/v1', authController.getRouter());
@@ -64,5 +73,7 @@ app.use('/api/v1', userController.getRouter());
 app.use('/api/v1', mountainController.getRouter());
 app.use('/api/v1', trailController.getRouter());
 app.use('/api/v1', terrainTagController.getRouter());
+app.use('/api/v1', userTrailController.getRouter());
+
 
 export default app;

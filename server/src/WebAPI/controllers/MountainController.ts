@@ -3,7 +3,7 @@ import { IMountainService } from "../../Domain/services/mountains/IMountainServi
 import { authenticate } from "../../Middlewares/authentification/AuthMiddleware";
 import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
 import { UserRole } from "../../Domain/enums/UserRole";
-import { monitorEventLoopDelay } from "node:perf_hooks";
+import { validateMountain } from "../validators/mountainValidator";
 
 export class MountainController {
     private router : Router;
@@ -50,11 +50,24 @@ export class MountainController {
         try{
             const {naziv, drzava, region, visina, opis} = req.body;
 
+            const rezultat = validateMountain(
+                naziv,
+                drzava,
+                region??null,
+                Number(visina),
+                opis??null
+            );
+
+            if (!rezultat.valid) {
+                res.status(400).json( {success: false, message: rezultat.message });
+                return;
+            }
+
             const mountain = await this.mountainService.createPlanina(
                 naziv,
                 drzava,
                 region ?? null,
-                visina,
+                Number(visina),
                 opis ?? null
             );
 

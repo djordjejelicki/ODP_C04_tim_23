@@ -93,4 +93,34 @@ export class MountainRepository implements IMountainRepository {
             return new Mountain();
         }
     }
+
+    async getByNaziv(naziv: string): Promise<Mountain> {
+        try {
+            const query = `
+                SELECT id, naziv, drzava, region, visina, opis, created_at
+                FROM mountains
+                WHERE naziv = ?
+            `;
+
+            const [rows] = await db.execute<RowDataPacket[]>(query, [naziv]);
+
+            if (rows.length > 0){
+                const row = rows[0];
+                return new Mountain(
+                    row.id,
+                    row.naziv,
+                    row.drzava,
+                    row.region,
+                    row.visina,
+                    row.opis,
+                    row.created_at
+                );
+            }
+
+            return new Mountain();
+        } catch(error) {
+            console.log("getByNaziv mountain error: ", error);
+            return new Mountain();
+        }
+    }
 }

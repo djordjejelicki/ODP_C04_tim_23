@@ -14,6 +14,12 @@ export class MountainService implements IMountainService{
     }
 
     async createPlanina(naziv: string, drzava: string, region: string | null, visina: number, opis: string | null): Promise<Mountain> {
+        
+        const postojecaPlanina = await this.mountainRepository.getByNaziv(naziv);
+        if(postojecaPlanina.id !== 0){
+            return new Mountain();
+        }
+        
         const novaPlanina = new Mountain(
             0,
             naziv,
