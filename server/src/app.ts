@@ -42,6 +42,14 @@ import { IAscentService } from './Domain/services/acents/IAscentServuce';
 import { AscentService } from './Services/ascents/AscentService';
 import { AscentController } from './WebAPI/controllers/AscentController';
 
+import { IHikeRepository } from './Domain/repositories/hikes/IHikeRepository';
+import { HikeRepository } from './Database/repositories/hikes/HikeRepository';
+import { IHikeParticipantRepository } from './Domain/repositories/hikes/IHikeParticipantRepository';
+import { HikeParticipantRepository } from './Database/repositories/hikes/HikeParticipantRepository';
+import { IHikeService } from './Domain/services/hikes/IHikeService';
+import { HikeService } from './Services/hikes/HikeService';
+import { HikeController } from './WebAPI/controllers/HikeController';
+
 require('dotenv').config();
 
 const app = express();
@@ -57,6 +65,8 @@ const terrainTagRepository : ITerrainTagRepository = new TerrainTagRepository();
 const trailTagRepository: ITrailTagRepository = new TrailTagRepository();
 const userTrailRepository: IUserTrailRepository = new UserTrailRepository();
 const ascentRepository: IAscentRepository = new AscentRepository();
+const hikeRepository: IHikeRepository = new HikeRepository();
+const hikeParticipantRepository: IHikeParticipantRepository = new HikeParticipantRepository();
 
 // Services
 const authService: IAuthService = new AuthService(userRepository);
@@ -66,6 +76,7 @@ const trailService: ITrailService = new TrailService(trailRepository, trailTagRe
 const terrainTagService: ITerrrainTagService = new TerrainTagService(terrainTagRepository);
 const userTrailService: IUserTrailService = new UserTrailService(userTrailRepository);
 const ascentService: IAscentService = new AscentService(ascentRepository, userTrailRepository);
+const hikeService: IHikeService = new HikeService(hikeRepository, hikeParticipantRepository);
 
 // WebAPI routes
 const authController = new AuthController(authService);
@@ -75,6 +86,7 @@ const trailController = new TrailController(trailService);
 const terrainTagController = new TerrainTagController(terrainTagService);
 const userTrailController = new UserTrailController(userTrailService);
 const ascentController = new AscentController(ascentService);
+const hikeController = new HikeController(hikeService);
 
 // Registering routes
 app.use('/api/v1', authController.getRouter());
@@ -84,6 +96,7 @@ app.use('/api/v1', trailController.getRouter());
 app.use('/api/v1', terrainTagController.getRouter());
 app.use('/api/v1', userTrailController.getRouter());
 app.use('/api/v1', ascentController.getRouter());
+app.use('/api/v1', hikeController.getRouter());
 
 
 export default app;
