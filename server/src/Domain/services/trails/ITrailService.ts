@@ -15,5 +15,17 @@ export interface ITrailService {
         visinski_uspon_m: number,
         slika_url: string,
         terrain_tag_ids: number[]
-    ): Promise<Trail>;  
+    ): Promise<Trail>;
+    updateRuta(
+        id: number,
+        mountain_id: number,
+        naziv: string,
+        opis: string | null,
+        duzina_km: number,
+        tezina: TrailDifficulty,
+        trajanje_min: number,
+        visinski_uspon_m: number,
+        slika_url: string,
+        terrain_tag_ids: number[]
+    ): Promise<boolean>;  
 }

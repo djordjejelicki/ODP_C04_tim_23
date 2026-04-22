@@ -104,4 +104,31 @@ export class TrailRepository implements ITrailRepository {
             return new Trail();
         }
     }
+
+    async update(trail: Trail): Promise<boolean> {
+        try{
+            const query = `
+                UPDATE trails
+                SET mountain_id = ?, naziv = ?, opis = ?, duzina_km = ?, tezina = ?, trajanje_min = ?, visinski_uspon_m = ?, slika_url = ?
+                WHERE id = ?
+            `;
+
+            const [result] = await db.execute<ResultSetHeader>(query, [
+                trail.mountain_id,
+                trail.naziv,
+                trail.opis,
+                trail.duzina_km,
+                trail.tezina,
+                trail.trajanje_min,
+                trail.visinski_uspon_m,
+                trail.slika_url,
+                trail.id
+            ]);
+
+            return result.affectedRows > 0;
+        } catch (error) {
+            console.log("update trail error: ", error);
+            return false;
+        }
+    }
 }

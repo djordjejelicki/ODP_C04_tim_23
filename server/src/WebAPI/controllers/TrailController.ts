@@ -20,6 +20,7 @@ export class TrailController {
         this.router.get("/trails", this.getAll.bind(this));
         this.router.get("/trails/:id", this.getById.bind(this));
         this.router.post("/trails",authenticate,authorize(UserRole.ADMIN),this.create.bind(this));
+        this.router.put("/trails/:id", authenticate, authorize(UserRole.ADMIN), this.update.bind(this));
     }
 
     private async getAll(req: Request, res: Response): Promise<void> {
@@ -96,6 +97,69 @@ export class TrailController {
             }
 
             res.status(201).json(trail);
+        } catch {
+            res.status(500).json({ success: false, message: "Greska na serveru" });
+        }
+    }
+
+    private async update(req: Request, res: Response): Promise<void> {
+        try{
+            const id = Number(req.params.id);
+            const {
+                mountain_id,
+                naziv,
+                opis,
+                duzina_km,
+                tezina,
+                trajanje_min,
+                visinski_uspon_m,
+                slika_url,
+                terrain_tag_ids
+            } = req.body;
+
+            if (!Number.isInteger(id) || id <= 0){
+                res.status(400).json({ success: false, message: "Ruta nije validna" });
+                return;
+            }
+
+            const terrainIds = Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : [];
+
+            const rezultat = validateTrail(
+                Number(mountain_id),
+                naziv,
+                opis ?? null,
+                Number(duzina_km),
+                tezina,
+                Number(trajanje_min),
+                Number(visinski_uspon_m),
+                slika_url,
+                terrainIds
+            );
+
+            if (!rezultat.valid) {
+                res.status(400).json({ success: false, message: rezultat.message });
+                return;
+            }
+
+            const uspesno = await this.trailService.updateRuta(
+                id,
+                Number(mountain_id),
+                naziv,
+                opis ?? null,
+                Number(duzina_km),
+                tezina as TrailDifficulty,
+                Number(trajanje_min),
+                Number(visinski_uspon_m),
+                slika_url,
+                terrainIds
+            );
+
+            if (!uspesno) {
+                res.status(404).json({ success: false, message: "Ruta nije pronadjena ili izmena nije uspela" });
+                return;
+            }
+
+            res.status(200).json({ success: true, message: "Ruta uspesno izmenjena" });
         } catch {
             res.status(500).json({ success: false, message: "Greska na serveru" });
         }

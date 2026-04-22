@@ -1,5 +1,5 @@
 import { ITrailTagRepository } from "../../../Domain/repositories/trailTags/ITrailTagRepository";
-import { RowDataPacket } from "mysql2";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 import db from "../../connection/DbConnectionPool";
 import { TerrainTag } from "../../../Domain/models/TerrainTag";
 
@@ -38,6 +38,22 @@ export class TrailTagRepository implements ITrailTagRepository {
         } catch (error) {
             console.log("getTagsForTrail error: ", error);
             return [];
+        }
+    }
+
+    async deleteTagsForTrail(trail_id: number): Promise<boolean> {
+        try{
+            const query = `
+                DELETE FROM trail_tags
+                WHERE trail_id = ?
+            `;
+
+            const [result] = await db.execute<ResultSetHeader>(query, [trail_id]);
+
+            return result.affectedRows >= 0;
+        } catch (error){
+            console.log("deleteTagsForTrail error: ", error);
+            return false;
         }
     }
 }

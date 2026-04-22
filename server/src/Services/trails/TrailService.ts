@@ -66,4 +66,43 @@ export class TrailService implements ITrailService {
 
         return kreiranaRuta;
     }
+
+    async updateRuta(id: number, mountain_id: number, naziv: string, opis: string | null, duzina_km: number, tezina: TrailDifficulty, trajanje_min: number, visinski_uspon_m: number, slika_url: string, terrain_tag_ids: number[]): Promise<boolean> {
+        const postojecaRuta = await this.trailRepository.getById(id);
+
+        if (postojecaRuta.id === 0) {
+            return false;
+        }
+
+        const izmenjenaRuta = new Trail(
+            id,
+            mountain_id,
+            naziv,
+            opis,
+            duzina_km,
+            tezina,
+            trajanje_min,
+            visinski_uspon_m,
+            slika_url,
+            postojecaRuta.created_at
+        );
+
+        const uspesno = await this.trailRepository.update(izmenjenaRuta);
+
+        if (!uspesno){
+            return false;
+        }
+
+        const obrisaniTagovi = await this.trailTagRepository.deleteTagsForTrail(id);
+
+        if (!obrisaniTagovi) {
+            return false;
+        }
+
+        if (terrain_tag_ids.length > 0){
+            await this.trailTagRepository.addTagsToTrail(id, terrain_tag_ids);
+        }
+
+        return true;
+    }
 }
