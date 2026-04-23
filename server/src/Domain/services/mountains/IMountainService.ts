@@ -10,4 +10,12 @@ export interface IMountainService {
         visina: number,
         opis: string | null
     ) : Promise<Mountain>;
+    updatePlanina(
+        id: number,
+        naziv: string,
+        drzava: string,
+        region: string | null,
+        visina: number,
+        opis: string | null
+    ): Promise<boolean>;
 }

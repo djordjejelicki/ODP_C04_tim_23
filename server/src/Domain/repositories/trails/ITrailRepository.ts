@@ -5,4 +5,5 @@ export interface ITrailRepository {
     getById(id: number): Promise<Trail>;
     create(trail: Trail): Promise<Trail>;
     update(trail: Trail): Promise<boolean>;
+    delete(id: number): Promise<boolean>;
 }

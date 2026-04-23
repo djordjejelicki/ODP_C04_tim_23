@@ -32,4 +32,30 @@ export class MountainService implements IMountainService{
 
         return await this.mountainRepository.create(novaPlanina);
     }
+
+    async updatePlanina(id: number, naziv: string, drzava: string, region: string | null, visina: number, opis: string | null): Promise<boolean> {
+        const postojecaPlanina = await this.mountainRepository.getById(id);
+
+        if (postojecaPlanina.id === 0){
+            return false;
+        }
+
+        const planinaSaIstimNazivom = await this.mountainRepository.getByNaziv(naziv);
+
+        if (planinaSaIstimNazivom.id !== 0 && planinaSaIstimNazivom.id !== id){
+            return false;
+        }
+
+        const izmenjenaPlanina = new Mountain(
+            id,
+            naziv,
+            drzava,
+            region,
+            visina,
+            opis,
+            postojecaPlanina.created_at
+        );
+
+        return await this.mountainRepository.update(izmenjenaPlanina);
+    }
 }

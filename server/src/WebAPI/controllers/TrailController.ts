@@ -21,6 +21,7 @@ export class TrailController {
         this.router.get("/trails/:id", this.getById.bind(this));
         this.router.post("/trails",authenticate,authorize(UserRole.ADMIN),this.create.bind(this));
         this.router.put("/trails/:id", authenticate, authorize(UserRole.ADMIN), this.update.bind(this));
+        this.router.delete("/trails/:id", authenticate, authorize(UserRole.ADMIN), this.delete.bind(this));
     }
 
     private async getAll(req: Request, res: Response): Promise<void> {
@@ -160,6 +161,28 @@ export class TrailController {
             }
 
             res.status(200).json({ success: true, message: "Ruta uspesno izmenjena" });
+        } catch {
+            res.status(500).json({ success: false, message: "Greska na serveru" });
+        }
+    }
+
+    private async delete(req: Request, res: Response): Promise<void>{
+        try{
+            const id = Number(req.params.id);
+
+            if (!Number.isInteger(id) || id <= 0){
+                res.status(400).json({ success: false, message: "Ruta nije validna" });
+                return;
+            }
+
+            const uspesno = await this.trailService.deleteRuta(id);
+
+            if (!uspesno){
+                res.status(400).json({ success: false, message: "Ruta ne moze biti obrisana jer ne postoji ili ima evidentirane uspone"});
+                return;
+            }
+
+            res.status(200).json({ success: true, message: "Ruta uspesno obrisana"});
         } catch {
             res.status(500).json({ success: false, message: "Greska na serveru" });
         }

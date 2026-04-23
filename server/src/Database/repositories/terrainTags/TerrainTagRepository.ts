@@ -64,4 +64,20 @@ export class TerrainTagRepository implements ITerrainTagRepository {
             return new TerrainTag();
         }
     }
+
+    async delete(id: number): Promise<boolean> {
+        try{
+            const query = `
+                 DELETE FROM terrain_tags
+                WHERE id = ?
+            `;
+
+            const [result] = await db.execute<ResultSetHeader>(query, [id]);
+
+            return result.affectedRows > 0;
+        } catch(error){
+            console.log("delete terrain tag error: ", error);
+            return false;
+        }
+    }
 }

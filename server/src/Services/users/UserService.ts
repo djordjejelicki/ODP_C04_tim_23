@@ -1,4 +1,5 @@
 import { UserDto } from "../../Domain/DTOs/users/UserDto";
+import { UserRole } from "../../Domain/enums/UserRole";
 import { User } from "../../Domain/models/User";
 import { IUserRepository } from "../../Domain/repositories/users/IUserRepository";
 import { IUserService } from "../../Domain/services/users/IUserService";
@@ -13,5 +14,15 @@ export class UserService implements IUserService {
     );
 
     return korisniciDto;
+  }
+
+  async promeniUlogu(id: number, uloga: UserRole): Promise<boolean> {
+    const korisnik = await this.userRepository.getById(id);
+
+    if (korisnik.id === 0){
+      return false;
+    }
+
+    return await this.userRepository.updateRole(id, uloga);
   }
 }

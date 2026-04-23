@@ -1,9 +1,7 @@
 import { UserDto } from "../../DTOs/users/UserDto";
+import { UserRole } from "../../enums/UserRole";
 
-export interface IUserService {
-     /**
-     * Vraca listu svih korisnika u sistemu.
-     * @returns Podatke o korisnicima u vidu liste.
-     */
+export interface IUserService { 
   getSviKorisnici(): Promise<UserDto[]>;
+  promeniUlogu(id: number, uloga: UserRole): Promise<boolean>;
 }

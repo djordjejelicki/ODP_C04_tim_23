@@ -3,6 +3,7 @@ import { Ascent } from "../../../Domain/models/Ascent";
 import { RowDataPacket, ResultSetHeader } from "mysql2";
 import db from "../../connection/DbConnectionPool";
 import { AsyncResource } from "node:async_hooks";
+import { error } from "node:console";
 
 export class AscentRepository implements IAscentRepository {
     
@@ -135,6 +136,22 @@ export class AscentRepository implements IAscentRepository {
         } catch(error){
             console.log("delete ascent error: ", error);
             return false;
+        }
+    }
+
+    async existsByTrail(trail_id: number): Promise<boolean> {
+        try{
+            const query = `
+                SELECT id FROM ascents
+                WHERE trail_id = ?
+                LIMIT 1
+            `;
+
+            const [rows] = await db.execute<RowDataPacket[]>(query, [trail_id]);
+            return rows.length > 0;
+        } catch(error){
+            console.log("existsByTrail error: ", error);
+            return true;
         }
     }
 }

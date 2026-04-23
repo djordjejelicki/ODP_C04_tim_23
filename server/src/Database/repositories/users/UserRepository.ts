@@ -2,6 +2,7 @@ import { IUserRepository } from "../../../Domain/repositories/users/IUserReposit
 import { User } from "../../../Domain/models/User";
 import { RowDataPacket, ResultSetHeader } from "mysql2";
 import db from "../../connection/DbConnectionPool";
+import { UserRole } from "../../../Domain/enums/UserRole";
 
 export class UserRepository implements IUserRepository {
   async create(user: User): Promise<User> {
@@ -209,6 +210,23 @@ export class UserRepository implements IUserRepository {
     } catch (error) {
       console.log("getByEmail error: ", error);
       return new User();
+    }
+  }
+
+  async updateRole(id: number, uloga: UserRole): Promise<boolean> {
+    try{
+      const query = `
+        UPDATE users
+        SET uloga = ?
+        WHERE id = ?
+      `;
+
+      const [result] = await db.execute<ResultSetHeader>(query, [uloga, id]);
+      
+      return result.affectedRows > 0;
+    } catch (error){
+      console.log("updateRole error: ", error);
+      return false;
     }
   }
 }

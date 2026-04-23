@@ -131,4 +131,20 @@ export class TrailRepository implements ITrailRepository {
             return false;
         }
     }
+
+    async delete(id: number): Promise<boolean> {
+        try{
+            const query = `
+                DELETE FROM trails
+                WHERE id = ? 
+            `;
+
+            const [result] = await db.execute<ResultSetHeader>(query, [id]);
+
+            return result.affectedRows > 0;
+        } catch(error){
+            console.log("delete trail error: ", error);
+            return false;
+        }
+    }
 }

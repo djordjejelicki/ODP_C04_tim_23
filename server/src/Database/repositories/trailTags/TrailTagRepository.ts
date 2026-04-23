@@ -56,4 +56,21 @@ export class TrailTagRepository implements ITrailTagRepository {
             return false;
         }
     }
+
+    async existsByTerrainTagId(terrain_tag_id: number): Promise<boolean> {
+        try{
+            const query = `
+                SELECT trail_id
+                FROM trail_tags
+                WHERE terrain_tag_id = ?
+                LIMIT 1
+            `;
+
+            const [rows] = await db.execute<RowDataPacket[]>(query, [terrain_tag_id]);
+            return rows.length > 0;
+        } catch(error) {
+            console.log("existsByTerrainTagId error: ", error);
+            return true;
+        }
+    }
 }

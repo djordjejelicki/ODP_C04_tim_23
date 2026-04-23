@@ -28,4 +28,5 @@ export interface ITrailService {
         slika_url: string,
         terrain_tag_ids: number[]
     ): Promise<boolean>;  
+    deleteRuta(id: number): Promise<boolean>;
 }

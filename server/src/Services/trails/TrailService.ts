@@ -4,12 +4,14 @@ import { ITrailRepository } from "../../Domain/repositories/trails/ITrailReposit
 import { ITrailService } from "../../Domain/services/trails/ITrailService";
 import { ITrailTagRepository } from "../../Domain/repositories/trailTags/ITrailTagRepository";
 import { TrailDetailsDto } from "../../Domain/DTOs/trails/TrailDetailsDto";
+import { IAscentRepository } from "../../Domain/repositories/ascents/IAscentRepository";
 
 
 export class TrailService implements ITrailService {
     public constructor(
         private trailRepository: ITrailRepository,
-        private trailTagRepository: ITrailTagRepository
+        private trailTagRepository: ITrailTagRepository,
+        private ascentRepository: IAscentRepository
     ) {}
 
     async getSveRute(): Promise<Trail[]> {
@@ -104,5 +106,22 @@ export class TrailService implements ITrailService {
         }
 
         return true;
+    }
+
+    async deleteRuta(id: number): Promise<boolean> {
+        const postojecaRuta = await this.trailRepository.getById(id);
+
+        if (postojecaRuta.id === 0){
+            return false;
+        }
+
+        const postojeUsponi = await this.ascentRepository.existsByTrail(id);
+        if(postojeUsponi){
+            return false;
+        }
+
+        await this.trailTagRepository.deleteTagsForTrail(id);
+
+        return await this.trailRepository.delete(id);
     }
 }

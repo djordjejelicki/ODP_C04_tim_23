@@ -5,4 +5,5 @@ export interface IMountainRepository {
     getById(id : number) : Promise<Mountain>;
     getByNaziv(naziv : string) : Promise<Mountain>;
     create(mountain : Mountain) : Promise<Mountain>;
+    update(mountain : Mountain) : Promise<boolean>;
 }

@@ -6,4 +6,5 @@ export interface IAscentRepository {
     add(ascent: Ascent): Promise<Ascent>;
     update(ascent: Ascent): Promise<boolean>;
     delete(id: number): Promise<boolean>;
+    existsByTrail(trail_id: number): Promise<boolean>;
 }

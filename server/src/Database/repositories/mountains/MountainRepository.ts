@@ -123,4 +123,28 @@ export class MountainRepository implements IMountainRepository {
             return new Mountain();
         }
     }
+
+    async update(mountain: Mountain): Promise<boolean> {
+        try{
+            const query = `
+                UPDATE mountains
+                SET naziv = ?, drzava = ?, region = ?, visina = ?, opis = ?
+                WHERE id = ?  
+            `;
+
+            const [result] = await db.execute<ResultSetHeader>(query,[
+                mountain.naziv,
+                mountain.drzava,
+                mountain.region,
+                mountain.visina,
+                mountain.opis,
+                mountain.id
+            ]);
+
+            return result.affectedRows > 0;
+        } catch(error){
+            console.log("update mountain error: ", error);
+            return false;
+        }
+    }
 }

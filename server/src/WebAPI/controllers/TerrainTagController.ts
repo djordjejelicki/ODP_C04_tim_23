@@ -2,7 +2,6 @@ import { Request, Response, Router } from "express";
 import { ITerrrainTagService } from "../../Domain/services/terrainTags/ITerrainTagService";
 import { authenticate } from "../../Middlewares/authentification/AuthMiddleware";
 import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
-import { TerrainTagService } from "../../Services/terrainTags/TerrainTagService";
 import { UserRole } from "../../Domain/enums/UserRole";
 
 export class TerrainTagController {
@@ -12,14 +11,14 @@ export class TerrainTagController {
     constructor(terrainTagService : ITerrrainTagService){
         this.router = Router();
         this.terrainTagService = terrainTagService;
-        this.intializeRoutes();
-        
+        this.intializeRoutes();  
     }
 
     private intializeRoutes() : void {
         this.router.get("/terrain-tags", this.getAll.bind(this));
         this.router.get("/terrain-tags/:id", this.getById.bind(this));
         this.router.post("/terrain-tags", authenticate, authorize(UserRole.ADMIN), this.create.bind(this));
+        this.router.delete("/terrain-tags/:id", authenticate, authorize(UserRole.ADMIN), this.delete.bind(this));
     }
 
     private async getAll(req: Request, res: Response) : Promise<void> {
@@ -61,6 +60,28 @@ export class TerrainTagController {
             res.status(201).json(tag);
         } catch {
             res.status(500).json({ success: false, message: "Greska na serveru"});
+        }
+    }
+
+    private async delete(req: Request, res: Response): Promise<void> {
+        try{
+            const id = Number(req.params.id);
+
+            if (!Number.isInteger(id) || id <= 0){
+                res.status(400).json({ success: false, messsage: "Tip terena nije validan" });
+                return;
+            }
+
+            const uspesno = await this.terrainTagService.obrisiTipTerena(id);
+
+            if (!uspesno){
+                res.status(400).json({ success: false, message: "Tip terena nije pronadjen ili je vezan za neku rutu"});
+                return;
+            }
+
+            res.status(200).json({ success: true, message: "Tip terena uspesno obrisan" });
+        } catch {
+            res.status(500).json({ success: false, message: "Greska na serveru" });
         }
     }
 
