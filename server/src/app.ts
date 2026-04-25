@@ -50,6 +50,12 @@ import { IHikeService } from './Domain/services/hikes/IHikeService';
 import { HikeService } from './Services/hikes/HikeService';
 import { HikeController } from './WebAPI/controllers/HikeController';
 
+import { IAuditLogRepository } from './Domain/repositories/auditLogs/IAuditLogRepository';
+import { AuditLogRepository } from './Database/repositories/auditLogs/AuditLogRepository';
+import { IAuditLogService } from './Domain/services/auditLogs/IAuditLogService';
+import { AuditLogService } from './Services/auditLogs/AuditLogService';
+import { AuditLogController } from './WebAPI/controllers/AuditLogController';
+
 require('dotenv').config();
 
 const app = express();
@@ -67,9 +73,11 @@ const userTrailRepository: IUserTrailRepository = new UserTrailRepository();
 const ascentRepository: IAscentRepository = new AscentRepository();
 const hikeRepository: IHikeRepository = new HikeRepository();
 const hikeParticipantRepository: IHikeParticipantRepository = new HikeParticipantRepository();
+const auditLogRepository: IAuditLogRepository = new AuditLogRepository();
 
 // Services
-const authService: IAuthService = new AuthService(userRepository);
+const auditLogService: IAuditLogService = new AuditLogService(auditLogRepository);
+const authService: IAuthService = new AuthService(userRepository, auditLogService);
 const userService: IUserService = new UserService(userRepository);
 const mountainService: IMountainService = new MountainService(mountainRepository);
 const trailService: ITrailService = new TrailService(trailRepository, trailTagRepository, ascentRepository);
@@ -87,6 +95,7 @@ const terrainTagController = new TerrainTagController(terrainTagService);
 const userTrailController = new UserTrailController(userTrailService);
 const ascentController = new AscentController(ascentService);
 const hikeController = new HikeController(hikeService);
+const auditLogController = new AuditLogController(auditLogService);
 
 // Registering routes
 app.use('/api/v1', authController.getRouter());
@@ -97,6 +106,7 @@ app.use('/api/v1', terrainTagController.getRouter());
 app.use('/api/v1', userTrailController.getRouter());
 app.use('/api/v1', ascentController.getRouter());
 app.use('/api/v1', hikeController.getRouter());
+app.use('/api/v1', auditLogController.getRouter());
 
 
 export default app;

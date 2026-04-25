@@ -4,11 +4,16 @@ import { IAuthService } from "../../Domain/services/auth/IAuthService";
 import { UserRole } from "../../Domain/enums/UserRole";
 import bcrypt from "bcryptjs";
 import { AuthResultDto } from "../../Domain/DTOs/auth/AuthResultDto";
+import { IAuditLogService } from "../../Domain/services/auditLogs/IAuditLogService";
+import { AuditAction } from "../../Domain/enums/AuditAction";
 
 export class AuthService implements IAuthService {
   private readonly saltRounds: number = parseInt(process.env.SALT_ROUNDS || "10", 10);
 
-  public constructor(private userRepository: IUserRepository) {}
+  public constructor(
+    private userRepository: IUserRepository,
+    private auditLogService: IAuditLogService
+  ) {}
 
   async prijava(korisnickoIme: string, lozinka: string): Promise<AuthResultDto> {
     const user = await this.userRepository.getByUsername(korisnickoIme);
@@ -69,4 +74,17 @@ export class AuthService implements IAuthService {
 
     return new AuthResultDto(true, "Uspesna registracija", newUser.id, newUser.korisnickoIme, newUser.uloga);
   }
+
+  async logout(user_id: number): Promise<boolean> {
+    const log = await this.auditLogService.createLog(
+      user_id,
+      AuditAction.LOGOUT,
+      "auth",
+      user_id,
+      "Korisnik se odjavio"
+    );
+
+    return log.id !== 0;
+  }
+  
 }

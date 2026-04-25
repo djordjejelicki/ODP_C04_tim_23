@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { IAuthService } from '../../Domain/services/auth/IAuthService';
 import { validateLogin, validateRegister } from '../validators/authValidator';
+import { authenticate } from '../../Middlewares/authentification/AuthMiddleware';
 import jwt from "jsonwebtoken";
 
 export class AuthController {
@@ -16,12 +17,9 @@ export class AuthController {
   private initializeRoutes(): void {
     this.router.post('/auth/login', this.prijava.bind(this));
     this.router.post('/auth/register', this.registracija.bind(this));
+    this.router.post('/auth/logout', authenticate, this.logout.bind(this));
   }
 
-  /**
-   * POST /api/v1/auth/login
-   * Prijava korisnika
-   */
   private async prijava(req: Request, res: Response): Promise<void> {
     try {
       const { korisnickoIme, lozinka } = req.body;
@@ -57,10 +55,7 @@ export class AuthController {
     }
   }
 
-  /**
-   * POST /api/v1/auth/register
-   * Registracija novog korisnika
-   */
+ 
   private async registracija(req: Request, res: Response): Promise<void> {
     try {
       const { korisnickoIme, email, lozinka, ime, prezime } = req.body;
@@ -96,10 +91,28 @@ export class AuthController {
     }
   }
 
+  private async logout(req: Request, res: Response): Promise<void> {
+    try{
+      const userId = req.user?.id;
 
-  /**
-   * Getter za router
-   */
+      if (!userId){
+        res.status(401).json({ success: false, message: "Neautorizovan pristup"});
+        return;
+      }
+
+      const uspesno = await this.authService.logout(userId);
+
+      if (!uspesno) {
+        res.status(400).json({ success: false, message: "Odjava nije evidentirana" });
+        return;
+      }
+
+      res.status(200).json({ success: true, message: "Uspesna odjava" });
+    } catch{
+      res.status(500).json({ success: false, message: "Greska na serveru" });
+    }
+  }
+  
   public getRouter(): Router {
     return this.router;
   }
