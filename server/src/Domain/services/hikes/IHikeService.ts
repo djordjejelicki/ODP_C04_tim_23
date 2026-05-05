@@ -6,12 +6,12 @@ export interface IHikeService {
     getSviPohodi(): Promise<Hike[]>;
     getPohodById(id: number): Promise<Hike>;
     kreirajPohod(
-        organizator_id: number,
+        organizer_id: number,
         trail_id: number,
-        naziv: string,
-        opis: string | null,
-        datum_vreme: Date,
-        maksimalan_broj_ucesnika: number
+        name: string,
+        description: string | null,
+        scheduled_at: Date,
+        max_participants: number
     ): Promise<Hike>;
     pozoviUcesnika(hike_id: number, user_id: number): Promise<boolean>;
     odgovoriNaPoziv(

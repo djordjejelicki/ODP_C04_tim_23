@@ -2,13 +2,13 @@ import { AuthResultDto } from "../../DTOs/auth/AuthResultDto";
 
 export interface IAuthService {
 
-  prijava(korisnickoIme: string, lozinka: string): Promise<AuthResultDto>;
+  prijava(username: string, password: string): Promise<AuthResultDto>;
   registracija(
-    korisnickoIme: string,
+    username: string,
     email: string,
-    lozinka: string,
-    ime: string,
-    prezime: string
+    password: string,
+    first_name: string,
+    last_name: string
   ): Promise<AuthResultDto>;
   logout(user_id: number): Promise<boolean>;
 }

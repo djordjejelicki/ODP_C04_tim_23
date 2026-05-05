@@ -17,8 +17,8 @@ export class TerrainTagService implements ITerrrainTagService{
         return await this.terrainTagRepository.getById(id);
     }
 
-    async createTipTerena(naziv: string, opis: string | null): Promise<TerrainTag> {
-        const noviTag = new TerrainTag(0, naziv, opis);
+    async createTipTerena(name: string, description: string | null): Promise<TerrainTag> {
+        const noviTag = new TerrainTag(0, name, description);
         return await this.terrainTagRepository.create(noviTag);
     }
 

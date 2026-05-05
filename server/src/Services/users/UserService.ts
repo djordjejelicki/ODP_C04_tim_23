@@ -10,19 +10,19 @@ export class UserService implements IUserService {
   async getSviKorisnici(): Promise<UserDto[]> {
     const korisnici: User[] = await this.userRepository.getAll();
     const korisniciDto: UserDto[] = korisnici.map(
-      (user) => new UserDto(user.id, user.korisnickoIme, user.uloga)
+      (user) => new UserDto(user.id, user.username, user.role)
     );
 
     return korisniciDto;
   }
 
-  async promeniUlogu(id: number, uloga: UserRole): Promise<boolean> {
+  async promeniUlogu(id: number, role: UserRole): Promise<boolean> {
     const korisnik = await this.userRepository.getById(id);
 
     if (korisnik.id === 0){
       return false;
     }
 
-    return await this.userRepository.updateRole(id, uloga);
+    return await this.userRepository.updateRole(id, role);
   }
 }

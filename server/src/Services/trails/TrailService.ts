@@ -5,6 +5,7 @@ import { ITrailService } from "../../Domain/services/trails/ITrailService";
 import { ITrailTagRepository } from "../../Domain/repositories/trailTags/ITrailTagRepository";
 import { TrailDetailsDto } from "../../Domain/DTOs/trails/TrailDetailsDto";
 import { IAscentRepository } from "../../Domain/repositories/ascents/IAscentRepository";
+import { EOL } from "node:os";
 
 
 export class TrailService implements ITrailService {
@@ -30,29 +31,29 @@ export class TrailService implements ITrailService {
         return new TrailDetailsDto(
             trail.id,
             trail.mountain_id,
-            trail.naziv,
-            trail.opis,
-            trail.duzina_km,
-            trail.tezina,
-            trail.trajanje_min,
-            trail.visinski_uspon_m,
-            trail.slika_url,
+            trail.name,
+            trail.description,
+            trail.length_km,
+            trail.difficulty,
+            trail.est_duration_min,
+            trail.elevation_m,
+            trail.image_url,
             trail.created_at,
             terrainTags
         );
     }
 
-    async createRuta(mountain_id: number, naziv: string, opis: string | null, duzina_km: number, tezina: TrailDifficulty, trajanje_min: number, visinski_uspon_m: number, slika_url: string, terrain_tag_ids: number[]): Promise<Trail> {
+    async createRuta(mountain_id: number, name: string, description: string | null, length_km: number, difficulty: TrailDifficulty, est_duration_min: number, elevation_m: number, image_url: string, terrain_tag_ids: number[]): Promise<Trail> {
         const novaRuta = new Trail(
             0, 
             mountain_id,
-            naziv,
-            opis,
-            duzina_km,
-            tezina,
-            trajanje_min,
-            visinski_uspon_m,
-            slika_url,
+            name,
+            description,
+            length_km,
+            difficulty,
+            est_duration_min,
+            elevation_m,
+            image_url,
             null
         );
 
@@ -69,7 +70,7 @@ export class TrailService implements ITrailService {
         return kreiranaRuta;
     }
 
-    async updateRuta(id: number, mountain_id: number, naziv: string, opis: string | null, duzina_km: number, tezina: TrailDifficulty, trajanje_min: number, visinski_uspon_m: number, slika_url: string, terrain_tag_ids: number[]): Promise<boolean> {
+    async updateRuta(id: number, mountain_id: number, name: string, description: string | null, length_km: number, difficulty: TrailDifficulty, est_duration_min: number, elevation_m: number, image_url: string, terrain_tag_ids: number[]): Promise<boolean> {
         const postojecaRuta = await this.trailRepository.getById(id);
 
         if (postojecaRuta.id === 0) {
@@ -79,13 +80,13 @@ export class TrailService implements ITrailService {
         const izmenjenaRuta = new Trail(
             id,
             mountain_id,
-            naziv,
-            opis,
-            duzina_km,
-            tezina,
-            trajanje_min,
-            visinski_uspon_m,
-            slika_url,
+            name,
+            description,
+            length_km,
+            difficulty,
+            est_duration_min,
+            elevation_m,
+            image_url,
             postojecaRuta.created_at
         );
 

@@ -48,9 +48,9 @@ export class TerrainTagController {
 
     private async create(req: Request, res: Response) : Promise<void> {
         try{
-            const {naziv, opis} = req.body;
+            const {name, description} = req.body;
 
-            const tag = await this.terrainTagService.createTipTerena(naziv, opis ?? null);
+            const tag = await this.terrainTagService.createTipTerena(name, description ?? null);
 
             if (tag.id === 0){
                 res.status(400).json({ success: false, message: "Kreiranje nije uspelo" });

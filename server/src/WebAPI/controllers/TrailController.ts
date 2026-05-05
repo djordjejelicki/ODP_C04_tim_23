@@ -5,6 +5,7 @@ import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
 import { UserRole } from "../../Domain/enums/UserRole";
 import { validateTrail } from "../validators/TrailValidator";
 import { TrailDifficulty } from "../../Domain/enums/TrailDifficulty";
+import { diff } from "node:util";
 
 export class TrailController {
     private router: Router;
@@ -53,25 +54,25 @@ export class TrailController {
         try{
             const {
                 mountain_id,
-                naziv,
-                opis,
-                duzina_km,
-                tezina,
-                trajanje_min,
-                visinski_uspon_m,
-                slika_url,
+                name,
+                description,
+                length_km,
+                difficulty,
+                est_duration_min,
+                elevation_m,
+                image_url,
                 terrain_tag_ids
             } = req.body;
 
             const result = validateTrail(
                 Number(mountain_id),
-                naziv,
-                opis ?? null,
-                Number(duzina_km),
-                tezina,
-                Number(trajanje_min),
-                Number(visinski_uspon_m),
-                slika_url,
+                name,
+                description ?? null,
+                Number(length_km),
+                difficulty,
+                Number(est_duration_min),
+                Number(elevation_m),
+                image_url,
                 Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : []
             );
 
@@ -82,13 +83,13 @@ export class TrailController {
 
             const trail = await this.trailService.createRuta(
                 Number(mountain_id),
-                naziv,
-                opis ?? null,
-                Number(duzina_km),
-                tezina as TrailDifficulty,
-                Number(trajanje_min),
-                Number(visinski_uspon_m),
-                slika_url,
+                name,
+                description ?? null,
+                Number(length_km),
+                difficulty as TrailDifficulty,
+                Number(est_duration_min),
+                Number(elevation_m),
+                image_url,
                 Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : []
             );
 
@@ -108,13 +109,13 @@ export class TrailController {
             const id = Number(req.params.id);
             const {
                 mountain_id,
-                naziv,
-                opis,
-                duzina_km,
-                tezina,
-                trajanje_min,
-                visinski_uspon_m,
-                slika_url,
+                name,
+                description,
+                length_km,
+                difficulty,
+                est_duration_min,
+                elevation_m,
+                image_url,
                 terrain_tag_ids
             } = req.body;
 
@@ -127,13 +128,13 @@ export class TrailController {
 
             const rezultat = validateTrail(
                 Number(mountain_id),
-                naziv,
-                opis ?? null,
-                Number(duzina_km),
-                tezina,
-                Number(trajanje_min),
-                Number(visinski_uspon_m),
-                slika_url,
+                name,
+                description ?? null,
+                Number(length_km),
+                difficulty,
+                Number(est_duration_min),
+                Number(elevation_m),
+                image_url,
                 terrainIds
             );
 
@@ -145,13 +146,13 @@ export class TrailController {
             const uspesno = await this.trailService.updateRuta(
                 id,
                 Number(mountain_id),
-                naziv,
-                opis ?? null,
-                Number(duzina_km),
-                tezina as TrailDifficulty,
-                Number(trajanje_min),
-                Number(visinski_uspon_m),
-                slika_url,
+                name,
+                description ?? null,
+                Number(length_km),
+                difficulty as TrailDifficulty,
+                Number(est_duration_min),
+                Number(elevation_m),
+                image_url,
                 terrainIds
             );
 

@@ -40,7 +40,7 @@ export class AscentController {
     private async create(req: Request, res: Response): Promise<void> {
         try{
             const userId = req.user?.id;
-            const {trail_id, datum, trajanje_min, napomena, ocena} = req.body;
+            const {trail_id, ascent_date, duration_min, note, rating} = req.body;
 
             if (!userId){
                 res.status(401).json({ success: false, message: "Neautorizovan pristup" });
@@ -49,10 +49,10 @@ export class AscentController {
 
             const rezultat = validateAscent(
                 Number(trail_id),
-                datum,
-                Number(trajanje_min),
-                napomena ?? null,
-                Number(ocena)
+                ascent_date,
+                Number(duration_min),
+                note ?? null,
+                Number(rating)
             );
 
             if (!rezultat.valid){
@@ -63,10 +63,10 @@ export class AscentController {
             const uspon = await this.ascentService.dodajUspon(
                 userId,
                 Number(trail_id),
-                new Date(datum),
-                Number(trajanje_min),
-                napomena ?? null,
-                Number(ocena)
+                new Date(ascent_date),
+                Number(duration_min),
+                note ?? null,
+                Number(rating)
             );
 
             if (uspon.id === 0){
@@ -112,7 +112,7 @@ export class AscentController {
         try{
             const userId = req.user?.id;
             const id = Number(req.params.id);
-            const {datum, trajanje_min, napomena, ocena, trail_id} = req.body;
+            const {ascent_date, duration_min, note, rating, trail_id} = req.body;
 
             if (!userId){
                 res.status(401).json({ success: false, message: "Neautorizovan pristup" });
@@ -126,10 +126,10 @@ export class AscentController {
 
             const rezultat = validateAscent(
                 Number(trail_id ?? 1),
-                datum,
-                Number(trajanje_min),
-                napomena ?? null,
-                Number(ocena)
+                ascent_date,
+                Number(duration_min),
+                note ?? null,
+                Number(rating)
             );
 
             if (!rezultat.valid){
@@ -140,10 +140,10 @@ export class AscentController {
             const uspesno = await this.ascentService.izmeniUspon(
                 userId,
                 id,
-                new Date(datum),
-                Number(trajanje_min),
-                napomena ?? null,
-                Number(ocena)
+                new Date(ascent_date),
+                Number(duration_min),
+                note ?? null,
+                Number(rating)
             );
 
             if (!uspesno) {

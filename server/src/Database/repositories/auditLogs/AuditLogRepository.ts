@@ -7,7 +7,7 @@ export class AuditLogRepository implements IAuditLogRepository {
     async getAll(): Promise<AuditLog[]> {
         try{
             const query = `
-                SELECT id, user_id, akcija, entitet, entitet_id, detalji, created_at
+                SELECT id, user_id, action, entity, entity_id, details, created_at
                 FROM audit_logs
                 ORDER BY created_at DESC
             `;
@@ -18,10 +18,10 @@ export class AuditLogRepository implements IAuditLogRepository {
                 (row) => new AuditLog(
                     row.id,
                     row.user_id,
-                    row.akcija,
-                    row.entitet,
-                    row.entitet_id,
-                    row.detalji,
+                    row.action,
+                    row.entity,
+                    row.entity_id,
+                    row.details,
                     row.created_at
                 )
             );
@@ -34,26 +34,26 @@ export class AuditLogRepository implements IAuditLogRepository {
     async create(log: AuditLog): Promise<AuditLog> {
         try{
             const query = `
-                INSERT INTO audit_logs (user_id, akcija, entitet, entitet_id, detalji)
+                INSERT INTO audit_logs (user_id, action, entity, entity_id, details)
                 VALUES (?, ?, ?, ?, ?)
             `;
 
             const [result] = await db.execute<ResultSetHeader>(query, [
                 log.user_id,
-                log.akcija,
-                log.entitet,
-                log.entitet_id,
-                log.detalji
+                log.action,
+                log.entity,
+                log.entity_id,
+                log.details
             ]);
 
             if (result.insertId) {
                 return new AuditLog(
                     result.insertId,
                     log.user_id,
-                    log.akcija,
-                    log.entitet,
-                    log.entitet_id,
-                    log.detalji
+                    log.action,
+                    log.entity,
+                    log.entity_id,
+                    log.details
                 );
             }
 

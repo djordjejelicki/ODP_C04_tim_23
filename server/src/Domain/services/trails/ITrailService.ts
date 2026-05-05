@@ -7,25 +7,25 @@ export interface ITrailService {
     getRutaById(id: number): Promise<TrailDetailsDto>;
     createRuta(
         mountain_id: number,
-        naziv: string,
-        opis: string | null,
-        duzina_km: number,
-        tezina: TrailDifficulty,
-        trajanje_min: number,
-        visinski_uspon_m: number,
-        slika_url: string,
+        name: string,
+        description: string | null,
+        length_km: number,
+        difficulty: TrailDifficulty,
+        est_duration_min: number,
+        elevation_m: number,
+        image_url: string,
         terrain_tag_ids: number[]
     ): Promise<Trail>;
     updateRuta(
         id: number,
         mountain_id: number,
-        naziv: string,
-        opis: string | null,
-        duzina_km: number,
-        tezina: TrailDifficulty,
-        trajanje_min: number,
-        visinski_uspon_m: number,
-        slika_url: string,
+        name: string,
+        description: string | null,
+        lenght_km: number,
+        difficulty: TrailDifficulty,
+        est_duration_min: number,
+        elevation_m: number,
+        image_url: string,
         terrain_tag_ids: number[]
     ): Promise<boolean>;  
     deleteRuta(id: number): Promise<boolean>;

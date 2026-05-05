@@ -19,15 +19,15 @@ export class HikeService implements IHikeService{
         return await this.hikeRepository.getById(id);
     }
 
-    async kreirajPohod(organizator_id: number, trail_id: number, naziv: string, opis: string | null, datum_vreme: Date, maksimalan_broj_ucesnika: number): Promise<Hike> {
+    async kreirajPohod(organizer_id: number, trail_id: number, name: string, description: string | null, scheduled_at: Date, max_participants: number): Promise<Hike> {
         const noviPohod = new Hike(
             0,
-            organizator_id,
+            organizer_id,
             trail_id,
-            naziv,
-            opis,
-            datum_vreme,
-            maksimalan_broj_ucesnika
+            name,
+            description,
+            scheduled_at,
+            max_participants
         );
 
         return await this.hikeRepository.create(noviPohod);

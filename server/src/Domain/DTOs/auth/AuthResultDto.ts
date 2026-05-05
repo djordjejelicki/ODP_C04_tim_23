@@ -5,7 +5,7 @@ export class AuthResultDto {
         public success: boolean = false,
         public message: string = "",
         public id: number = 0,
-        public korisnickoIme: string = "",
-        public uloga: UserRole = UserRole.HIKER
+        public username: string = "",
+        public role: UserRole = UserRole.HIKER
     ){}
 }

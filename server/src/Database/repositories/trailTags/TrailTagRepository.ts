@@ -22,11 +22,11 @@ export class TrailTagRepository implements ITrailTagRepository {
     async getTagsForTrail(traild_id: number): Promise<TerrainTag[]> {
         try {
             const query = `
-                SELECT tt.id, tt.naziv, tt.opis
+                SELECT tt.id, tt.name, tt.description
                 FROM terrain_tags tt
                 INNER JOIN trail_tags trt ON tt.id = trt.terrain_tag_id
                 WHERE trt.trail_id = ?
-                ORDER BY tt.naziv ASC
+                ORDER BY tt.name ASC
             `;
 
             const [rows] = await db.execute<RowDataPacket[]>(query, [traild_id]);

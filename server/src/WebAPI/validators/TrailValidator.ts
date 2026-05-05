@@ -4,44 +4,44 @@ import { ValidationResault } from "../../Domain/types/ValidationResult";
 
 export const validateTrail = (
     mountain_id: number, 
-    naziv: string,
-    opis: string | null,
-    duzina_km: number,
-    tezina: string,
-    trajanje_min: number,
-    visinski_uspon_m: number,
-    slika_url: string,
+    name: string,
+    description: string | null,
+    length_km: number,
+    difficulty: string,
+    est_duration_min: number,
+    elevation_m: number,
+    image_url: string,
     terrain_tag_ids: number[]
 ): ValidationResault => {
     if (!Number.isInteger(mountain_id) || mountain_id <= 0){
         return { valid: false, message: "Planina nije validna." };
     }
 
-    if (typeof naziv !== "string" || naziv.trim().length < 2 || naziv.trim().length > 120){
+    if (typeof name !== "string" || name.trim().length < 2 || name.trim().length > 120){
         return { valid: false, message: "Naziv rute mora imati izmedju 2 i 120 karaktera." };
     }
 
-    if (opis !== null && (typeof opis !== "string" || opis.length > 2000)){
+    if (description !== null && (typeof description !== "string" || description.length > 2000)){
         return { valid: false, message: "Opis rute moze imati najvise 2000 karaktera"};
     }
 
-    if (typeof duzina_km !== "number" || Number.isNaN(duzina_km) || duzina_km < 0.1){
+    if (typeof length_km !== "number" || Number.isNaN(length_km) || length_km < 0.1){
         return { valid: false, message: "Duzina rute mora biti najmanje 0.1 km" };
     }
 
-    if (!Object.values(TrailDifficulty).includes(tezina as TrailDifficulty)){
+    if (!Object.values(TrailDifficulty).includes(difficulty as TrailDifficulty)){
         return { valid: false, message: "Izaberite validan nivo tezine" };
     }
 
-    if (!Number.isInteger(trajanje_min) || trajanje_min < 10){
+    if (!Number.isInteger(est_duration_min) || est_duration_min < 10){
         return { valid: false, message: "Trajanje mora biti najmanje 10 minuta" };
     }
 
-    if (!Number.isInteger(visinski_uspon_m) || visinski_uspon_m < 0 ){
+    if (!Number.isInteger(elevation_m) || elevation_m < 0 ){
         return { valid: false, message: "Visinska razlika mora biti 0 ili veca" };
     }
 
-    if (typeof slika_url !== "string" || slika_url.trim().length === 0 || slika_url.length > 255){
+    if (typeof image_url !== "string" || image_url.trim().length === 0 || image_url.length > 255){
         return { valid: false, message: "Slika rute je obavezna" }
     }
     

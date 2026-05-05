@@ -19,7 +19,7 @@ export class AscentService implements IAscentService {
         return await this.ascentRepository.getById(id);
     }
 
-    async dodajUspon(user_id: number, trail_id: number, datum: Date, trajanje_min: number, napomena: string | null, ocena: number): Promise<Ascent> {
+    async dodajUspon(user_id: number, trail_id: number, ascent_date: Date, duration_min: number, note: string | null, rating: number): Promise<Ascent> {
         const userTrail = await this.userTrailRepository.getOne(user_id, trail_id);
 
         if (userTrail.user_id === 0){
@@ -30,10 +30,10 @@ export class AscentService implements IAscentService {
             0,
             user_id,
             trail_id,
-            datum,
-            trajanje_min,
-            napomena,
-            ocena
+            ascent_date,
+            duration_min,
+            note,
+            rating
         );
 
         const kreiranUspon = await this.ascentRepository.add(noviUspon);
@@ -51,7 +51,7 @@ export class AscentService implements IAscentService {
         return kreiranUspon;
     }
 
-    async izmeniUspon(user_id: number, id: number, datum: Date, trajanje_min: number, napomena: string | null, ocena: number): Promise<boolean> {
+    async izmeniUspon(user_id: number, id: number, ascent_date: Date, duration_min: number, note: string | null, rating: number): Promise<boolean> {
         
         const postojeciUspon = await this.ascentRepository.getById(id);
 
@@ -63,10 +63,10 @@ export class AscentService implements IAscentService {
             id,
             user_id,
             postojeciUspon.trail_id,
-            datum,
-            trajanje_min,
-            napomena,
-            ocena
+            ascent_date,
+            duration_min,
+            note,
+            rating
         );
 
         return await this.ascentRepository.update(izmenjeniUspon);

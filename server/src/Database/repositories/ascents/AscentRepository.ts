@@ -10,10 +10,10 @@ export class AscentRepository implements IAscentRepository {
     async getByUser(user_id: number): Promise<Ascent[]> {
         try{
             const query = `
-                SELECT id, user_id, trail_id, datum, trajanje_min, napomena, ocena
+                SELECT id, user_id, trail_id, ascent_date, duration_min, note, rating
                 FROM ascents
                 WHERE user_id = ?
-                ORDER BY datum DESC, id DESC
+                ORDER BY ascent_date DESC, id DESC
             `;
 
             const [rows] = await db.execute<RowDataPacket[]>(query, [user_id]);
@@ -23,10 +23,10 @@ export class AscentRepository implements IAscentRepository {
                     row.id,
                     row.user_id,
                     row.trail_id,
-                    row.datum,
-                    row.trajanje_min,
-                    row.napomena,
-                    row.ocena
+                    row.ascent_date,
+                    row.duration_min,
+                    row.note,
+                    row.rating
                 )
             );
         } catch(error){
@@ -38,7 +38,7 @@ export class AscentRepository implements IAscentRepository {
     async getById(id: number): Promise<Ascent> {
         try{
             const query = `
-                SELECT id, user_id, trail_id, datum, trajanje_min, napomena, ocena
+                SELECT id, user_id, trail_id, ascent_date, duration_min, note, rating
                 FROM ascents
                 WHERE id = ?
             `;
@@ -51,10 +51,10 @@ export class AscentRepository implements IAscentRepository {
                     row.id,
                     row.user_id,
                     row.trail_id,
-                    row.datum,
-                    row.trajanje_min,
-                    row.napomena,
-                    row.ocena
+                    row.ascent_date,
+                    row.duration_min,
+                    row.note,
+                    row.rating
                 );
             }
 
@@ -68,17 +68,17 @@ export class AscentRepository implements IAscentRepository {
     async add(ascent: Ascent): Promise<Ascent> {
         try{
             const query = `
-                INSERT INTO ascents (user_id, trail_id, datum, trajanje_min, napomena, ocena)
+                INSERT INTO ascents (user_id, trail_id, ascent_date, duration_min, note, rating)
                 VALUES (?, ?, ?, ?, ?, ?)
             `;
 
             const [result] = await db.execute<ResultSetHeader>(query, [
                 ascent.user_id,
                 ascent.trail_id,
-                ascent.datum,
-                ascent.trajanje_min,
-                ascent.napomena,
-                ascent.ocena
+                ascent.ascent_date,
+                ascent.duration_min,
+                ascent.note,
+                ascent.rating
             ]);
 
             if (result.insertId){
@@ -86,10 +86,10 @@ export class AscentRepository implements IAscentRepository {
                     result.insertId,
                     ascent.user_id,
                     ascent.trail_id,
-                    ascent.datum,
-                    ascent.trajanje_min,
-                    ascent.napomena,
-                    ascent.ocena
+                    ascent.ascent_date,
+                    ascent.duration_min,
+                    ascent.note,
+                    ascent.rating
                 );
             }
 
@@ -104,15 +104,15 @@ export class AscentRepository implements IAscentRepository {
         try{
             const query = `
                 UPDATE ascents
-                SET datum = ?, trajanje_min = ?, napomena = ?, ocena = ?
+                SET ascent_date = ?, duration_min = ?, note = ?, rating = ?
                 WHERE id = ? 
             `;
 
             const [result] = await db.execute<ResultSetHeader>(query, [
-                ascent.datum,
-                ascent.trajanje_min,
-                ascent.napomena,
-                ascent.ocena,
+                ascent.ascent_date,
+                ascent.duration_min,
+                ascent.note,
+                ascent.rating,
                 ascent.id
             ]);
 

@@ -49,14 +49,14 @@ export class MountainController {
 
     private async create(req: Request, res: Response) : Promise<void> {
         try{
-            const {naziv, drzava, region, visina, opis} = req.body;
+            const {name, country, region, height, description} = req.body;
 
             const rezultat = validateMountain(
-                naziv,
-                drzava,
+                name,
+                country,
                 region??null,
-                Number(visina),
-                opis??null
+                Number(height),
+                description??null
             );
 
             if (!rezultat.valid) {
@@ -65,11 +65,11 @@ export class MountainController {
             }
 
             const mountain = await this.mountainService.createPlanina(
-                naziv,
-                drzava,
+                name,
+                country,
                 region ?? null,
-                Number(visina),
-                opis ?? null
+                Number(height),
+                description ?? null
             );
 
             if (mountain.id === 0) {
@@ -86,7 +86,7 @@ export class MountainController {
     private async update(req: Request, res: Response): Promise<void> {
         try{
             const id = Number(req.params.id);
-            const {naziv, drzava, region, visina, opis} = req.body;
+            const {name, country, region, height, description} = req.body;
 
             if (!Number.isInteger(id) || id <= 0){
                 res.status(400).json({ success: false, message: "Planina nije validna" });
@@ -94,11 +94,11 @@ export class MountainController {
             }
 
             const rezultat = validateMountain(
-                naziv,
-                drzava,
+                name,
+                country,
                 region ?? null,
-                Number(visina),
-                opis ?? null
+                Number(height),
+                description ?? null
             );
 
             if (!rezultat.valid){
@@ -108,11 +108,11 @@ export class MountainController {
 
             const uspesno = await this.mountainService.updatePlanina(
                 id,
-                naziv,
-                drzava,
+                name,
+                country,
                 region ?? null,
-                Number(visina),
-                opis ?? null
+                Number(height),
+                description ?? null
             );
 
             if (!uspesno){

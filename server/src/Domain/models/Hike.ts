@@ -1,11 +1,11 @@
 export class Hike {
     public constructor(
         public id: number = 0,
-        public organizator_id: number = 0,
+        public organizer_id: number = 0,
         public trail_id: number = 0,
-        public naziv: string = "",
-        public opis: string | null = null,
-        public datum_vreme: Date | null = null,
-        public maksimalan_broj_ucesnika: number = 0
+        public name: string = "",
+        public description: string | null = null,
+        public scheduled_at: Date | null = null,
+        public max_participants: number = 0
     ){}
 }

@@ -8,17 +8,17 @@ export class UserRepository implements IUserRepository {
   async create(user: User): Promise<User> {
     try {
       const query = `
-        INSERT INTO users (korisnickoIme, email, uloga, lozinka, ime, prezime, bio, avatar_url)
+        INSERT INTO users (username, email, role, password, first_name, last_name, bio, avatar_url)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const [result] = await db.execute<ResultSetHeader>(query, [
-        user.korisnickoIme,
+        user.username,
         user.email,
-        user.uloga,
-        user.lozinka,
-        user.ime,
-        user.prezime,
+        user.role,
+        user.password,
+        user.first_name,
+        user.last_name,
         user.bio,
         user.avatar_url,
       ]);
@@ -28,12 +28,12 @@ export class UserRepository implements IUserRepository {
         // Vraćamo novog korisnika sa dodeljenim ID-om
         return new User(
           result.insertId,
-          user.korisnickoIme,
+          user.username,
           user.email,
-          user.uloga,
-          user.lozinka,
-          user.ime,
-          user.prezime,
+          user.role,
+          user.password,
+          user.first_name,
+          user.last_name,
           user.bio,
           user.avatar_url,
         );
@@ -54,7 +54,7 @@ export class UserRepository implements IUserRepository {
 
       if (rows.length > 0) {
         const row = rows[0];
-        return new User(row.id, row.korisnickoIme, row.uloga, row.lozinka);
+        return new User(row.id, row.username, row.role, row.password);
       }
 
       return new User();
@@ -63,26 +63,26 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  async getByUsername(korisnickoIme: string): Promise<User> {
+  async getByUsername(username: string): Promise<User> {
     try {
       const query = `
-        SELECT id, korisnickoIme, email, uloga, lozinka, ime, prezime, bio, avatar_url, created_at
+        SELECT id, username, email, role, password, first_name, last_name, bio, avatar_url, created_at
         FROM users
-        WHERE korisnickoIme = ?
+        WHERE username = ?
       `;
 
-      const [rows] = await db.execute<RowDataPacket[]>(query, [korisnickoIme]);
+      const [rows] = await db.execute<RowDataPacket[]>(query, [username]);
 
       if (rows.length > 0) {
         const row = rows[0];
         return new User(
           row.id,
-          row.korisnickoIme,
+          row.username,
           row.email,
-          row.uloga,
-          row.lozinka,
-          row.ime,
-          row.prezime,
+          row.role,
+          row.password,
+          row.first_name,
+          row.last_name,
           row.bio,
           row.avatar_url,
           row.created_at
@@ -99,7 +99,7 @@ export class UserRepository implements IUserRepository {
   async getAll(): Promise<User[]> {
     try {
       const query = `
-        SELECT id, korisnickoIme, email, uloga, lozinka, ime, prezime, bio, avatar_url, created_at
+        SELECT id, username, email, role, password, first_name, last_name, bio, avatar_url, created_at
         FROM users
         ORDER BY id ASC
       `;
@@ -109,12 +109,12 @@ export class UserRepository implements IUserRepository {
         (row) => 
           new User(
             row.id,
-            row.korisnickoIme,
+            row.username,
             row.email,
-            row.uloga,
-            row.lozinka,
-            row.ime,
-            row.prezime,
+            row.role,
+            row.password,
+            row.first_name,
+            row.last_name,
             row.bio,
             row.avatar_url,
             row.created_at
@@ -129,13 +129,13 @@ export class UserRepository implements IUserRepository {
     try {
       const query = `
         UPDATE users 
-        SET korisnickoIme = ?, lozinka = ? 
+        SET username = ?, password = ? 
         WHERE id = ?
       `;
 
       const [result] = await db.execute<ResultSetHeader>(query, [
-        user.korisnickoIme,
-        user.lozinka,
+        user.username,
+        user.password,
         user.id,
       ]);
 
@@ -183,7 +183,7 @@ export class UserRepository implements IUserRepository {
   async getByEmail(email: string): Promise<User> {
     try{
       const query = `
-        SELECT id, korisnickoIme, email, uloga, lozinka, ime, prezime, bio, avatar_url, created_at
+        SELECT id, username, email, role, password, first_name, last_name, bio, avatar_url, created_at
         FROM users
         WHERE email = ?
       `;
@@ -193,12 +193,12 @@ export class UserRepository implements IUserRepository {
         const row = rows[0];
         return new User(
           row.id,
-          row.korisnickoIme,
+          row.username,
           row.email,
-          row.uloga,
-          row.lozinka,
-          row.ime,
-          row.prezime,
+          row.role,
+          row.password,
+          row.first_name,
+          row.last_name,
           row.bio,
           row.avatar_url,
           row.created_at
@@ -213,15 +213,15 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  async updateRole(id: number, uloga: UserRole): Promise<boolean> {
+  async updateRole(id: number, role: UserRole): Promise<boolean> {
     try{
       const query = `
         UPDATE users
-        SET uloga = ?
+        SET role = ?
         WHERE id = ?
       `;
 
-      const [result] = await db.execute<ResultSetHeader>(query, [uloga, id]);
+      const [result] = await db.execute<ResultSetHeader>(query, [role, id]);
       
       return result.affectedRows > 0;
     } catch (error){

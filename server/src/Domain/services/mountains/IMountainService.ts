@@ -4,18 +4,18 @@ export interface IMountainService {
     getSvePlanine(): Promise<Mountain[]>;
     getPlaninaById(id : number) : Promise<Mountain>;
     createPlanina(
-        naziv: string,
-        drzava: string,
+        name: string,
+        country: string,
         region: string | null,
-        visina: number,
-        opis: string | null
+        height: number,
+        description: string | null
     ) : Promise<Mountain>;
     updatePlanina(
         id: number,
-        naziv: string,
-        drzava: string,
+        name: string,
+        country: string,
         region: string | null,
-        visina: number,
-        opis: string | null
+        height: number,
+        description: string | null
     ): Promise<boolean>;
 }

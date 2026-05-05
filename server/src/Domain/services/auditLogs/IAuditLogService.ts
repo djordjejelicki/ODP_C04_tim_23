@@ -5,9 +5,9 @@ export interface IAuditLogService {
     getSviLogovi(): Promise<AuditLog[]>;
     createLog(
         user_id: number,
-        akcija: AuditAction,
-        entitet: string,
-        entitet_id: number,
-        detalji: string | null
+        action: AuditAction,
+        entity: string,
+        entity_id: number,
+        details: string | null
     ): Promise<AuditLog>;
 }

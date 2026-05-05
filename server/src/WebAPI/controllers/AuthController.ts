@@ -22,16 +22,16 @@ export class AuthController {
 
   private async prijava(req: Request, res: Response): Promise<void> {
     try {
-      const { korisnickoIme, lozinka } = req.body;
+      const { username, password } = req.body;
 
-      const rezultat = validateLogin(korisnickoIme, lozinka);
+      const rezultat = validateLogin(username, password);
 
       if (!rezultat.valid) {
         res.status(400).json({ success: false, message: rezultat.message });
         return;
       }
 
-      const result = await this.authService.prijava(korisnickoIme, lozinka);
+      const result = await this.authService.prijava(username, password);
 
       // Proveravamo da li je prijava uspešna
       if (result.success) {
@@ -39,8 +39,8 @@ export class AuthController {
         const token = jwt.sign(
           { 
             id: result.id, 
-            korisnickoIme: result.korisnickoIme, 
-            uloga: result.uloga,
+            username: result.username, 
+            role: result.role,
           }, process.env.JWT_SECRET ?? "", { expiresIn: '6h' });
 
         res.status(200).json({success: true, message: result.message, data: token});
@@ -58,9 +58,9 @@ export class AuthController {
  
   private async registracija(req: Request, res: Response): Promise<void> {
     try {
-      const { korisnickoIme, email, lozinka, ime, prezime } = req.body;
+      const { username, email, password, first_name, last_name } = req.body;
       
-      const rezultat = validateRegister(korisnickoIme, email, lozinka, ime, prezime);
+      const rezultat = validateRegister(username, email, password, first_name, last_name);
 
       if (!rezultat.valid) {
         res.status(400).json({ success: false, message: rezultat.message });
@@ -68,7 +68,7 @@ export class AuthController {
       }
 
       const result = await this.authService.registracija(
-        korisnickoIme, email, lozinka, ime, prezime 
+        username, email, password, first_name, last_name 
       );
       
       // Proveravamo da li je registracija uspešna
@@ -77,8 +77,8 @@ export class AuthController {
         const token = jwt.sign(
           { 
             id: result.id, 
-            korisnickoIme: result.korisnickoIme, 
-            uloga: result.uloga,
+            username: result.username, 
+            role: result.role,
           }, process.env.JWT_SECRET ?? "", { expiresIn: '6h' });
 
 

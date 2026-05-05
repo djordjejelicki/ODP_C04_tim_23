@@ -34,7 +34,7 @@ export class HikeController {
     private async create(req: Request, res: Response): Promise<void> {
         try{
             const userId = req.user?.id;
-            const { trail_id, naziv, opis, datum_vreme, maksimalan_broj_ucesnika } = req.body;
+            const { trail_id, name, description, scheduled_at, max_participants } = req.body;
 
             if (!userId){
                 res.status(401).json({ success: false, message: "Neautorizovani pristup" });
@@ -43,10 +43,10 @@ export class HikeController {
 
             const rezultat = validateHike(
                 Number(trail_id),
-                naziv,
-                opis ?? null,
-                datum_vreme,
-                Number(maksimalan_broj_ucesnika)
+                name,
+                description ?? null,
+                scheduled_at,
+                Number(max_participants)
             );
 
             if (!rezultat.valid) {
@@ -57,10 +57,10 @@ export class HikeController {
             const hike = await this.hikeService.kreirajPohod(
                 userId,
                 Number(trail_id),
-                naziv,
-                opis ?? null,
-                new Date(datum_vreme),
-                Number(maksimalan_broj_ucesnika)
+                name,
+                description ?? null,
+                new Date(scheduled_at),
+                Number(max_participants)
             );
 
             if (hike.id === 0){

@@ -8,20 +8,20 @@ export class MountainRepository implements IMountainRepository {
     async getAll(): Promise<Mountain[]> {
         try{
             const query = `
-                SELECT id, naziv, drzava, region, visina, opis, created_at
+                SELECT id, name, country, region, height, description, created_at
                 FROM mountains
-                ORDER BY naziv ASC
+                ORDER BY name ASC
             `;
 
             const [rows] = await db.execute<RowDataPacket[]>(query);
 
             return rows.map(row => new Mountain(
                 row.id,
-                row.naziv,
-                row.drzava,
+                row.name,
+                row.country,
                 row.region,
-                row.visina,
-                row.opis,
+                row.height,
+                row.description,
                 row.created_at
             ));
         } catch (error){
@@ -33,7 +33,7 @@ export class MountainRepository implements IMountainRepository {
     async getById(id: number): Promise<Mountain> {
         try{
             const query = `
-                SELECT id, naziv, drzava, region, visina, opis, created_at
+                SELECT id, name, country, region, height, description, created_at
                 FROM mountains
                 WHERE id = ?
             `;
@@ -44,11 +44,11 @@ export class MountainRepository implements IMountainRepository {
                 const row = rows[0];
                 return new Mountain(
                     row.id,
-                    row.naziv,
-                    row.drzava,
+                    row.name,
+                    row.country,
                     row.region,
-                    row.visina,
-                    row.opis,
+                    row.height,
+                    row.description,
                     row.created_at
                 );
             }
@@ -64,26 +64,26 @@ export class MountainRepository implements IMountainRepository {
     async create(mountain: Mountain): Promise<Mountain> {
         try{
             const query = `
-                INSERT INTO mountains (naziv, drzava, region, visina, opis)
+                INSERT INTO mountains (name, country, region, height, description)
                 VALUES (?, ?, ?, ?, ?)
             `;
 
             const [result] = await db.execute<ResultSetHeader>(query, [
-                mountain.naziv,
-                mountain.drzava,
+                mountain.name,
+                mountain.country,
                 mountain.region,
-                mountain.visina,
-                mountain.opis
+                mountain.height,
+                mountain.description
             ]);
 
             if (result.insertId) {
                 return new Mountain(
                     result.insertId,
-                    mountain.naziv,
-                    mountain.drzava,
+                    mountain.name,
+                    mountain.country,
                     mountain.region,
-                    mountain.visina,
-                    mountain.opis
+                    mountain.height,
+                    mountain.description
                 );
             }
 
@@ -94,25 +94,25 @@ export class MountainRepository implements IMountainRepository {
         }
     }
 
-    async getByNaziv(naziv: string): Promise<Mountain> {
+    async getByNaziv(name: string): Promise<Mountain> {
         try {
             const query = `
-                SELECT id, naziv, drzava, region, visina, opis, created_at
+                SELECT id, name, country, region, height, description, created_at
                 FROM mountains
-                WHERE naziv = ?
+                WHERE name = ?
             `;
 
-            const [rows] = await db.execute<RowDataPacket[]>(query, [naziv]);
+            const [rows] = await db.execute<RowDataPacket[]>(query, [name]);
 
             if (rows.length > 0){
                 const row = rows[0];
                 return new Mountain(
                     row.id,
-                    row.naziv,
-                    row.drzava,
+                    row.name,
+                    row.country,
                     row.region,
-                    row.visina,
-                    row.opis,
+                    row.height,
+                    row.description,
                     row.created_at
                 );
             }
@@ -128,16 +128,16 @@ export class MountainRepository implements IMountainRepository {
         try{
             const query = `
                 UPDATE mountains
-                SET naziv = ?, drzava = ?, region = ?, visina = ?, opis = ?
+                SET name = ?, country = ?, region = ?, height = ?, description = ?
                 WHERE id = ?  
             `;
 
             const [result] = await db.execute<ResultSetHeader>(query,[
-                mountain.naziv,
-                mountain.drzava,
+                mountain.name,
+                mountain.country,
                 mountain.region,
-                mountain.visina,
-                mountain.opis,
+                mountain.height,
+                mountain.description,
                 mountain.id
             ]);
 

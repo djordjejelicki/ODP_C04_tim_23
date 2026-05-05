@@ -1,17 +1,17 @@
 import { ValidationResault } from "../../Domain/types/ValidationResult";
 
 export const validateRegister = (
-    korisnickoIme: string,
+    username: string,
     email: string,
-    lozinka: string,
-    ime: string,
-    prezime: string
+    password: string,
+    first_name: string,
+    last_name: string
 ): ValidationResault => {
     const usernameRegex = /^[a-zA-Z0-9-]{3,40}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 
-    if (typeof korisnickoIme !== "string" || !usernameRegex.test(korisnickoIme)){
+    if (typeof username !== "string" || !usernameRegex.test(username)){
         return { valid: false, message: "Korisnicko ime nije validno" };
     }
 
@@ -19,15 +19,15 @@ export const validateRegister = (
         return { valid: false, message: "Email ne ispunjava uslove" };
     }
 
-    if (typeof lozinka !== "string" || !passwordRegex.test(lozinka)){
+    if (typeof password !== "string" || !passwordRegex.test(password)){
         return { valid: false, message: "Lozinka ne ispunjava uslove" };
     }
 
-    if (typeof ime !== "string" || ime.trim().length < 2 || ime.trim().length > 50){
+    if (typeof first_name !== "string" || first_name.trim().length < 2 || first_name.trim().length > 50){
         return {valid: false, message: "Ime nije validno" };
     }
 
-    if (typeof prezime !== "string" || prezime.trim().length < 2 || prezime.trim().length > 50){
+    if (typeof last_name !== "string" || last_name.trim().length < 2 || last_name.trim().length > 50){
         return {valid: false, message: "Prezime nije validno" };
     }
 
@@ -35,15 +35,15 @@ export const validateRegister = (
 }
 
 export const validateLogin = (
-    korisnickoIme: string,
-    lozinka: string
+    username: string,
+    password: string
 ): ValidationResault => {
     
-    if (typeof korisnickoIme !== "string" || korisnickoIme.trim().length === 0){
+    if (typeof username !== "string" || username.trim().length === 0){
         return { valid: false, message: "Korisnicko ime je obavezno" };
     }
 
-    if (typeof lozinka !== "string" || lozinka.trim().length === 0){
+    if (typeof password !== "string" || password.trim().length === 0){
         return { valid: false, message: "Lozinka je obavezna" };
     }
 

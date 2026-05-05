@@ -6,18 +6,18 @@ export interface IAscentService {
     dodajUspon(
         user_id: number,
         trail_id: number,
-        datum: Date,
-        trajanje_min: number,
-        napomena: string | null,
-        ocena: number
+        ascent_date: Date,
+        duration_min: number,
+        note: string | null,
+        rating: number
     ): Promise<Ascent>;
     izmeniUspon(
         user_id: number,
         id: number,
-        datum: Date,
-        trajanje_min: number,
-        napomena: string | null,
-        ocena: number
+        ascent_date: Date,
+        duration_min: number,
+        note: string | null,
+        rating: number
     ): Promise<boolean>;
     obrisiUspon(user_id: number, id: number): Promise<boolean>;
 }

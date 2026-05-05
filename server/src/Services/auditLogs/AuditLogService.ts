@@ -13,14 +13,14 @@ export class AuditLogService implements IAuditLogService{
         return await this.auditLogRepository.getAll();
     }
 
-    async createLog(user_id: number, akcija: AuditAction, entitet: string, entitet_id: number, detalji: string | null): Promise<AuditLog> {
+    async createLog(user_id: number, action: AuditAction, entity: string, entity_id: number, details: string | null): Promise<AuditLog> {
         const log = new AuditLog(
             0,
             user_id,
-            akcija,
-            entitet,
-            entitet_id,
-            detalji,
+            action,
+            entity,
+            entity_id,
+            details,
             null
         );
 

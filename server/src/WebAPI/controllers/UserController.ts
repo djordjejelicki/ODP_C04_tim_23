@@ -36,7 +36,7 @@ export class UserController {
     try{
       const adminId = req.user?.id;
       const id = Number(req.params.id);
-      const {uloga} = req.body;
+      const {role} = req.body;
 
       if (!adminId){
         res.status(401).json({ success: false, message: "Neautorizovan pristup" });
@@ -53,7 +53,7 @@ export class UserController {
         return;
       }
 
-      const normalizedRole = typeof uloga === "string" ? uloga.trim() : "";
+      const normalizedRole = typeof role === "string" ? role.trim() : "";
       const validRole = normalizedRole === UserRole.ADMIN || normalizedRole === UserRole.HIKER;
 
       if (!validRole) {

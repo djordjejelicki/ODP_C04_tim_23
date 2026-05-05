@@ -13,34 +13,34 @@ export class MountainService implements IMountainService{
         return await this.mountainRepository.getById(id);
     }
 
-    async createPlanina(naziv: string, drzava: string, region: string | null, visina: number, opis: string | null): Promise<Mountain> {
+    async createPlanina(name: string, country: string, region: string | null, height: number, description: string | null): Promise<Mountain> {
         
-        const postojecaPlanina = await this.mountainRepository.getByNaziv(naziv);
+        const postojecaPlanina = await this.mountainRepository.getByNaziv(name);
         if(postojecaPlanina.id !== 0){
             return new Mountain();
         }
         
         const novaPlanina = new Mountain(
             0,
-            naziv,
-            drzava,
+            name,
+            country,
             region,
-            visina,
-            opis,
+            height,
+            description,
             null
         );
 
         return await this.mountainRepository.create(novaPlanina);
     }
 
-    async updatePlanina(id: number, naziv: string, drzava: string, region: string | null, visina: number, opis: string | null): Promise<boolean> {
+    async updatePlanina(id: number, name: string, country: string, region: string | null, height: number, description: string | null): Promise<boolean> {
         const postojecaPlanina = await this.mountainRepository.getById(id);
 
         if (postojecaPlanina.id === 0){
             return false;
         }
 
-        const planinaSaIstimNazivom = await this.mountainRepository.getByNaziv(naziv);
+        const planinaSaIstimNazivom = await this.mountainRepository.getByNaziv(name);
 
         if (planinaSaIstimNazivom.id !== 0 && planinaSaIstimNazivom.id !== id){
             return false;
@@ -48,11 +48,11 @@ export class MountainService implements IMountainService{
 
         const izmenjenaPlanina = new Mountain(
             id,
-            naziv,
-            drzava,
+            name,
+            country,
             region,
-            visina,
-            opis,
+            height,
+            description,
             postojecaPlanina.created_at
         );
 

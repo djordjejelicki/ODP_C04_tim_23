@@ -1,18 +1,18 @@
 import { ValidationResault } from "../../Domain/types/ValidationResult";
 
 export const validateMountain = (
-    naziv: string,
-    drzava: string,
+    name: string,
+    country: string,
     region: string | null,
-    visina: number,
-    opis: string | null
+    height: number,
+    description: string | null
 ) : ValidationResault => {
     
-    if (typeof naziv !== "string" || naziv.trim().length < 2 || naziv.trim().length > 100){
+    if (typeof name !== "string" || name.trim().length < 2 || name.trim().length > 100){
         return { valid: false, message: "Naziv planine mora imati izmedju 2 i 100 karaktera" };
     }
 
-    if (typeof drzava !== "string" || drzava.trim().length < 2 || drzava.trim().length > 100){
+    if (typeof country !== "string" || country.trim().length < 2 || country.trim().length > 100){
         return { valid: false, message: "Drzava nije validna" };
     }
    
@@ -20,11 +20,11 @@ export const validateMountain = (
         return { valid: false, message: "Region nije validan" }
     }
 
-    if (!Number.isInteger(visina) || visina <= 0){
+    if (!Number.isInteger(height) || height <= 0){
         return { valid: false, message: "Visina mora biti pozitivan ceo broj" };
     }
 
-    if (opis !== null && (typeof opis !== "string" || opis.length > 2000)){
+    if (description !== null && (typeof description !== "string" || description.length > 2000)){
         return { valid: false, message: "Opis moze imati najvise 2000 karaktera" }
     }
 

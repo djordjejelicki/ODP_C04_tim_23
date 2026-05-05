@@ -7,9 +7,9 @@ export class HikeRepository implements IHikeRepository {
     async getAll(): Promise<Hike[]> {
         try{
             const query = `
-                SELECT id, organizator_id, trail_id, naziv, opis, datum_vreme, maksimalan_broj_ucesnika
+                SELECT id, organizer_id, trail_id, name, description, scheduled_at, max_participants
                 FROM hikes
-                ORDER BY datum_vreme ASC
+                ORDER BY scheduled_at ASC
             `;
 
             const [rows] = await db.execute<RowDataPacket[]>(query);
@@ -17,12 +17,12 @@ export class HikeRepository implements IHikeRepository {
             return rows.map(
                 (row) => new Hike(
                     row.id,
-                    row.organizator_id,
+                    row.organizer_id,
                     row.trail_id,
-                    row.naziv,
-                    row.opis,
-                    row.datum_vreme,
-                    row.maksimalan_broj_ucesnika
+                    row.name,
+                    row.description,
+                    row.scheduled_at,
+                    row.max_participants
                 )
             );
 
@@ -35,7 +35,7 @@ export class HikeRepository implements IHikeRepository {
     async getById(id: number): Promise<Hike> {
         try{
             const query = `
-                SELECT id, organizator_id, trail_id, naziv, opis, datum_vreme, maksimalan_broj_ucesnika
+                SELECT id, organizer_id, trail_id, name, description, scheduled_at, max_participants
                 FROM hikes
                 WHERE id = ?  
             `;
@@ -46,12 +46,12 @@ export class HikeRepository implements IHikeRepository {
                 const row = rows[0];
                 return new Hike(
                     row.id,
-                    row.organizator_id,
+                    row.organizer_id,
                     row.trail_id,
-                    row.naziv,
-                    row.opis,
-                    row.datum_vreme,
-                    row.maksimalan_broj_ucesnika
+                    row.name,
+                    row.description,
+                    row.scheduled_at,
+                    row.max_participants
                 );
             }
 
@@ -65,28 +65,28 @@ export class HikeRepository implements IHikeRepository {
     async create(hike: Hike): Promise<Hike> {
         try{
             const query = `
-                INSERT INTO hikes (organizator_id, trail_id, naziv, opis, datum_vreme, maksimalan_broj_ucesnika)
+                INSERT INTO hikes (organizer_id, trail_id, name, description, scheduled_at, max_participants)
                 VALUES (?, ?, ?, ?, ?, ?)
             `;
 
             const [result] = await db.execute<ResultSetHeader>(query, [
-                hike.organizator_id,
+                hike.organizer_id,
                 hike.trail_id,
-                hike.naziv,
-                hike.opis,
-                hike.datum_vreme,
-                hike.maksimalan_broj_ucesnika
+                hike.name,
+                hike.description,
+                hike.scheduled_at,
+                hike.max_participants
             ]);
 
             if (result.insertId){
                 return new Hike(
                     result.insertId,
-                    hike.organizator_id,
+                    hike.organizer_id,
                     hike.trail_id,
-                    hike.naziv,
-                    hike.opis,
-                    hike.datum_vreme,
-                    hike.maksimalan_broj_ucesnika
+                    hike.name,
+                    hike.description,
+                    hike.scheduled_at,
+                    hike.max_participants
                 );
             }
 

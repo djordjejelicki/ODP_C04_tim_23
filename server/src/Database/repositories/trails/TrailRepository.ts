@@ -7,9 +7,9 @@ export class TrailRepository implements ITrailRepository {
     async getAll(): Promise<Trail[]> {
         try{
             const query = `
-                SELECT id, mountain_id, naziv, opis, duzina_km, tezina, trajanje_min, visinski_uspon_m, slika_url, created_at
+                SELECT id, mountain_id, name, description, length_km, difficulty, est_duration_min, elevation_m, image_url, created_at
                 FROM trails
-                ORDER BY naziv ASC
+                ORDER BY name ASC
             `;
     
             const [rows] = await db.execute<RowDataPacket[]>(query);
@@ -17,13 +17,13 @@ export class TrailRepository implements ITrailRepository {
             return rows.map(row => new Trail(
                 row.id,
                 row.mountain_id,
-                row.naziv, 
-                row.opis,
-                row.duzina_km,
-                row.tezina,
-                row.trajanje_min,
-                row.visinski_uspon_m,
-                row.slika_url,
+                row.name, 
+                row.description,
+                row.length_km,
+                row.difficulty,
+                row.est_duration_min,
+                row.elevation_m,
+                row.image_url,
                 row.created_at
             ));
         
@@ -36,7 +36,7 @@ export class TrailRepository implements ITrailRepository {
     async getById(id: number): Promise<Trail> {
         try{
             const query = `
-                SELECT id, mountain_id, naziv, opis, duzina_km, tezina, trajanje_min, visinski_uspon_m, slika_url, created_at
+                SELECT id, mountain_id, name, description, length_km, difficulty, est_duration_min, elevation_m, image_url, created_at
                 FROM trails
                 WHERE id = ?
             `;
@@ -48,13 +48,13 @@ export class TrailRepository implements ITrailRepository {
                 return new Trail(
                     row.id,
                     row.mountain_id,
-                    row.naziv,
-                    row.opis,
-                    row.duzina_km,
-                    row.tezina,
-                    row.trajanje_min,
-                    row.visinski_uspon_m,
-                    row.slika_url,
+                    row.name,
+                    row.description,
+                    row.length_km,
+                    row.difficulty,
+                    row.est_duration_min,
+                    row.elevation_m,
+                    row.image_url,
                     row.created_at
                 );
             }
@@ -69,32 +69,32 @@ export class TrailRepository implements ITrailRepository {
     async create(trail: Trail): Promise<Trail> {
         try{
             const query = `
-                INSERT INTO trails (mountain_id, naziv, opis, duzina_km, tezina, trajanje_min, visinski_uspon_m, slika_url)
+                INSERT INTO trails (mountain_id, name, description, length_km, difficulty, est_duration_min, elevation_m, image_url)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
             `;
 
             const [result] = await db.execute<ResultSetHeader>(query, [
                 trail.mountain_id,
-                trail.naziv,
-                trail.opis,
-                trail.duzina_km,
-                trail.tezina,
-                trail.trajanje_min,
-                trail.visinski_uspon_m,
-                trail.slika_url
+                trail.name,
+                trail.description,
+                trail.length_km,
+                trail.difficulty,
+                trail.est_duration_min,
+                trail.elevation_m,
+                trail.image_url
             ]);
 
             if (result.insertId) {
                 return new Trail(
                     result.insertId,
                     trail.mountain_id,
-                    trail.naziv,
-                    trail.opis,
-                    trail.duzina_km,
-                    trail.tezina,
-                    trail.trajanje_min,
-                    trail.visinski_uspon_m,
-                    trail.slika_url
+                    trail.name,
+                    trail.description,
+                    trail.length_km,
+                    trail.difficulty,
+                    trail.est_duration_min,
+                    trail.elevation_m,
+                    trail.image_url
                 );
             }
 
@@ -109,19 +109,19 @@ export class TrailRepository implements ITrailRepository {
         try{
             const query = `
                 UPDATE trails
-                SET mountain_id = ?, naziv = ?, opis = ?, duzina_km = ?, tezina = ?, trajanje_min = ?, visinski_uspon_m = ?, slika_url = ?
+                SET mountain_id = ?, name = ?, description = ?, length_km = ?, difficulty = ?, est_duration_min = ?, elevation_m = ?, image_url = ?
                 WHERE id = ?
             `;
 
             const [result] = await db.execute<ResultSetHeader>(query, [
                 trail.mountain_id,
-                trail.naziv,
-                trail.opis,
-                trail.duzina_km,
-                trail.tezina,
-                trail.trajanje_min,
-                trail.visinski_uspon_m,
-                trail.slika_url,
+                trail.name,
+                trail.description,
+                trail.length_km,
+                trail.difficulty,
+                trail.est_duration_min,
+                trail.elevation_m,
+                trail.image_url,
                 trail.id
             ]);
 

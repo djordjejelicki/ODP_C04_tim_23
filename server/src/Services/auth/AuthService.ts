@@ -15,30 +15,30 @@ export class AuthService implements IAuthService {
     private auditLogService: IAuditLogService
   ) {}
 
-  async prijava(korisnickoIme: string, lozinka: string): Promise<AuthResultDto> {
-    const user = await this.userRepository.getByUsername(korisnickoIme);
+  async prijava(username: string, password: string): Promise<AuthResultDto> {
+    const user = await this.userRepository.getByUsername(username);
 
     if (user.id === 0) {
       return new AuthResultDto(false, "Pogresno korisnicko ime ili lozinka");
     }
 
-    const passwordMatch = await bcrypt.compare(lozinka, user.lozinka);
+    const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch){
       return new AuthResultDto(false, "Pogresno korisnicko ime ili lozinka");
     }
 
-    return new AuthResultDto(true, "Uspesna prijava", user.id, user.korisnickoIme, user.uloga);
+    return new AuthResultDto(true, "Uspesna prijava", user.id, user.username, user.role);
   }
 
   async registracija(
-    korisnickoIme: string,
+    username: string,
     email: string,
-    lozinka: string,
-    ime: string,
-    prezime: string
+    password: string,
+    first_name: string,
+    last_name: string
   ): Promise<AuthResultDto> {
-    const existingUser = await this.userRepository.getByUsername(korisnickoIme);
+    const existingUser = await this.userRepository.getByUsername(username);
     
     if (existingUser.id !== 0) {
       return new AuthResultDto(false, "Korisnicko ime vec postoji.");
@@ -51,17 +51,17 @@ export class AuthService implements IAuthService {
     }
 
     // Hash-ujemo lozinku pre čuvanja
-    const hashedPassword = await bcrypt.hash(lozinka, this.saltRounds);
+    const hashedPassword = await bcrypt.hash(password, this.saltRounds);
 
     const newUser = await this.userRepository.create(
       new User(
         0,
-        korisnickoIme,
+        username,
         email,
         UserRole.HIKER,
         hashedPassword,
-        ime,
-        prezime,
+        first_name,
+        last_name,
         null,
         null,
         null
@@ -72,7 +72,7 @@ export class AuthService implements IAuthService {
       return new AuthResultDto(false, "Registracija nije uspela.");
     }
 
-    return new AuthResultDto(true, "Uspesna registracija", newUser.id, newUser.korisnickoIme, newUser.uloga);
+    return new AuthResultDto(true, "Uspesna registracija", newUser.id, newUser.username, newUser.role);
   }
 
   async logout(user_id: number): Promise<boolean> {

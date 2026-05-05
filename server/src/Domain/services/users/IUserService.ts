@@ -3,5 +3,5 @@ import { UserRole } from "../../enums/UserRole";
 
 export interface IUserService { 
   getSviKorisnici(): Promise<UserDto[]>;
-  promeniUlogu(id: number, uloga: UserRole): Promise<boolean>;
+  promeniUlogu(id: number, role: UserRole): Promise<boolean>;
 }
