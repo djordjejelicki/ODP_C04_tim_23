@@ -113,3 +113,10 @@ CREATE TABLE `users` (
   UNIQUE KEY `korisnickoIme` (`korisnickoIme`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_trails_mountain_id ON trails(mountain_id);
+CREATE INDEX idx_user_trails_user_id ON user_trails(user_id);
+CREATE INDEX idx_ascents_user_id ON ascents(user_id);
+CREATE INDEX idx_hikes_organizer_id ON hikes(organizer_id);
+CREATE INDEX idx_trail_tags_trail_id ON trail_tags(trail_id);

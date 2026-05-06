@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect, type ReactNode } from 'react
 import { jwtDecode } from 'jwt-decode';
 import type { AuthContextType } from '../../types/auth/AuthContext';
 import type { AuthUser } from '../../types/auth/AuthUser';
-import { ObrišiVrednostPoKljuču, PročitajVrednostPoKljuču, SačuvajVrednostPoKljuču } from '../../helpers/local_storage';
+import { removeValueByKey, getValueByKey, saveValueByKey } from '../../helpers/local_storage';
 import type { JwtTokenClaims } from '../../types/auth/JwtTokenClaims';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -13,11 +13,11 @@ const decodeJWT = (token: string): JwtTokenClaims | null => {
         const decoded = jwtDecode<JwtTokenClaims>(token);
         
         // Proveri da li token ima potrebna polja
-        if (decoded.id && decoded.korisnickoIme && decoded.uloga) {
+        if (decoded.id && decoded.username && decoded.role) {
             return {
                 id: decoded.id,
-                korisnickoIme: decoded.korisnickoIme,
-                uloga: decoded.uloga
+                username: decoded.username,
+                role: decoded.role
             };
         }
         
@@ -47,12 +47,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     // Učitaj token iz localStorage pri pokretanju
     useEffect(() => {
-        const savedToken = PročitajVrednostPoKljuču("authToken");
+        const savedToken = getValueByKey("authToken");
         
         if (savedToken) {
             // Proveri da li je token istekao
             if (isTokenExpired(savedToken)) {
-                ObrišiVrednostPoKljuču("authToken");
+                removeValueByKey("authToken");
                 setIsLoading(false);
                 return;
             }
@@ -62,11 +62,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 setToken(savedToken);
                 setUser({
                     id: claims.id,
-                    korisnickoIme: claims.korisnickoIme,
-                    uloga: claims.uloga
+                    username: claims.username,
+                    role: claims.role
                 });
             } else {
-                ObrišiVrednostPoKljuču("authToken");
+                removeValueByKey("authToken");
             }
         }
         
@@ -80,10 +80,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setToken(newToken);
             setUser({
                 id: claims.id,
-                korisnickoIme: claims.korisnickoIme,
-                uloga: claims.uloga
+                username: claims.username,
+                role: claims.role
             });
-            SačuvajVrednostPoKljuču("authToken", newToken);
+            saveValueByKey("authToken", newToken);
         } else {
             console.error('Nevažeći ili istekao token');
         }
@@ -92,7 +92,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const logout = () => {
         setToken(null);
         setUser(null);
-        ObrišiVrednostPoKljuču("authToken");
+        removeValueByKey("authToken");
     };
 
     const isAuthenticated = !!user && !!token;

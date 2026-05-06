@@ -5,15 +5,15 @@ import axios from "axios";
 const API_URL: string = import.meta.env.VITE_API_URL + "auth";
 
 export const authApi: IAuthAPIService = {
-  async prijava(korisnickoIme: string, lozinka: string): Promise<AuthResponse> {
+  async login(username: string, password: string): Promise<AuthResponse> {
     try {
       const res = await axios.post<AuthResponse>(`${API_URL}/login`, {
-        korisnickoIme,
-        lozinka,
+        username,
+        password,
       });
       return res.data;
     } catch (error) {
-      let message = "Грешка приликом пријаве.";
+      let message = "Login failed.";
       if (axios.isAxiosError(error)) {
         message = error.response?.data?.message || message;
       }
@@ -25,20 +25,24 @@ export const authApi: IAuthAPIService = {
     }
   },
 
-  async registracija(
-    korisnickoIme: string,
-    lozinka: string,
-    uloga: string
+  async register(
+    username: string,
+    email: string,
+    password: string,
+    first_name: string,
+    last_name: string
   ): Promise<AuthResponse> {
     try {
       const res = await axios.post<AuthResponse>(`${API_URL}/register`, {
-        korisnickoIme,
-        lozinka,
-        uloga
+        username,
+        email,
+        password,
+        first_name,
+        last_name
       });
       return res.data;
     } catch (error) {
-      let message = "Greška prilikom registracije.";
+      let message = "Registration failed.";
       if (axios.isAxiosError(error)) {
         message = error.response?.data?.message || message;
       }

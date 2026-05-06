@@ -1,7 +1,7 @@
 import type { AuthFormProps } from "../../types/props/auth_form_props/AuthFormProps";
 // import { useAuth } from "../../hooks/auth/useAuthHook";
 
-export function RegistracijaForma({ authApi }: AuthFormProps) {
+export function RegisterForm({ authApi }: AuthFormProps) {
   // TODO: ADD STATE VARIABLES
   //const { login } = useAuth();
 
