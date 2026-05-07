@@ -11,6 +11,7 @@ import NotFoundPage from "./pages/not_found/NotFoundPage";
 // import { usersApi } from "./api_services/users/UsersAPIService";
 import TrailsPage from "./pages/trails/TrailsPage";
 import TrailDetailsPage from "./pages/trails/TrailDetailsPage";
+import { AppLayout } from "./components/layout/AppLayout";
 import { trailApi } from "./api_services/trails/TrailAPIService";
 
 function App() {
@@ -18,26 +19,15 @@ function App() {
     <Routes>
       <Route path="/login" element={<LoginPage authApi={authApi} />} />
       <Route path="/register" element={<RegisterPage authApi={authApi} />} />
-      <Route path="/trails" element={<TrailsPage trailApi={trailApi}/>} />
-      <Route path="/trails/:id" element={<TrailDetailsPage trailApi={trailApi} />} />
+
+      <Route element={<AppLayout />}>
+        <Route path="/trails" element={<TrailsPage trailApi={trailApi}/>} />
+        <Route path="/trails/:id" element={<TrailDetailsPage trailApi={trailApi} />} />
+        <Route path="/" element={<Navigate to="/trails" replace />} />  
+      </Route>
+
       <Route path="/404" element={<NotFoundPage />} />
-
-        {/*
-          Example usage of protected route.
-        <Route
-          path="/user-dashboard"
-          element={
-            <ProtectedRoute requiredRole="user">
-              <KontrolnaTablaUserStranica />
-            </ProtectedRoute>
-          }
-        /> */}
-
-        {/* Preusmerava na dashboard kao default rutu */}
-        <Route path="/" element={<Navigate to="/trails" replace />} />
-
-        {/* Catch-all ruta za nepostojeće stranice */}
-        <Route path="*" element={<Navigate to="/404" replace />} />
+      <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
   );
 }
