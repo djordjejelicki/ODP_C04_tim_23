@@ -32,7 +32,7 @@ export class TrailTagRepository implements ITrailTagRepository {
             const [rows] = await db.execute<RowDataPacket[]>(query, [traild_id]);
 
             return rows.map(
-                (row) => new TerrainTag(row.id, row.naziv, row.opis)
+                (row) => new TerrainTag(row.id, row.name, row.description)
             );
             
         } catch (error) {

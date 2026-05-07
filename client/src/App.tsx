@@ -10,6 +10,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import NotFoundPage from "./pages/not_found/NotFoundPage";
 // import { usersApi } from "./api_services/users/UsersAPIService";
 import TrailsPage from "./pages/trails/TrailsPage";
+import TrailDetailsPage from "./pages/trails/TrailDetailsPage";
 import { trailApi } from "./api_services/trails/TrailAPIService";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
       <Route path="/login" element={<LoginPage authApi={authApi} />} />
       <Route path="/register" element={<RegisterPage authApi={authApi} />} />
       <Route path="/trails" element={<TrailsPage trailApi={trailApi}/>} />
+      <Route path="/trails/:id" element={<TrailDetailsPage trailApi={trailApi} />} />
       <Route path="/404" element={<NotFoundPage />} />
 
         {/*
