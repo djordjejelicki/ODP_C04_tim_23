@@ -2,14 +2,21 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { TrailDetails } from "../../types/trails/TrailDetails";
 import type { ITrailAPIService } from "../../api_services/trails/ITrailAPIService";
+import type { IMyTrailAPIService } from "../../api_services/my_trails/IMyTrailAPIService";
+import type { UserTrail } from "../../types/my_trails/UserTrail";
+import { useAuth } from "../../hooks/auth/useAuthHook";
+
 
 type TrailDetailsPageProps = {
     trailApi: ITrailAPIService;
+    myTrailApi: IMyTrailAPIService;
 };
 
-export default function TrailDetailsPage({trailApi}: TrailDetailsPageProps) {
+export default function TrailDetailsPage({trailApi, myTrailApi}: TrailDetailsPageProps) {
     const { id } = useParams();
-
+    const { isAuthenticated } = useAuth();
+    const [myTrail, setMyTrail] = useState<UserTrail | null>(null);
+    const [message, setMessage] = useState("");
     const [trail, setTrail] = useState<TrailDetails | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -19,11 +26,71 @@ export default function TrailDetailsPage({trailApi}: TrailDetailsPageProps) {
 
             const data = await trailApi.getById(Number(id));
             setTrail(data);
+            if (isAuthenticated && data){
+                const myTrails = await myTrailApi.getAll();
+                const existing = myTrails.find((item) => item.trail_id === data.id) ?? null;
+                setMyTrail(existing);
+            }
             setIsLoading(false);
         };
 
         loadTrail();
-    }, [id, trailApi]);
+    }, [id, trailApi, myTrailApi, isAuthenticated]);
+
+    const handleAddToMyTrails = async () => {
+        if (!trail) return;
+
+        const success = await myTrailApi.add(trail.id, "want_to_hike");
+
+        if (!success) {
+            setMessage("Failed to add trail to your list.");
+            return;
+        }
+
+        setMyTrail({
+            user_id: 0,
+            trail_id: trail.id,
+            status: "want_to_hike",
+            added_at: new Date().toISOString(),
+        });
+
+        setMessage("Trail added to your list");
+    };
+
+    const handleMarkCompleted = async () => {
+        if (!trail) return;
+
+        const success = await myTrailApi.updateStatus(trail.id, "completed");
+
+        if (!success) {
+            setMessage("Failed to update trail status.");
+            return;
+        }
+
+        setMyTrail({
+            user_id: myTrail?.user_id ?? 0,
+            trail_id: trail.id,
+            status: "completed",
+            added_at: myTrail?.added_at ?? null
+        });
+
+        setMessage("Trail marked as completed.");
+
+    };
+
+    const handleRemoveFromMyTrails = async () => {
+        if (!trail) return;
+
+        const success = await myTrailApi.remove(trail.id);
+
+        if (!success){
+            setMessage("Failed to remove trail from your list.");
+            return;
+        }
+
+        setMyTrail(null);
+        setMessage("Trail removed from your list.");
+    };
 
     if (isLoading){
         return(
@@ -109,6 +176,50 @@ export default function TrailDetailsPage({trailApi}: TrailDetailsPageProps) {
                     </div>
                     </div>
                 </div>
+                    {message && (
+                        <div className="rounded-lg bg-orange-100 text-orange-800 px-4 py-3">
+                            {message}
+                        </div>
+                    )}
+
+                    {isAuthenticated ? (
+                    <div className="flex flex-wrap gap-3">
+                        {!myTrail ? (
+                        <button
+                            onClick={handleAddToMyTrails}
+                            className="rounded-lg bg-orange-700 text-white px-5 py-2 font-semibold hover:bg-orange-800"
+                        >
+                            Add to my trails
+                        </button>
+                        ) : (
+                        <>
+                            <span className="rounded-lg bg-slate-100 text-slate-700 px-5 py-2">
+                            Status: {myTrail.status}
+                            </span>
+
+                            {myTrail.status !== "completed" && (
+                            <button
+                                onClick={handleMarkCompleted}
+                                className="rounded-lg bg-green-700 text-white px-5 py-2 font-semibold hover:bg-green-800"
+                            >
+                                Mark completed
+                            </button>
+                            )}
+
+                            <button
+                            onClick={handleRemoveFromMyTrails}
+                            className="rounded-lg bg-red-700 text-white px-5 py-2 font-semibold hover:bg-red-800"
+                            >
+                            Remove from my trails
+                            </button>
+                        </>
+                        )}
+                    </div>
+                    ) : (
+                    <p className="text-gray-600">
+                        Login to add this trail to your hiking list.
+                    </p>
+                    )}
                 </div>
             </section>
         </main> 

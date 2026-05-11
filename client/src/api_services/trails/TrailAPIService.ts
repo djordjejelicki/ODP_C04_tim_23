@@ -1,14 +1,12 @@
-import axios from "axios";
+import { apiClient } from "../apiClient";
 import type { Trail } from "../../types/trails/Trail";
 import type { TrailDetails } from "../../types/trails/TrailDetails";
 import type { ITrailAPIService } from "./ITrailAPIService";
 
-const API_URL = import.meta.env.VITE_API_URL + "trails";
-
 export const trailApi: ITrailAPIService = {
     async getAll(): Promise<Trail[]> {
         try{
-            const res = await axios.get<Trail[]>(API_URL);
+            const res = await apiClient.get<Trail[]>("trails");
             return res.data;
         } catch(error){
             console.error("Error loading trails: ", error);
@@ -17,7 +15,7 @@ export const trailApi: ITrailAPIService = {
     },
     async getById(id: number): Promise<TrailDetails | null> {
         try{
-            const res = await axios.get<TrailDetails>(`${API_URL}/${id}`);
+            const res = await apiClient.get<TrailDetails>(`trails/${id}`);
             return res.data;
         } catch(error){
             console.error("Error loading trail details: ", error);
