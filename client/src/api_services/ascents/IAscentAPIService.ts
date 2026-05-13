@@ -1,7 +1,8 @@
 import type { Ascent } from "../../types/ascents/Ascent";
+import type { AscentDetails } from "../../types/ascents/AscentDetails";
 
 export interface IAscentAPIService {
-    getAll(): Promise<Ascent[]>;
+    getAll(): Promise<AscentDetails[]>;
     create(
         trail_id: number,
         ascent_date: string,

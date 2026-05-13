@@ -1,8 +1,10 @@
 import type { UserTrail } from "../../types/my_trails/UserTrail";
+import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
+import { formatDate } from "../../helpers/format_date";
 
 type TrailStatusColumnProps = {
     title: string;
-    items: UserTrail[];
+    items: UserTrailDetails[];
 };
 
 export function TrailStatusColumn({title, items}: TrailStatusColumnProps) {
@@ -22,13 +24,19 @@ export function TrailStatusColumn({title, items}: TrailStatusColumnProps) {
                     className="border rounded-xl p-4 flex items-center justify-between"
                     >
                     <div>
-                        <p className="font-semibold">
-                        Trail ID: {item.trail_id}
-                        </p>
+                        <p className="font-semibold text-lg text-gray-900">
+                        {item.trail_name}
+                         </p>
 
-                        <p className="text-sm text-gray-500">
-                        Added at: {item.added_at ?? "N/A"}
-                        </p>
+                    <div className="flex flex-wrap gap-3 text-sm text-gray-600">
+                        <span>{item.length_km.toFixed(2)} km</span>
+                        <span>{item.elevation_m} m elevation</span>
+                        <span className="capitalize">{item.difficulty}</span>
+                    </div>
+
+                    <p className="text-sm text-gray-500">
+                         Added at: {formatDate(item.added_at)}
+                    </p>
                     </div>
 
                     <span className="rounded-full bg-orange-100 text-orange-800 px-3 py-1 text-sm">

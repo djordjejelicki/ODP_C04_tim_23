@@ -2,6 +2,9 @@ import { IUserTrailRepository } from "../../../Domain/repositories/userTrails/IU
 import { UserTrail } from "../../../Domain/models/UserTrail";
 import { RowDataPacket, ResultSetHeader } from "mysql2";
 import db from "../../connection/DbConnectionPool";
+import { UserTrailDetailsDto } from "../../../Domain/DTOs/my_trails/UserTrailDetailsDto";
+import { UserTrailStatus } from "../../../Domain/enums/UserTrailStatus";
+import { TrailDifficulty } from "../../../Domain/enums/TrailDifficulty";
 
 export class UserTrailRepository implements IUserTrailRepository {
     async getByUser(user_id: number): Promise<UserTrail[]> {
@@ -20,6 +23,44 @@ export class UserTrailRepository implements IUserTrailRepository {
             );
         } catch (error) {
             console.log("getByUser error: ", error);
+            return [];
+        }
+    }
+
+    async getDetailsByUserId(user_id: number): Promise<UserTrailDetailsDto[]> {
+        try{
+            const query = `
+                SELECT
+                ut.user_id,
+                ut.trail_id,
+                ut.status,
+                ut.added_at,
+                t.name AS trail_name,
+                t.length_km,
+                t.elevation_m,
+                t.difficulty
+                FROM user_trails ut
+                INNER JOIN trails t ON t.id = ut.trail_id
+                WHERE ut.user_id = ?
+                ORDER BY ut.added_at DESC
+            `;
+
+            const [rows] = await db.execute<RowDataPacket[]>(query, [user_id]);
+
+            return rows.map(
+                (row) => new UserTrailDetailsDto(
+                    row.user_id,
+                    row.trail_id,
+                    row.status as UserTrailStatus,
+                    row.added_at,
+                    row.trail_name,
+                    row.length_km,
+                    row.elevation_m,
+                    row.difficulty as TrailDifficulty
+                )
+            );
+        } catch(error){
+            console.log("getDetailsByUserId error: ", error);
             return [];
         }
     }

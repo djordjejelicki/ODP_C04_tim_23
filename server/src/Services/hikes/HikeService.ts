@@ -4,11 +4,18 @@ import { HikeParticipantStatus } from "../../Domain/enums/HikeParticipantStatus"
 import { IHikeRepository } from "../../Domain/repositories/hikes/IHikeRepository";
 import { IHikeParticipantRepository } from "../../Domain/repositories/hikes/IHikeParticipantRepository";
 import { IHikeService } from "../../Domain/services/hikes/IHikeService";
+import { IUserRepository } from "../../Domain/repositories/users/IUserRepository";
+import { HikeWithUserStatusDto } from "../../Domain/DTOs/hikes/HikeWithUserStatusDto";
+import { IUserTrailRepository } from "../../Domain/repositories/userTrails/IUserTrailRepository";
+import { UserTrail } from "../../Domain/models/UserTrail";
+import { UserTrailStatus } from "../../Domain/enums/UserTrailStatus";
 
 export class HikeService implements IHikeService{
     public constructor(
         private hikeRepository: IHikeRepository,
-        private hikeParticipantRepository: IHikeParticipantRepository
+        private hikeParticipantRepository: IHikeParticipantRepository,
+        private userRepository: IUserRepository,
+        private userTrailRepository: IUserTrailRepository
     ){}
 
     async getSviPohodi(): Promise<Hike[]> {
@@ -17,6 +24,23 @@ export class HikeService implements IHikeService{
 
     async getPohodById(id: number): Promise<Hike> {
         return await this.hikeRepository.getById(id);
+    }
+
+    async korisnikImaPristupPohodu(hikeId: number, userId: number): Promise<boolean> {
+        const hike = await this.hikeRepository.getById(hikeId);
+
+        if (hike.id === 0){
+            return false;
+        }
+
+        if (hike.organizer_id === userId){
+            return true;
+        }
+
+        const participant = await this.hikeParticipantRepository.getOne(hikeId, userId);
+
+        return participant.hike_id !== 0;
+
     }
 
     async kreirajPohod(organizer_id: number, trail_id: number, name: string, description: string | null, scheduled_at: Date, max_participants: number): Promise<Hike> {
@@ -33,8 +57,33 @@ export class HikeService implements IHikeService{
         return await this.hikeRepository.create(noviPohod);
     }
 
-    async pozoviUcesnika(hike_id: number, user_id: number): Promise<boolean> {
-        const postojeci = await this.hikeParticipantRepository.getOne(hike_id, user_id);
+    async pozoviUcesnika(hike_id: number, organizer_id: number, username: string): Promise<boolean> {
+        
+        const hike = await this.hikeRepository.getById(hike_id);
+        
+        if (hike.id === 0){
+            return false;
+        }
+        
+        if (hike.organizer_id !== organizer_id){
+            return false;
+        }
+
+        if (username.trim().length < 3){
+            return false;
+        }
+
+        const user = await this.userRepository.getByUsername(username.trim());
+
+        if (user.id === 0){
+            return false;
+        }
+
+        if (organizer_id === user.id){
+            return false;
+        }
+        
+        const postojeci = await this.hikeParticipantRepository.getOne(hike_id, user.id);
 
         if (postojeci.hike_id !== 0){
             return false;
@@ -42,7 +91,7 @@ export class HikeService implements IHikeService{
 
         const participant = new HikeParticipant(
             hike_id,
-            user_id,
+            user.id,
             HikeParticipantStatus.INVITED,
             null
         );
@@ -57,10 +106,42 @@ export class HikeService implements IHikeService{
             return false;
         }
 
-        return await this.hikeParticipantRepository.updateStatus(hike_id, user_id, status);
+        const uspesno = await this.hikeParticipantRepository.updateStatus(hike_id, user_id, status);
+
+        if(!uspesno){
+            return false;
+        }
+
+        if (status === HikeParticipantStatus.CONFIRMED){
+            const hike = await this.hikeRepository.getById(hike_id);
+
+            if (hike.id === 0){
+                return false;
+            }
+
+            const postojecaRuta = await this.userTrailRepository.getOne(user_id, hike.trail_id);
+
+            if (postojecaRuta.user_id === 0){
+                const novaRuta = new UserTrail(
+                    user_id,
+                    hike.trail_id,
+                    UserTrailStatus.WANT_TO_HIKE,
+                    null
+                );
+
+                const dodataRuta = await this.userTrailRepository.add(novaRuta);
+                return dodataRuta.user_id !== 0;
+            }
+        }
+
+        return true;
     }
 
     async getUcesnici(hike_id: number): Promise<HikeParticipant[]> {
         return await this.hikeParticipantRepository.getByHike(hike_id);
+    }
+
+    async getPohodiZaKorisnika(userId: number): Promise<HikeWithUserStatusDto[]> {
+        return await this.hikeRepository.getByUserId(userId);
     }
 }

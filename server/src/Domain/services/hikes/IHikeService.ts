@@ -1,9 +1,12 @@
 import { Hike } from "../../models/Hike";
 import { HikeParticipant } from "../../models/HikeParticipant";
 import { HikeParticipantStatus } from "../../enums/HikeParticipantStatus";
+import { HikeWithUserStatusDto } from "../../DTOs/hikes/HikeWithUserStatusDto";
 
 export interface IHikeService {
     getSviPohodi(): Promise<Hike[]>;
+    getPohodiZaKorisnika(userId: number): Promise<HikeWithUserStatusDto[]>;
+    korisnikImaPristupPohodu(hikeId: number, userId: number): Promise<boolean>;
     getPohodById(id: number): Promise<Hike>;
     kreirajPohod(
         organizer_id: number,
@@ -13,7 +16,7 @@ export interface IHikeService {
         scheduled_at: Date,
         max_participants: number
     ): Promise<Hike>;
-    pozoviUcesnika(hike_id: number, user_id: number): Promise<boolean>;
+    pozoviUcesnika(hike_id: number, organizer_id: number, username: string): Promise<boolean>;
     odgovoriNaPoziv(
         hike_id: number,
         user_id: number,

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { IMyTrailAPIService } from "../../api_services/my_trails/IMyTrailAPIService";
 import type { UserTrail } from "../../types/my_trails/UserTrail";
+import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
 import { TrailStatusColumn } from "../../components/my_trails/TrailStatusColumn"; 
 
 type MyTrailsPageProps = {
@@ -8,7 +9,7 @@ type MyTrailsPageProps = {
 };
 
 export default function MyTrailsPage({ myTrailApi }: MyTrailsPageProps) {
-    const [items, setItems] = useState<UserTrail[]>([]);
+    const [items, setItems] = useState<UserTrailDetails[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {

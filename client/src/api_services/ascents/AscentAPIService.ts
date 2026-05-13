@@ -1,11 +1,12 @@
 import { apiClient } from "../apiClient";
 import type { Ascent } from "../../types/ascents/Ascent";
 import type { IAscentAPIService } from "./IAscentAPIService";
+import type { AscentDetails } from "../../types/ascents/AscentDetails";
 
 export const ascentApi: IAscentAPIService = {
-    async getAll(): Promise<Ascent[]> {
+    async getAll(): Promise<AscentDetails[]> {
         try{
-            const res = await apiClient.get<Ascent[]>("ascents");
+            const res = await apiClient.get<AscentDetails[]>("ascents");
             return res.data;
         } catch(error){
             console.error("Error loading ascents: ", error);

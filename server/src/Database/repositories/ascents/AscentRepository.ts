@@ -4,6 +4,7 @@ import { RowDataPacket, ResultSetHeader } from "mysql2";
 import db from "../../connection/DbConnectionPool";
 import { AsyncResource } from "node:async_hooks";
 import { error } from "node:console";
+import { AscentDetailsDto } from "../../../Domain/DTOs/ascents/AscentDetailsDto";
 
 export class AscentRepository implements IAscentRepository {
     
@@ -152,6 +153,61 @@ export class AscentRepository implements IAscentRepository {
         } catch(error){
             console.log("existsByTrail error: ", error);
             return true;
+        }
+    }
+
+    async existsByUserAndTrail(user_id: number, trail_id: number): Promise<boolean> {
+        try{
+            const query = `
+                SELECT id
+                FROM ascents
+                WHERE user_id = ? AND trail_id = ?
+                LIMIT 1
+            `;
+
+            const [rows] = await db.execute<RowDataPacket[]>(query, [user_id, trail_id]);
+            return rows.length > 0;
+        } catch(error){
+            console.log("existsByUserAndTrail error: ", error);
+            return true;
+        }   
+    }
+
+    async getDetailsByUser(user_id: number): Promise<AscentDetailsDto[]> {
+        try{
+            const query = `
+                SELECT
+                a.id,
+                a.user_id,
+                a.trail_id,
+                t.name AS trail_name,
+                a.ascent_date,
+                a.duration_min,
+                a.note,
+                a.rating
+                FROM ascents a
+                INNER JOIN trails t ON t.id = a.trail_id
+                WHERE a.user_id = ?
+                ORDER BY a.ascent_date DESC, a.id DESC
+            `;
+
+            const [rows] = await db.execute<RowDataPacket[]>(query, [user_id]);
+
+            return rows.map(
+                (row) => new AscentDetailsDto(
+                    row.id,
+                    row.user_id,
+                    row.trail_id,
+                    row.trail_name,
+                    row.ascent_date,
+                    row.duration_min,
+                    row.note,
+                    row.rating    
+                )
+            );
+        } catch(error){
+            console.log("getDetailsByUser ascent error: ", error);
+            return [];
         }
     }
 }

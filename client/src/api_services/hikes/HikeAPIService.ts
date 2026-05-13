@@ -1,12 +1,12 @@
 import { apiClient } from "../apiClient";
 import type { IHikeAPIService } from "./IHikeAPIService";
-import type { Hike } from "../../types/hikes/Hike";
 import type { HikeParticipantStatus } from "../../types/hikes/HikeParticipant";
+import type { HikeWithUserStatus } from "../../types/hikes/HikeWithUserStatus";
 
 export const hikeApi: IHikeAPIService = {
-    async getAll(): Promise<Hike[]> {
+    async getAll(): Promise<HikeWithUserStatus[]> {
         try{
-            const res = await apiClient.get<Hike[]>("hikes");
+            const res = await apiClient.get<HikeWithUserStatus[]>("hikes");
             return res.data;
         } catch(error){
             console.error("Error loading hikes: ", error);
@@ -36,9 +36,9 @@ export const hikeApi: IHikeAPIService = {
         }
     },
 
-    async invite(hike_id: number, user_id: number): Promise<boolean> {
+    async invite(hike_id: number, username: string): Promise<boolean> {
         try{
-            await apiClient.post(`hikes/${hike_id}/invite`, {user_id});
+            await apiClient.post(`hikes/${hike_id}/invite`, {username});
             return true;
         } catch(error){
             console.error("Error inviting participant: ", error);

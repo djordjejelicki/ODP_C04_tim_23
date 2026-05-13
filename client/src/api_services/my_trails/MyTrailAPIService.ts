@@ -1,11 +1,12 @@
 import { apiClient } from "../apiClient";
 import type { IMyTrailAPIService } from "./IMyTrailAPIService";
 import type { UserTrail, UserTrailStatus } from "../../types/my_trails/UserTrail";
+import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
 
 export const myTrailApi: IMyTrailAPIService = {
-    async getAll(): Promise<UserTrail[]> {
+    async getAll(): Promise<UserTrailDetails[]> {
         try{
-            const res = await apiClient.get<UserTrail[]>("my-trails");
+            const res = await apiClient.get<UserTrailDetails[]>("my-trails");
             return res.data;
         } catch(error){
             console.error("Error loading my trails: ", error);

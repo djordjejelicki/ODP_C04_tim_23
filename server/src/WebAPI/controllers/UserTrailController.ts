@@ -30,7 +30,7 @@ export class UserTrailController {
                 return;
             }
 
-            const mojeRute = await this.userTrailService.getMojeRute(userId);
+            const mojeRute = await this.userTrailService.getDetaljiMojihRuta(userId);
             res.status(200).json(mojeRute);
         } catch {
             res.status(500).json({ success: false, message: "Greska na serveri" });

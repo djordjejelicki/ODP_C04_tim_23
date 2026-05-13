@@ -82,9 +82,9 @@ const userService: IUserService = new UserService(userRepository);
 const mountainService: IMountainService = new MountainService(mountainRepository);
 const trailService: ITrailService = new TrailService(trailRepository, trailTagRepository, ascentRepository);
 const terrainTagService: ITerrrainTagService = new TerrainTagService(terrainTagRepository, trailTagRepository);
-const userTrailService: IUserTrailService = new UserTrailService(userTrailRepository);
+const userTrailService: IUserTrailService = new UserTrailService(userTrailRepository, ascentRepository, hikeRepository);
 const ascentService: IAscentService = new AscentService(ascentRepository, userTrailRepository);
-const hikeService: IHikeService = new HikeService(hikeRepository, hikeParticipantRepository);
+const hikeService: IHikeService = new HikeService(hikeRepository, hikeParticipantRepository, userRepository, userTrailRepository);
 
 // WebAPI routes
 const authController = new AuthController(authService);

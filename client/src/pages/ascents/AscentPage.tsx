@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
 import type { Ascent } from "../../types/ascents/Ascent";
+import type { AscentDetails } from "../../types/ascents/AscentDetails";
 import type { IAscentAPIService } from "../../api_services/ascents/IAscentAPIService";
+import type { IMyTrailAPIService } from "../../api_services/my_trails/IMyTrailAPIService";
+import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
+import { formatDate } from "../../helpers/format_date";
 
 type AscentsPageProps = {
     ascentApi: IAscentAPIService;
+    myTrailApi: IMyTrailAPIService;
 };
 
-export default function AscentsPage({ ascentApi }: AscentsPageProps){
-    const [ascents, setAscents] = useState<Ascent[]>([]);
+export default function AscentsPage({ ascentApi, myTrailApi }: AscentsPageProps){
+    const [ascents, setAscents] = useState<AscentDetails[]>([]);
+    const [myTrails, setMyTrails] = useState<UserTrailDetails[]>([]);
     const [trailId, setTrailId] = useState("");
     const [ascentDate, setAscentDate] = useState("");
     const [durationMin, setDurationMin] = useState("");
@@ -15,13 +21,15 @@ export default function AscentsPage({ ascentApi }: AscentsPageProps){
     const [rating, setRating] = useState("");
     const [message, setMessage] = useState("");
 
-    const loadAscents = async () => {
-        const data = await ascentApi.getAll();
-        setAscents(data);
+    const loadData = async () => {
+        const ascentsData = await ascentApi.getAll();
+        const trailsData = await myTrailApi.getAll();
+        setAscents(ascentsData);
+        setMyTrails(trailsData);
     };
 
     useEffect(() => {
-        loadAscents();
+        loadData();
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -47,7 +55,7 @@ export default function AscentsPage({ ascentApi }: AscentsPageProps){
         setNote("");
         setRating("");
         setMessage("Ascent created successfully.");
-        await loadAscents();
+        await loadData();
     };
 
     const handleDelete = async (id: number) => {
@@ -59,7 +67,7 @@ export default function AscentsPage({ ascentApi }: AscentsPageProps){
         }
 
         setMessage("Ascent deleted successfully.");
-        await loadAscents();
+        await loadData();
     };
 
     return (
@@ -72,12 +80,18 @@ export default function AscentsPage({ ascentApi }: AscentsPageProps){
                 onSubmit={handleSubmit}
                 className="mt-8 bg-white rounded-2xl shadow-md p-6 grid gap-4 md:grid-cols-2"
                 >
-                <input
+                <select
                     className="rounded-lg border px-3 py-2"
-                    placeholder="Trail ID"
                     value={trailId}
                     onChange={(e) => setTrailId(e.target.value)}
-                />
+                >
+                    <option value="">Choose trail</option>
+                    {myTrails.map((trail) => (
+                        <option key={trail.trail_id} value={trail.trail_id}>
+                            {trail.trail_name}
+                        </option>
+                    ))}
+                </select>
 
                 <input
                     type="date"
@@ -128,9 +142,9 @@ export default function AscentsPage({ ascentApi }: AscentsPageProps){
                         className="bg-white rounded-2xl shadow-md p-5 flex items-center justify-between"
                     >
                         <div>
-                        <p className="font-bold">Trail ID: {ascent.trail_id}</p>
+                        <p className="font-bold">{ascent.trail_name}</p>
                         <p className="text-gray-600">
-                            Date: {String(ascent.ascent_date).slice(0, 10)}
+                            Date: {formatDate(ascent.ascent_date)}
                         </p>
                         <p className="text-gray-600">
                             Duration: {ascent.duration_min} min

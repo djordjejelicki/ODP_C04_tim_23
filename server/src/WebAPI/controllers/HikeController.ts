@@ -15,7 +15,7 @@ export class HikeController {
     }
 
     private initializeRoutes(): void {
-        this.router.get("/hikes", authenticate, this.getAll.bind(this));
+        this.router.get("/hikes", authenticate, this.getForCurrentUser.bind(this));
         this.router.post("/hikes", authenticate, this.create.bind(this));
         this.router.get("/hikes/:id", authenticate, this.getById.bind(this));
         this.router.post("/hikes/:id/invite", authenticate, this.invite.bind(this));
@@ -24,7 +24,31 @@ export class HikeController {
 
     private async getAll(req: Request, res: Response): Promise<void> {
         try{
+
+            const userId = req.user?.id;
+
+            if (!userId) {
+                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                return;
+            }
+
             const hikes = await this.hikeService.getSviPohodi();
+            res.status(200).json(hikes);
+        } catch {
+            res.status(500).json({ success: false, message: "Greska na serveru" });
+        }
+    }
+
+    private async getForCurrentUser(req: Request, res: Response): Promise<void> {
+        try{
+            const userId = req.user?.id;
+
+            if (!userId){
+                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                return;
+            }
+
+            const hikes = await this.hikeService.getPohodiZaKorisnika(userId);
             res.status(200).json(hikes);
         } catch {
             res.status(500).json({ success: false, message: "Greska na serveru" });
@@ -77,6 +101,12 @@ export class HikeController {
     private async getById(req: Request, res: Response): Promise<void> {
         try{
             const id = Number(req.params.id);
+            const userId = req.user?.id;
+
+            if (!userId) {
+                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                return;
+            }
 
             if (!Number.isInteger(id) || id <= 0){
                 res.status(400).json({ success: false, message: "Pohod nije validan" });
@@ -90,6 +120,13 @@ export class HikeController {
                 return;
             }
 
+            const imaPristup = await this.hikeService.korisnikImaPristupPohodu(id, userId);
+
+            if (!imaPristup){
+                res.status(403).json({ success: false, message: "Nemate pristup ovom pohodu" });
+                return;
+            }
+
             const ucesnici = await this.hikeService.getUcesnici(id);
             res.status(200).json({ hike, ucesnici });
         } catch {
@@ -99,20 +136,26 @@ export class HikeController {
 
     private async invite(req: Request, res: Response): Promise<void> {
         try{
+            const organizerId = req.user?.id;
             const hikeId = Number(req.params.id);
-            const {user_id} = req.body;
+            const { username } = req.body;
+
+            if (!organizerId){
+                res.status(401).json({ success: false, message: "Neautorizovan pristup"});
+                return;
+            }
 
             if (!Number.isInteger(hikeId) || hikeId <= 0){
                 res.status(400).json({ success: false, message: "Pohod nije validan" });
                 return;
             }
 
-            if (!Number.isInteger(Number(user_id)) || Number(user_id) <= 0){
-                res.status(400).json({ sucess: false, message: "Korisnik nije validan" });
+            if (typeof username !== "string" || username.trim().length < 3){
+                res.status(400).json({ success: false, message: "Korisnicko ime nije validno "});
                 return;
             }
 
-            const uspesno = await this.hikeService.pozoviUcesnika(hikeId, Number(user_id));
+            const uspesno = await this.hikeService.pozoviUcesnika(hikeId, organizerId, username.trim());
 
             if (!uspesno){
                 res.status(400).json({ success: false, message: "Korisnik je vec pozvan na ovaj pohod" });

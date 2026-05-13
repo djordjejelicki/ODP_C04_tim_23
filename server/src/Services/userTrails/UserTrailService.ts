@@ -1,14 +1,25 @@
 import { UserTrail } from "../../Domain/models/UserTrail";
 import { IUserTrailRepository } from "../../Domain/repositories/userTrails/IUserTrailRepository";
+import { IAscentRepository } from "../../Domain/repositories/ascents/IAscentRepository";
 import { IUserTrailService } from "../../Domain/services/userTrails/IUserTrailService";
 import { UserTrailStatus } from "../../Domain/enums/UserTrailStatus";
-import { stat } from "node:fs";
+import { UserTrailDetailsDto } from "../../Domain/DTOs/my_trails/UserTrailDetailsDto";
+import { IHikeRepository } from "../../Domain/repositories/hikes/IHikeRepository";
+
 
 export class UserTrailService implements IUserTrailService {
-    public constructor(private userTrailRepository: IUserTrailRepository) {}
+    public constructor(
+        private userTrailRepository: IUserTrailRepository,
+        private ascentRepository: IAscentRepository,
+        private hikeRepostiroy: IHikeRepository
+    ) {}
 
     async getMojeRute(user_id: number): Promise<UserTrail[]> {
         return await this.userTrailRepository.getByUser(user_id);
+    }
+
+    async getDetaljiMojihRuta(user_id: number): Promise<UserTrailDetailsDto[]> {
+        return await this.userTrailRepository.getDetailsByUserId(user_id);
     }
 
     async dodajRutu(user_id: number, trail_id: number, status: UserTrailStatus): Promise<UserTrail> {
@@ -42,6 +53,18 @@ export class UserTrailService implements IUserTrailService {
         const postojecaRuta = await this.userTrailRepository.getOne(user_id, trail_id);
 
         if (postojecaRuta.user_id === 0){
+            return false;
+        }
+
+        const imaUspon = await this.ascentRepository.existsByUserAndTrail(user_id, trail_id);
+        
+        if(imaUspon){
+            return false;
+        }
+
+        const imaPohod = await this.hikeRepostiroy.existsByUserAndTrail(user_id, trail_id);
+
+        if(imaPohod){
             return false;
         }
 

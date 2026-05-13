@@ -30,7 +30,7 @@ export class AscentController {
                 return;
             }
 
-            const usponi = await this.ascentService.getMojiUsponi(userId);
+            const usponi = await this.ascentService.getDetaljiMojihUspona(userId);
             res.status(200).json(usponi);
         } catch{
             res.status(500).json({ success: false, message: "Greska na serveru" });

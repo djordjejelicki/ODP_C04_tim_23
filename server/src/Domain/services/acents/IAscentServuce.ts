@@ -1,7 +1,9 @@
+import { AscentDetailsDto } from "../../DTOs/ascents/AscentDetailsDto";
 import { Ascent } from "../../models/Ascent";
 
 export interface IAscentService {
     getMojiUsponi(user_id: number): Promise<Ascent[]>;
+    getDetaljiMojihUspona(user_id: number): Promise<AscentDetailsDto[]>;
     getUsponById(id: number): Promise<Ascent>;
     dodajUspon(
         user_id: number,

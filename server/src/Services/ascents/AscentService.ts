@@ -3,6 +3,7 @@ import { IAscentRepository } from "../../Domain/repositories/ascents/IAscentRepo
 import { IUserTrailRepository } from "../../Domain/repositories/userTrails/IUserTrailRepository";
 import { IAscentService } from "../../Domain/services/acents/IAscentServuce";
 import { UserTrailStatus } from "../../Domain/enums/UserTrailStatus";
+import { AscentDetailsDto } from "../../Domain/DTOs/ascents/AscentDetailsDto";
 
 export class AscentService implements IAscentService {
     
@@ -13,6 +14,10 @@ export class AscentService implements IAscentService {
 
     async getMojiUsponi(user_id: number): Promise<Ascent[]> {
         return await this.ascentRepository.getByUser(user_id);
+    }
+
+    async getDetaljiMojihUspona(user_id: number): Promise<AscentDetailsDto[]> {
+        return await this.ascentRepository.getDetailsByUser(user_id);
     }
 
     async getUsponById(id: number): Promise<Ascent> {

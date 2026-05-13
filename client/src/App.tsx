@@ -38,12 +38,12 @@ function App() {
         }/>
         <Route path="/ascents" element = {
           <ProtectedRoute>
-            <AscentsPage ascentApi={ascentApi} />
+            <AscentsPage ascentApi={ascentApi} myTrailApi={myTrailApi} />
           </ProtectedRoute>
         }/>
         <Route path="/hikes" element = {
           <ProtectedRoute>
-            <HikesPage hikeApi={hikeApi} />
+            <HikesPage hikeApi={hikeApi} myTrailApi={myTrailApi} />
           </ProtectedRoute>
         } />
       </Route>
