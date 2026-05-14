@@ -6,6 +6,9 @@ import { trailApi } from "./api_services/trails/TrailAPIService";
 import { myTrailApi } from "./api_services/my_trails/MyTrailAPIService";
 import { ascentApi } from "./api_services/ascents/AscentAPIService";
 import { hikeApi } from "./api_services/hikes/HikeAPIService";
+import { auditLogApi } from "./api_services/audit_logs/AuditLogAPIService";
+import { mountainApi } from "./api_services/mountains/MountainAPIService";
+import { terrainTagApi } from "./api_services/terrain_tags/TerrainTagAPIService";
 
 //pages
 import LoginPage from "./pages/auth/LoginPage";
@@ -16,6 +19,10 @@ import TrailDetailsPage from "./pages/trails/TrailDetailsPage";
 import MyTrailsPage from "./pages/my_trails/MyTrailsPage";
 import AscentsPage from "./pages/ascents/AscentPage";
 import HikesPage from "./pages/hikes/HikesPage";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import AdminAuditLogsPage from "./pages/admin/AdminAuditLogsPage";
+import AdminMountainsPage from "./pages/admin/AdminMountainsPage";
+import AdminTerrainTagsPage from "./pages/admin/AdminTerrainTagsPage";
 
 //components
 import { AppLayout } from "./components/layout/AppLayout";
@@ -46,6 +53,30 @@ function App() {
             <HikesPage hikeApi={hikeApi} myTrailApi={myTrailApi} />
           </ProtectedRoute>
         } />
+        <Route path="/admin" element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminDashboardPage/>
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/admin/audit-logs" element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminAuditLogsPage auditLogApi={auditLogApi}/>
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/admin/mountains" element={
+          <ProtectedRoute requiredRole="admin">
+            <AdminMountainsPage mountainApi={mountainApi}/>
+          </ProtectedRoute>
+          }
+        />
+        <Route path="/admin/terrain-tags" element={
+          <ProtectedRoute requiredRole="admin">
+            <AdminTerrainTagsPage terrainTagApi={terrainTagApi}/>
+          </ProtectedRoute>
+          }
+        />
       </Route>
 
       <Route path="/404" element={<NotFoundPage />} />
