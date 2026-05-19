@@ -13,6 +13,8 @@ export class TrailDetailsDto {
         public elevation_m: number = 0,
         public image_url: string = '',
         public created_at: Date | null = null,
-        public terrain_tags: TerrainTag[] = []
+        public terrain_tags: TerrainTag[] = [],
+        public average_rating: number | null = null,
+        public mountain_name: string = ""
     ) {}
 }

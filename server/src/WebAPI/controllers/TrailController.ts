@@ -5,7 +5,7 @@ import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
 import { UserRole } from "../../Domain/enums/UserRole";
 import { validateTrail } from "../validators/TrailValidator";
 import { TrailDifficulty } from "../../Domain/enums/TrailDifficulty";
-import { diff } from "node:util";
+import { uploadTrailImage } from "../../Middlewares/uploads/UploadTrailImageMiddleware";
 
 export class TrailController {
     private router: Router;
@@ -20,8 +20,8 @@ export class TrailController {
     private initializeRoutes(): void {
         this.router.get("/trails", this.getAll.bind(this));
         this.router.get("/trails/:id", this.getById.bind(this));
-        this.router.post("/trails",authenticate,authorize(UserRole.ADMIN),this.create.bind(this));
-        this.router.put("/trails/:id", authenticate, authorize(UserRole.ADMIN), this.update.bind(this));
+        this.router.post("/trails",authenticate,authorize(UserRole.ADMIN), uploadTrailImage.single("image"), this.create.bind(this));
+        this.router.put("/trails/:id", authenticate, authorize(UserRole.ADMIN), uploadTrailImage.single("image"), this.update.bind(this));
         this.router.delete("/trails/:id", authenticate, authorize(UserRole.ADMIN), this.delete.bind(this));
     }
 
@@ -60,9 +60,10 @@ export class TrailController {
                 difficulty,
                 est_duration_min,
                 elevation_m,
-                image_url,
                 terrain_tag_ids
             } = req.body;
+
+            const imageUrl = req.file ? `/uploads/${req.file.filename}` : "";
 
             const result = validateTrail(
                 Number(mountain_id),
@@ -72,7 +73,7 @@ export class TrailController {
                 difficulty,
                 Number(est_duration_min),
                 Number(elevation_m),
-                image_url,
+                imageUrl,
                 Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : []
             );
 
@@ -89,7 +90,7 @@ export class TrailController {
                 difficulty as TrailDifficulty,
                 Number(est_duration_min),
                 Number(elevation_m),
-                image_url,
+                imageUrl,
                 Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : []
             );
 
@@ -119,6 +120,8 @@ export class TrailController {
                 terrain_tag_ids
             } = req.body;
 
+            const imageUrl = req.file ? `/uploads/${req.file.filename}` : image_url;
+
             if (!Number.isInteger(id) || id <= 0){
                 res.status(400).json({ success: false, message: "Ruta nije validna" });
                 return;
@@ -134,7 +137,7 @@ export class TrailController {
                 difficulty,
                 Number(est_duration_min),
                 Number(elevation_m),
-                image_url,
+                imageUrl,
                 terrainIds
             );
 
@@ -152,7 +155,7 @@ export class TrailController {
                 difficulty as TrailDifficulty,
                 Number(est_duration_min),
                 Number(elevation_m),
-                image_url,
+                imageUrl,
                 terrainIds
             );
 

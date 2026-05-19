@@ -9,6 +9,7 @@ import { hikeApi } from "./api_services/hikes/HikeAPIService";
 import { auditLogApi } from "./api_services/audit_logs/AuditLogAPIService";
 import { mountainApi } from "./api_services/mountains/MountainAPIService";
 import { terrainTagApi } from "./api_services/terrain_tags/TerrainTagAPIService";
+import { usersApi } from "./api_services/users/UsersAPIService";
 
 //pages
 import LoginPage from "./pages/auth/LoginPage";
@@ -23,6 +24,8 @@ import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminAuditLogsPage from "./pages/admin/AdminAuditLogsPage";
 import AdminMountainsPage from "./pages/admin/AdminMountainsPage";
 import AdminTerrainTagsPage from "./pages/admin/AdminTerrainTagsPage";
+import AdminTrailsPage from "./pages/admin/AdminTrailsPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
 
 //components
 import { AppLayout } from "./components/layout/AppLayout";
@@ -74,6 +77,22 @@ function App() {
         <Route path="/admin/terrain-tags" element={
           <ProtectedRoute requiredRole="admin">
             <AdminTerrainTagsPage terrainTagApi={terrainTagApi}/>
+          </ProtectedRoute>
+          }
+        />
+        <Route path="/admin/trails" element={
+          <ProtectedRoute requiredRole="admin">
+            <AdminTrailsPage
+              trailApi={trailApi}
+              mountainApi={mountainApi}
+              terrainTagApi={terrainTagApi}
+            />
+          </ProtectedRoute>
+          }
+        />
+        <Route path="/admin/users" element={
+          <ProtectedRoute requiredRole="admin">
+            <AdminUsersPage userApi={usersApi}/>
           </ProtectedRoute>
           }
         />

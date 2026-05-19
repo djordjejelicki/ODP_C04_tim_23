@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Trail } from "../../types/trails/Trail";
+import { getImageUrl } from "../../helpers/get_image_url";
 
 type TrailCardProps = {
     trail: Trail;
@@ -9,7 +10,7 @@ export function TrailCard({ trail }: TrailCardProps) {
     return(
         <article className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition">
             <img
-                src={trail.image_url}
+                src={getImageUrl(trail.image_url)}
                 alt={trail.name}
                 className="w-full h-44 object-cover"
             />

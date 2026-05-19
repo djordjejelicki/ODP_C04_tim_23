@@ -10,6 +10,8 @@ export class UserTrailDetailsDto {
         public trail_name: string = "",
         public length_km: number = 0,
         public elevation_m: number = 0,
-        public difficulty: TrailDifficulty = TrailDifficulty.EASY
+        public difficulty: TrailDifficulty = TrailDifficulty.EASY,
+        public mountain_id: number = 0,
+        public mountain_name: string = ""
     ){}
 }

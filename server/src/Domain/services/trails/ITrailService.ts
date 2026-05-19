@@ -1,9 +1,10 @@
+import { TrailCatalogDto } from "../../DTOs/trails/TrailCatalogDto";
 import { Trail } from "../../models/Trail";
 import { TrailDetailsDto } from "../../DTOs/trails/TrailDetailsDto";    
 import { TrailDifficulty } from "../../enums/TrailDifficulty";
 
 export interface ITrailService {
-    getSveRute(): Promise<Trail[]>;
+    getSveRute(): Promise<TrailCatalogDto[]>;
     getRutaById(id: number): Promise<TrailDetailsDto>;
     createRuta(
         mountain_id: number,

@@ -1,6 +1,4 @@
 import { IHikeRepository } from "../../../Domain/repositories/hikes/IHikeRepository";
-import { HikeWithUserStatusDto } from "../../../Domain/DTOs/hikes/HikeWithUserStatusDto";
-import { HikeParticipantStatus } from "../../../Domain/enums/HikeParticipantStatus";
 import { Hike } from "../../../Domain/models/Hike";
 import { RowDataPacket, ResultSetHeader } from "mysql2";
 import db from "../../connection/DbConnectionPool";
@@ -64,40 +62,26 @@ export class HikeRepository implements IHikeRepository {
         }
     }
 
-    async getByUserId(userId: number): Promise<HikeWithUserStatusDto[]> {
+    async getByUserId(userId: number): Promise<Hike[]> {
         try{
             const query = `
-                    SELECT
-                    h.id,
-                    h.organizer_id,
-                    h.trail_id,
-                    t.name AS trail_name,
-                    h.name,
-                    h.description,
-                    h.scheduled_at,
-                    h.max_participants,
-                    hp.status AS current_user_status
-                    FROM hikes h
-                    INNER JOIN trails t ON t.id = h.trail_id
-                    LEFT JOIN hike_participants hp
-                        ON hp.hike_id = h.id AND hp.user_id = ?
-                    WHERE h.organizer_id = ? OR hp.user_id = ?
-                    ORDER BY h.scheduled_at ASC
+                SELECT id, organizer_id, trail_id, name, description, scheduled_at, max_participants
+                FROM hikes
+                WHERE organizer_id = ?
+                ORDER BY scheduled_at ASC    
             `;
 
-            const [rows] = await db.execute<RowDataPacket[]>(query, [userId, userId, userId]);
+            const [rows] = await db.execute<RowDataPacket[]>(query, [userId]);
 
             return rows.map(
-                (row) => new HikeWithUserStatusDto(
+                (row) => new Hike(
                     row.id,
                     row.organizer_id,
                     row.trail_id,
-                    row.trail_name,
                     row.name,
                     row.description,
                     row.scheduled_at,
                     row.max_participants,
-                    row.current_user_status as HikeParticipantStatus | null
                 )
             );
         } catch(error){
@@ -141,22 +125,4 @@ export class HikeRepository implements IHikeRepository {
         }
     }
 
-    async existsByUserAndTrail(user_id: number, trail_id: number): Promise<boolean> {
-        try{
-            const query = `
-                SELECT h.id
-                FROM hikes h
-                LEFT JOIN hike_participants hp ON hp.hike_id = h.id
-                WHERE h.trail_id = ?
-                AND (h.organizer_id = ? OR hp.user_id = ?)
-                LIMIT 1
-            `;
-
-            const [rows] = await db.execute<RowDataPacket[]>(query, [trail_id, user_id, user_id]);
-            return rows.length > 0;
-        } catch(error){
-            console.log("existsByUserAndTrail hike error: ", error);
-            return false;
-        }
-    }
 }

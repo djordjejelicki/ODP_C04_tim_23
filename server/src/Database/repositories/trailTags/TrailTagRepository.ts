@@ -1,7 +1,7 @@
 import { ITrailTagRepository } from "../../../Domain/repositories/trailTags/ITrailTagRepository";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import db from "../../connection/DbConnectionPool";
-import { TerrainTag } from "../../../Domain/models/TerrainTag";
+import { TrailTag } from "../../../Domain/models/TrailTag";
 
 export class TrailTagRepository implements ITrailTagRepository {
     async addTagsToTrail(traild_id: number, terrain_tag_id: number[]): Promise<void> {
@@ -19,20 +19,18 @@ export class TrailTagRepository implements ITrailTagRepository {
         }
     }
 
-    async getTagsForTrail(traild_id: number): Promise<TerrainTag[]> {
+    async getTagsForTrail(traild_id: number): Promise<TrailTag[]> {
         try {
             const query = `
-                SELECT tt.id, tt.name, tt.description
-                FROM terrain_tags tt
-                INNER JOIN trail_tags trt ON tt.id = trt.terrain_tag_id
-                WHERE trt.trail_id = ?
-                ORDER BY tt.name ASC
+                SELECT trail_id, terrain_tag_id
+                FROM trail_tags
+                WHERE trail_id = ?
             `;
 
             const [rows] = await db.execute<RowDataPacket[]>(query, [traild_id]);
 
             return rows.map(
-                (row) => new TerrainTag(row.id, row.name, row.description)
+                (row) => new TrailTag(row.trail_id, row.terrain_tag_id)
             );
             
         } catch (error) {

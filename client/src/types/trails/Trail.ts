@@ -15,4 +15,5 @@ export type Trail = {
     elevation_m: number;
     image_url: string;
     created_at: string | null;
-}
+    average_rating: number | null;
+};

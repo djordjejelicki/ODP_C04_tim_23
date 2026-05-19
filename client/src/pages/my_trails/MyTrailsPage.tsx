@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import type { IMyTrailAPIService } from "../../api_services/my_trails/IMyTrailAPIService";
-import type { UserTrail } from "../../types/my_trails/UserTrail";
 import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
 import { TrailStatusColumn } from "../../components/my_trails/TrailStatusColumn"; 
+import { DashboardStatsCard } from "../../components/dashboard/DashboardStatsCard";
+import { dashboardApi } from "../../api_services/dashboard/DashboardAPIService";
 
 type MyTrailsPageProps = {
     myTrailApi: IMyTrailAPIService;
@@ -29,6 +30,7 @@ export default function MyTrailsPage({ myTrailApi }: MyTrailsPageProps) {
         <main className="min-h-screen bg-slate-100">
             <section className="max-w-6xl mx-auto px-6 py-10">
                 <h1 className="text-4xl font-bold text-gray-900">My Trails</h1>
+                <DashboardStatsCard dashboardApi={dashboardApi} />
                 <p className="text-gray-600 mt-2">Routes saved to your hiking list.</p>
 
                 {isLoading ? (

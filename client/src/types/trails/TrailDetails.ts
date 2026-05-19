@@ -8,4 +8,5 @@ export type TerrainTag = {
 
 export type TrailDetails = Trail & {
     terrain_tags: TerrainTag[];
+    mountain_name: string;
 };

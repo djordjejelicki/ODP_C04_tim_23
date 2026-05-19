@@ -1,8 +1,6 @@
-import type { UserDto } from "../../models/users/UserDto";
+import type { UserDto, UserRole } from "../../types/users/UserDto";
 
-/**
- * Interfejs za korisnicki servis.
- */
 export interface IUsersAPIService {
-    getSviKorisnici(token: string): Promise<UserDto[]>;
+    getAll(): Promise<UserDto[]>;
+    updateRole(id: number, role: UserRole): Promise<boolean>;
 }

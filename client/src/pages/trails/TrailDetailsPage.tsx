@@ -5,7 +5,7 @@ import type { ITrailAPIService } from "../../api_services/trails/ITrailAPIServic
 import type { IMyTrailAPIService } from "../../api_services/my_trails/IMyTrailAPIService";
 import type { UserTrail } from "../../types/my_trails/UserTrail";
 import { useAuth } from "../../hooks/auth/useAuthHook";
-
+import { getImageUrl } from "../../helpers/get_image_url";
 
 type TrailDetailsPageProps = {
     trailApi: ITrailAPIService;
@@ -113,7 +113,7 @@ export default function TrailDetailsPage({trailApi, myTrailApi}: TrailDetailsPag
             <section className="max-w-5xl mx-auto px-6 py-10">
                 <div className="bg-white rounded-2xl shadow-md overflow-hidden">
                 <img
-                    src={trail.image_url}
+                    src={getImageUrl(trail.image_url)}
                     alt={trail.name}
                     className="w-full h-96 object-cover"
                 />
@@ -123,6 +123,13 @@ export default function TrailDetailsPage({trailApi, myTrailApi}: TrailDetailsPag
                     <h1 className="text-4xl font-bold text-gray-900">
                         {trail.name}
                     </h1>
+
+                    <p className="text-gray-700">
+                        Mountain:{" "}
+                        <span className="font-semibold">
+                            {trail.mountain_name}
+                        </span>
+                    </p>
 
                     <p className="text-gray-600 mt-3">
                         {trail.description}
@@ -158,6 +165,15 @@ export default function TrailDetailsPage({trailApi, myTrailApi}: TrailDetailsPag
                         </p>
                     </div>
                     </div>
+
+                    <p className="text-gray-700">
+                        Average rating:{" "}
+                        <span className="font-semibold">
+                            {trail.average_rating !== null
+                            ? trail.average_rating.toFixed(1)
+                            : "No ratings"}
+                        </span>
+                    </p>
 
                     <div>
                     <h2 className="text-2xl font-bold mb-4">

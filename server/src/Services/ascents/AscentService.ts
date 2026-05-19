@@ -4,12 +4,14 @@ import { IUserTrailRepository } from "../../Domain/repositories/userTrails/IUser
 import { IAscentService } from "../../Domain/services/acents/IAscentServuce";
 import { UserTrailStatus } from "../../Domain/enums/UserTrailStatus";
 import { AscentDetailsDto } from "../../Domain/DTOs/ascents/AscentDetailsDto";
+import { ITrailRepository } from "../../Domain/repositories/trails/ITrailRepository";
 
 export class AscentService implements IAscentService {
     
     public constructor(
         private ascentRepository: IAscentRepository,
-        private userTrailRepository: IUserTrailRepository
+        private userTrailRepository: IUserTrailRepository,
+        private trailRepository: ITrailRepository
     ){}
 
     async getMojiUsponi(user_id: number): Promise<Ascent[]> {
@@ -17,7 +19,28 @@ export class AscentService implements IAscentService {
     }
 
     async getDetaljiMojihUspona(user_id: number): Promise<AscentDetailsDto[]> {
-        return await this.ascentRepository.getDetailsByUser(user_id);
+        const ascents = await this.ascentRepository.getByUser(user_id);
+
+        const details: AscentDetailsDto[] = [];
+
+        for (const ascent of ascents) {
+            const trail = await this.trailRepository.getById(ascent.trail_id);
+
+            details.push(
+                new AscentDetailsDto(
+                    ascent.id,
+                    ascent.user_id,
+                    ascent.trail_id,
+                    trail.name,
+                    ascent.ascent_date,
+                    ascent.duration_min,
+                    ascent.note,
+                    ascent.rating
+                )
+            );
+        }
+
+        return details;
     }
 
     async getUsponById(id: number): Promise<Ascent> {

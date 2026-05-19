@@ -1,4 +1,7 @@
-export interface UserDto {
+
+export type UserRole = "hiker" | "admin";
+
+export type UserDto = {
     id: number;
     username: string;
     email: string;

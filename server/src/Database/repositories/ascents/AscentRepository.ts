@@ -173,41 +173,24 @@ export class AscentRepository implements IAscentRepository {
         }   
     }
 
-    async getDetailsByUser(user_id: number): Promise<AscentDetailsDto[]> {
+    async getAverageRatingByTrail(trail_id: number): Promise<number | null> {
         try{
             const query = `
-                SELECT
-                a.id,
-                a.user_id,
-                a.trail_id,
-                t.name AS trail_name,
-                a.ascent_date,
-                a.duration_min,
-                a.note,
-                a.rating
-                FROM ascents a
-                INNER JOIN trails t ON t.id = a.trail_id
-                WHERE a.user_id = ?
-                ORDER BY a.ascent_date DESC, a.id DESC
+                SELECT AVG(rating) AS average_rating
+                FROM ascents
+                WHERE trail_id = ?
             `;
 
-            const [rows] = await db.execute<RowDataPacket[]>(query, [user_id]);
+            const [rows] = await db.execute<RowDataPacket[]>(query, [trail_id]);
 
-            return rows.map(
-                (row) => new AscentDetailsDto(
-                    row.id,
-                    row.user_id,
-                    row.trail_id,
-                    row.trail_name,
-                    row.ascent_date,
-                    row.duration_min,
-                    row.note,
-                    row.rating    
-                )
-            );
+            if (rows.length === 0 || rows[0].average_rating === null){
+                return null;
+            }
+
+            return Number(rows[0].average_rating);
         } catch(error){
-            console.log("getDetailsByUser ascent error: ", error);
-            return [];
+            console.log("getAverageRatingByTrail error: ", error);
+            return null;
         }
     }
 }

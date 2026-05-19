@@ -9,13 +9,15 @@ import { HikeWithUserStatusDto } from "../../Domain/DTOs/hikes/HikeWithUserStatu
 import { IUserTrailRepository } from "../../Domain/repositories/userTrails/IUserTrailRepository";
 import { UserTrail } from "../../Domain/models/UserTrail";
 import { UserTrailStatus } from "../../Domain/enums/UserTrailStatus";
+import { ITrailRepository } from "../../Domain/repositories/trails/ITrailRepository";
 
 export class HikeService implements IHikeService{
     public constructor(
         private hikeRepository: IHikeRepository,
         private hikeParticipantRepository: IHikeParticipantRepository,
         private userRepository: IUserRepository,
-        private userTrailRepository: IUserTrailRepository
+        private userTrailRepository: IUserTrailRepository,
+        private trailRepository: ITrailRepository
     ){}
 
     async getSviPohodi(): Promise<Hike[]> {
@@ -142,6 +144,45 @@ export class HikeService implements IHikeService{
     }
 
     async getPohodiZaKorisnika(userId: number): Promise<HikeWithUserStatusDto[]> {
-        return await this.hikeRepository.getByUserId(userId);
+        const orginizedHikes = await this.hikeRepository.getByUserId(userId);
+        const participations = await this.hikeParticipantRepository.getByUser(userId);
+
+        const invitedHikes: Hike[] = [];
+
+        for (const participation of participations){
+            const hike = await this.hikeRepository.getById(participation.hike_id);
+
+            if (hike.id !== 0){
+                invitedHikes.push(hike);
+            }
+        }
+
+        const allHikes = [...orginizedHikes, ...invitedHikes];
+        const details: HikeWithUserStatusDto[] = [];
+
+        for (const hike of allHikes){
+            const trail = await this.trailRepository.getById(hike.trail_id);
+            const participation = participations.find(
+                (item) => item.hike_id === hike.id
+            );
+
+            details.push(
+                new HikeWithUserStatusDto(
+                    hike.id,
+                    hike.organizer_id,
+                    hike.trail_id,
+                    trail.name,
+                    hike.name,
+                    hike.description,
+                    hike.scheduled_at,
+                    hike.max_participants,
+                    participation ? participation.status : null
+
+                )
+            );
+        }
+
+        return details;
+
     }
 }

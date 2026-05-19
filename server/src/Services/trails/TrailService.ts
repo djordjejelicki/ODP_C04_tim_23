@@ -5,18 +5,44 @@ import { ITrailService } from "../../Domain/services/trails/ITrailService";
 import { ITrailTagRepository } from "../../Domain/repositories/trailTags/ITrailTagRepository";
 import { TrailDetailsDto } from "../../Domain/DTOs/trails/TrailDetailsDto";
 import { IAscentRepository } from "../../Domain/repositories/ascents/IAscentRepository";
-import { EOL } from "node:os";
+import { ITerrainTagRepository } from "../../Domain/repositories/terrainTags/ITerrainTagRepository";
+import { TerrainTag } from "../../Domain/models/TerrainTag";
+import { TrailCatalogDto } from "../../Domain/DTOs/trails/TrailCatalogDto";
+import { IMountainRepository } from "../../Domain/repositories/mountains/IMountainRepository";
 
 
 export class TrailService implements ITrailService {
     public constructor(
         private trailRepository: ITrailRepository,
         private trailTagRepository: ITrailTagRepository,
-        private ascentRepository: IAscentRepository
+        private ascentRepository: IAscentRepository,
+        private terrainTagRepository: ITerrainTagRepository,
+        private mountainRepository: IMountainRepository
     ) {}
 
-    async getSveRute(): Promise<Trail[]> {
-        return await this.trailRepository.getAll();
+    async getSveRute(): Promise<TrailCatalogDto[]> {
+        const trails =  await this.trailRepository.getAll();
+        const result: TrailCatalogDto[] = [];
+
+        for (const trail of trails){
+            const averageRating = await this.ascentRepository.getAverageRatingByTrail(trail.id);
+
+            result.push(new TrailCatalogDto(
+                trail.id,
+                trail.mountain_id,
+                trail.name,
+                trail.description,
+                trail.length_km,
+                trail.difficulty,
+                trail.est_duration_min,
+                trail.elevation_m,
+                trail.image_url,
+                trail.created_at,
+                averageRating
+            ));
+        }
+
+        return result;
     }
 
     async getRutaById(id: number): Promise<TrailDetailsDto> {
@@ -26,7 +52,19 @@ export class TrailService implements ITrailService {
             return new TrailDetailsDto();
         }
 
-        const terrainTags = await this.trailTagRepository.getTagsForTrail(id);
+        
+        const trailTags = await this.trailTagRepository.getTagsForTrail(id);
+        const mountain = await this.mountainRepository.getById(trail.mountain_id);
+        const terrainTags: TerrainTag[] = [];
+
+        for (const trailTag of trailTags) {
+            const tag = await this.terrainTagRepository.getById(trailTag.terrain_tag_id);
+            if (tag.id !== 0){
+                terrainTags.push(tag);
+            }
+        }
+
+        const averageRating = await this.ascentRepository.getAverageRatingByTrail(id);
 
         return new TrailDetailsDto(
             trail.id,
@@ -39,7 +77,9 @@ export class TrailService implements ITrailService {
             trail.elevation_m,
             trail.image_url,
             trail.created_at,
-            terrainTags
+            terrainTags,
+            averageRating,
+            mountain.name
         );
     }
 

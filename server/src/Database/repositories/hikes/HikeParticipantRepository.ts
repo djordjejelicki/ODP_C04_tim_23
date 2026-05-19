@@ -48,6 +48,31 @@ export class HikeParticipantRepository implements IHikeParticipantRepository{
         }
     }
 
+    async getByUser(user_id: number): Promise<HikeParticipant[]> {
+        try{
+            const query = `
+                SELECT hike_id, user_id, status, responded_at
+                FROM hike_participants
+                WHERE user_id = ?
+            `;
+
+            const [rows] = await db.execute<RowDataPacket[]>(query, [user_id]);
+
+            return rows.map(
+                (row) => new HikeParticipant(
+                    row.hike_id,
+                    row.user_id,
+                    row.status,
+                    row.responded_at
+                )
+            );
+
+        } catch(error){
+            console.log("getByUser hike participants error: ",error);
+            return [];
+        }
+    }
+
     async getOne(hike_id: number, user_id: number): Promise<HikeParticipant> {
         try{
             const query = `

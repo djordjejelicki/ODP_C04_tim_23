@@ -5,13 +5,18 @@ import { IUserTrailService } from "../../Domain/services/userTrails/IUserTrailSe
 import { UserTrailStatus } from "../../Domain/enums/UserTrailStatus";
 import { UserTrailDetailsDto } from "../../Domain/DTOs/my_trails/UserTrailDetailsDto";
 import { IHikeRepository } from "../../Domain/repositories/hikes/IHikeRepository";
-
+import { ITrailRepository } from "../../Domain/repositories/trails/ITrailRepository"; 
+import { IHikeParticipantRepository } from "../../Domain/repositories/hikes/IHikeParticipantRepository";
+import { IMountainRepository } from "../../Domain/repositories/mountains/IMountainRepository";
 
 export class UserTrailService implements IUserTrailService {
     public constructor(
         private userTrailRepository: IUserTrailRepository,
         private ascentRepository: IAscentRepository,
-        private hikeRepostiroy: IHikeRepository
+        private hikeRepository: IHikeRepository,
+        private trailRepository: ITrailRepository,
+        private hikeParticipantRepository: IHikeParticipantRepository,
+        private mountainRepository: IMountainRepository
     ) {}
 
     async getMojeRute(user_id: number): Promise<UserTrail[]> {
@@ -19,7 +24,31 @@ export class UserTrailService implements IUserTrailService {
     }
 
     async getDetaljiMojihRuta(user_id: number): Promise<UserTrailDetailsDto[]> {
-        return await this.userTrailRepository.getDetailsByUserId(user_id);
+        const userTrails = await this.userTrailRepository.getByUser(user_id);
+
+        const details: UserTrailDetailsDto[] = [];
+
+        for (const userTrail of userTrails){
+            const trail = await this.trailRepository.getById(userTrail.trail_id);
+            const mountain = await this.mountainRepository.getById(trail.mountain_id);
+
+            details.push(
+                new UserTrailDetailsDto(
+                    userTrail.user_id,
+                    userTrail.trail_id,
+                    userTrail.status,
+                    userTrail.added_at,
+                    trail.name,
+                    trail.length_km,
+                    trail.elevation_m,
+                    trail.difficulty,
+                    trail.mountain_id,
+                    mountain.name
+                )
+            );
+        }
+
+        return details;
     }
 
     async dodajRutu(user_id: number, trail_id: number, status: UserTrailStatus): Promise<UserTrail> {
@@ -62,10 +91,24 @@ export class UserTrailService implements IUserTrailService {
             return false;
         }
 
-        const imaPohod = await this.hikeRepostiroy.existsByUserAndTrail(user_id, trail_id);
+        const organizovaniPohodi = await this.hikeRepository.getByUserId(user_id);
 
-        if(imaPohod){
+        const imaOrganizovanPohod = organizovaniPohodi.some(
+            (hike) => hike.trail_id === trail_id
+        );
+
+        if (imaOrganizovanPohod) {
             return false;
+        }
+
+        const ucesca = await this.hikeParticipantRepository.getByUser(user_id);
+
+        for(const ucesce of ucesca){
+            const hike = await this.hikeRepository.getById(ucesce.hike_id);
+
+            if(hike.id !== 0 && hike.trail_id === trail_id){
+                return false;
+            }
         }
 
         return await this.userTrailRepository.delete(user_id, trail_id);

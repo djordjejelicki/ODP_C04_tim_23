@@ -1,20 +1,25 @@
-import axios from "axios";
-import type { UserDto } from "../../models/users/UserDto";
+import { apiClient } from "../apiClient";
+import type { UserDto, UserRole } from "../../types/users/UserDto";
 import type { IUsersAPIService } from "./IUsersAPIService";
 
-const API_URL: string = import.meta.env.VITE_API_URL + "user";
 
 export const usersApi: IUsersAPIService = {
-  async getSviKorisnici(token: string): Promise<UserDto[]> {
+  async getAll(): Promise<UserDto[]> {
     try {
-      const res = await axios.get<UserDto[]>(`${API_URL}s`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await apiClient.get<UserDto[]>("users");
       return res.data;
-    } catch {
+    } catch(error) {
+      console.error("Error loading users: ", error);
       return [];
+    }
+  },
+  async updateRole(id: number, role: UserRole): Promise<boolean> {
+    try{
+      await apiClient.put(`users/${id}/role`, {role,});
+      return true;
+    } catch(error){
+      console.error("Error updating user role: ", error);
+      return false;
     }
   },
 };

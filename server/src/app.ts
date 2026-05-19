@@ -1,5 +1,8 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'node:path';
+import fs from "fs";
+
 import { IAuthService } from './Domain/services/auth/IAuthService';
 import { AuthService } from './Services/auth/AuthService';
 import { IUserRepository } from './Domain/repositories/users/IUserRepository';
@@ -56,12 +59,23 @@ import { IAuditLogService } from './Domain/services/auditLogs/IAuditLogService';
 import { AuditLogService } from './Services/auditLogs/AuditLogService';
 import { AuditLogController } from './WebAPI/controllers/AuditLogController';
 
+import { IDashboardService } from './Domain/repositories/dashboard/IDashboardService';
+import { DashboardService } from './Services/dashboard/DashboardService';
+import { DashboardController } from './WebAPI/controllers/DashboardController';
+
 require('dotenv').config();
 
 const app = express();
 
+const uploadsPath = path.join(__dirname, "../uploads");
+
+if (!fs.existsSync(uploadsPath)){
+    fs.mkdirSync(uploadsPath, { recursive: true });
+}
+
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(uploadsPath));
 
 // Repositories
 const userRepository: IUserRepository = new UserRepository();
@@ -80,11 +94,12 @@ const auditLogService: IAuditLogService = new AuditLogService(auditLogRepository
 const authService: IAuthService = new AuthService(userRepository, auditLogService);
 const userService: IUserService = new UserService(userRepository);
 const mountainService: IMountainService = new MountainService(mountainRepository);
-const trailService: ITrailService = new TrailService(trailRepository, trailTagRepository, ascentRepository);
+const trailService: ITrailService = new TrailService(trailRepository, trailTagRepository, ascentRepository, terrainTagRepository, mountainRepository);
 const terrainTagService: ITerrrainTagService = new TerrainTagService(terrainTagRepository, trailTagRepository);
-const userTrailService: IUserTrailService = new UserTrailService(userTrailRepository, ascentRepository, hikeRepository);
-const ascentService: IAscentService = new AscentService(ascentRepository, userTrailRepository);
-const hikeService: IHikeService = new HikeService(hikeRepository, hikeParticipantRepository, userRepository, userTrailRepository);
+const userTrailService: IUserTrailService = new UserTrailService(userTrailRepository, ascentRepository, hikeRepository, trailRepository, hikeParticipantRepository, mountainRepository);
+const ascentService: IAscentService = new AscentService(ascentRepository, userTrailRepository, trailRepository);
+const hikeService: IHikeService = new HikeService(hikeRepository, hikeParticipantRepository, userRepository, userTrailRepository, trailRepository);
+const dashboardService: IDashboardService = new DashboardService(userTrailRepository, trailRepository, mountainRepository);
 
 // WebAPI routes
 const authController = new AuthController(authService);
@@ -96,6 +111,7 @@ const userTrailController = new UserTrailController(userTrailService);
 const ascentController = new AscentController(ascentService);
 const hikeController = new HikeController(hikeService);
 const auditLogController = new AuditLogController(auditLogService);
+const dashboardController = new DashboardController(dashboardService);
 
 // Registering routes
 app.use('/api/v1', authController.getRouter());
@@ -107,6 +123,7 @@ app.use('/api/v1', userTrailController.getRouter());
 app.use('/api/v1', ascentController.getRouter());
 app.use('/api/v1', hikeController.getRouter());
 app.use('/api/v1', auditLogController.getRouter());
+app.use('/api/v1', dashboardController.getRouter());
 
 
 export default app;

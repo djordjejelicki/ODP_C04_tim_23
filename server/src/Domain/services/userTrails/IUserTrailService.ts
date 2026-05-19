@@ -2,7 +2,6 @@ import { UserTrail } from "../../models/UserTrail";
 import { UserTrailStatus } from "../../enums/UserTrailStatus";
 import { UserTrailDetailsDto } from "../../DTOs/my_trails/UserTrailDetailsDto";
 
-
 export interface IUserTrailService {
     getMojeRute(user_id: number): Promise<UserTrail[]>;
     getDetaljiMojihRuta(user_id: number): Promise<UserTrailDetailsDto[]>;
