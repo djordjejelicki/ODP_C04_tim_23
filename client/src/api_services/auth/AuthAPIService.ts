@@ -30,16 +30,32 @@ export const authApi: IAuthAPIService = {
     email: string,
     password: string,
     first_name: string,
-    last_name: string
+    last_name: string,
+    avatar: File | null
   ): Promise<AuthResponse> {
     try {
-      const res = await axios.post<AuthResponse>(`${API_URL}/register`, {
-        username,
-        email,
-        password,
-        first_name,
-        last_name
-      });
+      const formData = new FormData();
+      
+      formData.append("username", username);
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("first_name", first_name);
+      formData.append("last_name", last_name);
+
+      if (avatar) {
+        formData.append("avatar", avatar);
+      }
+
+      const res = await axios.post<AuthResponse>(
+        `${API_URL}/register`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          },
+        }
+      );
+
       return res.data;
     } catch (error) {
       let message = "Registration failed.";

@@ -9,6 +9,8 @@ import { ITerrainTagRepository } from "../../Domain/repositories/terrainTags/ITe
 import { TerrainTag } from "../../Domain/models/TerrainTag";
 import { TrailCatalogDto } from "../../Domain/DTOs/trails/TrailCatalogDto";
 import { IMountainRepository } from "../../Domain/repositories/mountains/IMountainRepository";
+import fs from "fs";
+import path from "path";
 
 
 export class TrailService implements ITrailService {
@@ -19,6 +21,18 @@ export class TrailService implements ITrailService {
         private terrainTagRepository: ITerrainTagRepository,
         private mountainRepository: IMountainRepository
     ) {}
+
+    private deleteTrailImage(imageUrl: string): void {
+        if (!imageUrl.startsWith("/uploads/trails/")){
+            return;
+        }
+
+        const relativePath = imageUrl.replace("/uploads/", "");
+        const filePath = path.join(__dirname, "../../../uploads", relativePath);
+        if(fs.existsSync(filePath)){
+            fs.unlinkSync(filePath);
+        }
+    }
 
     async getSveRute(): Promise<TrailCatalogDto[]> {
         const trails =  await this.trailRepository.getAll();
@@ -135,6 +149,10 @@ export class TrailService implements ITrailService {
         if (!uspesno){
             return false;
         }
+        
+        if (postojecaRuta.image_url !== image_url && postojecaRuta.image_url){
+            this.deleteTrailImage(postojecaRuta.image_url);
+        }
 
         const obrisaniTagovi = await this.trailTagRepository.deleteTagsForTrail(id);
 
@@ -163,6 +181,12 @@ export class TrailService implements ITrailService {
 
         await this.trailTagRepository.deleteTagsForTrail(id);
 
-        return await this.trailRepository.delete(id);
+        const uspesno =  await this.trailRepository.delete(id);
+
+        if(uspesno){
+            this.deleteTrailImage(postojecaRuta.image_url);
+        }
+
+        return uspesno;
     }
 }

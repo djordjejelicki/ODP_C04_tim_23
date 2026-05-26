@@ -20,6 +20,9 @@ export class HikeController {
         this.router.get("/hikes/:id", authenticate, this.getById.bind(this));
         this.router.post("/hikes/:id/invite", authenticate, this.invite.bind(this));
         this.router.patch("/hikes/:id/respond", authenticate, this.respond.bind(this));
+        this.router.put("/hikes/:id", authenticate, this.update.bind(this));
+        this.router.delete("/hikes/:id", authenticate, this.cancel.bind(this));
+        this.router.delete("/hikes/:id/participants/:userId", authenticate, this.removeParticipant.bind(this));
     }
 
     private async getAll(req: Request, res: Response): Promise<void> {
@@ -127,8 +130,12 @@ export class HikeController {
                 return;
             }
 
-            const ucesnici = await this.hikeService.getUcesnici(id);
-            res.status(200).json({ hike, ucesnici });
+            const details = await this.hikeService.getDetaljiPohoda(id);
+            if (details.id === 0){
+                res.status(404).json({success: false, message: "Pohod nije pronadjen" });
+                return;
+            }
+            res.status(200).json(details);
         } catch {
             res.status(500).json({ success: false, message: "Greska na serveru" });
         }
@@ -209,6 +216,118 @@ export class HikeController {
             res.status(200).json({ success: true, message: "Odgovor na pozivnicu je sacuvan" });
         } catch {
             res.status(500).json({ success: false, message: "Greska na server" });
+        }
+    }
+
+    private async update(req: Request, res: Response): Promise<void> {
+        try{
+            const organizerId = req.user?.id;
+            const hikeId = Number(req.params.id);
+            const { trail_id, name, description, scheduled_at, max_participants } = req.body;
+
+            if (!organizerId){
+                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                return;
+            }
+
+            if (!Number.isInteger(hikeId) || hikeId <= 0){
+                res.status(400).json({ success: false, message: "Pohod nije validan" });
+                return;
+            }
+
+            const rezultat = validateHike(
+                Number(trail_id),
+                name,
+                description ?? null,
+                scheduled_at,
+                Number(max_participants)
+            );
+
+            if (!rezultat.valid){
+                res.status(400).json({ success: false, message: rezultat.message });
+                return;
+            }
+
+            const uspesno = await this.hikeService.izmeniPohod(
+                hikeId,
+                organizerId,
+                Number(trail_id),
+                name,
+                description ?? null,
+                new Date(scheduled_at),
+                Number(max_participants)
+            );
+
+            if (!uspesno){
+                res.status(404).json({ success: false, message: "Pohod nije pronadjen ili nemate pravo izmene" });
+                return;
+            }
+
+            res.status(200).json({ success: true, message: "Pohod uspesno izmenjen" });
+        } catch {
+            res.status(500).json({ success: false, message: "Greska na serveru" });
+        }
+    }
+
+    private async cancel(req: Request, res: Response): Promise<void> {
+        try{
+            const organizerId = req.user?.id;
+            const hikeId = Number(req.params.id);
+
+            if (!organizerId){
+                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                return;
+            }
+
+            if (!Number.isInteger(hikeId) || hikeId <= 0){
+                res.status(400).json({ success: false, message: "Pohod nije validan" });
+                return;
+            }
+
+            const uspesno = await this.hikeService.otkaziPohod(hikeId, organizerId);
+
+            if (!uspesno){
+                res.status(404).json({ success: false, message: "Pohod nije pronadjen ili nemate pravo otkazivanja" });
+                return;
+            }
+
+            res.status(200).json({ success: true, message: "Pohod uspesno otkazan" });
+        } catch{
+            res.status(500).json({ success: false, message: "Greska na serveru" });
+        }
+    }
+
+    private async removeParticipant(req: Request, res: Response): Promise<void> {
+        try{
+            const organizerId = req.user?.id;
+            const hikeId = Number(req.params.id);
+            const userId = Number(req.params.userId);
+
+            if (!organizerId){
+                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                return;
+            }
+
+            if (!Number.isInteger(hikeId) || hikeId <= 0){
+                res.status(400).json({ success: false, message: "Pohod nije validan" });
+                return;
+            }
+
+            if (!Number.isInteger(userId) || userId <= 0){
+                res.status(400).json({ success: false, message: "Korisnik nije validan" });
+                return;
+            }
+
+            const uspesno = await this.hikeService.ukloniUcesnika(hikeId, organizerId, userId);
+            
+            if (!uspesno){
+                res.status(404).json({ success: false, message: "Ucesnik nije pronadjen ili nemate pravo uklanjanja" });
+                return;
+            }
+
+            res.status(200).json({ success: true, message: "Ucesnik uspesno uklonjen" });
+        } catch{
+            res.status(500).json({ success: false, message: "Greska na serveru" });
         }
     }
 

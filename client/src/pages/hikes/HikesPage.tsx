@@ -5,6 +5,7 @@ import type { IHikeAPIService } from "../../api_services/hikes/IHikeAPIService";
 import type { IMyTrailAPIService } from "../../api_services/my_trails/IMyTrailAPIService";
 import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
 import { formatDate } from "../../helpers/format_date";
+import { Link } from "react-router-dom";
 
 type HikesPageProps = {
     hikeApi: IHikeAPIService;
@@ -227,6 +228,13 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
                                         <span className="inline-flex rounded-full bg-blue-100 text-blue-800 px-3 py-1 text-sm font-semibold">
                                             Organizer
                                         </span>
+
+                                        <Link
+                                            to={`/hikes/${hike.id}`}
+                                            className="inline-block rounded-lg bg-gray-900 text-white px-4 py-2 hover:bg-gray-800"
+                                        >
+                                            View details
+                                        </Link>
                                     </div>
                                 ))}
                             </div>
@@ -268,6 +276,13 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
                                             <span className="rounded-full bg-orange-100 text-orange-800 px-3 py-1 text-sm font-semibold">
                                                 Status: {hike.current_user_status}
                                             </span>
+
+                                            <Link
+                                                to={`/hikes/${hike.id}`}
+                                                className="inline-block rounded-lg bg-gray-900 text-white px-4 py-2 hover:bg-gray-800"
+                                            >
+                                                View details
+                                            </Link>
 
                                             {hike.current_user_status === "invited" && (
                                                 <>

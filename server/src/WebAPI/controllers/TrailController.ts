@@ -63,7 +63,7 @@ export class TrailController {
                 terrain_tag_ids
             } = req.body;
 
-            const imageUrl = req.file ? `/uploads/${req.file.filename}` : "";
+            const imageUrl = req.file ? `/uploads/trails${req.file.filename}` : "";
 
             const result = validateTrail(
                 Number(mountain_id),
@@ -120,7 +120,7 @@ export class TrailController {
                 terrain_tag_ids
             } = req.body;
 
-            const imageUrl = req.file ? `/uploads/${req.file.filename}` : image_url;
+            const imageUrl = req.file ? `/uploads/trails/${req.file.filename}` : image_url;
 
             if (!Number.isInteger(id) || id <= 0){
                 res.status(400).json({ success: false, message: "Ruta nije validna" });

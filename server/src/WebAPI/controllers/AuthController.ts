@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express';
 import { IAuthService } from '../../Domain/services/auth/IAuthService';
 import { validateLogin, validateRegister } from '../validators/authValidator';
 import { authenticate } from '../../Middlewares/authentification/AuthMiddleware';
+import { uploadAvatar } from '../../Middlewares/uploads/UploadAvatarMiddleware';
 import jwt from "jsonwebtoken";
 
 export class AuthController {
@@ -16,7 +17,7 @@ export class AuthController {
 
   private initializeRoutes(): void {
     this.router.post('/auth/login', this.prijava.bind(this));
-    this.router.post('/auth/register', this.registracija.bind(this));
+    this.router.post('/auth/register', uploadAvatar.single("avatar"), this.registracija.bind(this));
     this.router.post('/auth/logout', authenticate, this.logout.bind(this));
   }
 
@@ -59,6 +60,8 @@ export class AuthController {
   private async registracija(req: Request, res: Response): Promise<void> {
     try {
       const { username, email, password, first_name, last_name } = req.body;
+
+      const avatarUrl = req.file ? `/uploads/avatars/${req.file.filename}` : null;
       
       const rezultat = validateRegister(username, email, password, first_name, last_name);
 
@@ -68,7 +71,7 @@ export class AuthController {
       }
 
       const result = await this.authService.registracija(
-        username, email, password, first_name, last_name 
+        username, email, password, first_name, last_name, avatarUrl 
       );
       
       // Proveravamo da li je registracija uspešna

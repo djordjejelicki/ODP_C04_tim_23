@@ -6,4 +6,6 @@ export interface IHikeRepository {
     getById(id: number): Promise<Hike>;
     getByUserId(userId: number): Promise<Hike[]>;
     create(hike: Hike): Promise<Hike>;
+    update(hike: Hike): Promise<boolean>;
+    delete(id: number): Promise<boolean>;
 }

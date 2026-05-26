@@ -125,4 +125,44 @@ export class HikeRepository implements IHikeRepository {
         }
     }
 
+    async update(hike: Hike): Promise<boolean> {
+        try{
+            const query = `
+                UPDATE hikes
+                SET trail_id = ?, name = ?, description = ?, scheduled_at = ?, max_participants = ?
+                WHERE id = ?
+            `;
+
+            const [result] = await db.execute<ResultSetHeader>(query, [
+                hike.trail_id,
+                hike.name,
+                hike.description,
+                hike.scheduled_at,
+                hike.max_participants,
+                hike.id
+            ]);
+
+            return result.affectedRows > 0;
+        } catch(error){
+            console.log("update hike error: ", error);
+            return false;
+        }
+    }
+
+    async delete(id: number): Promise<boolean> {
+        try{
+            const query = `
+                DELETE FROM hikes
+                WHERE id = ?
+            `;
+
+            const [result] = await db.execute<ResultSetHeader>(query, [id]);
+
+            return result.affectedRows > 0;
+        } catch(error){
+            console.log("delete hike error: ", error);
+            return false;
+        }
+    }
+
 }

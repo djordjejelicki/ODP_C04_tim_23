@@ -26,6 +26,8 @@ import AdminMountainsPage from "./pages/admin/AdminMountainsPage";
 import AdminTerrainTagsPage from "./pages/admin/AdminTerrainTagsPage";
 import AdminTrailsPage from "./pages/admin/AdminTrailsPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import HikeDetailsPage from "./pages/hikes/HikeDetailsPage";
+import ProfilePage from "./pages/profile/ProfilePage";
 
 //components
 import { AppLayout } from "./components/layout/AppLayout";
@@ -93,6 +95,18 @@ function App() {
         <Route path="/admin/users" element={
           <ProtectedRoute requiredRole="admin">
             <AdminUsersPage userApi={usersApi}/>
+          </ProtectedRoute>
+          }
+        />
+        <Route path="/hikes/:id" element={
+          <ProtectedRoute>
+            <HikeDetailsPage hikeApi={hikeApi}/>
+          </ProtectedRoute>
+          }
+        />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <ProfilePage usersApi={usersApi}/>
           </ProtectedRoute>
           }
         />

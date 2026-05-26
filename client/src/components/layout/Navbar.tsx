@@ -24,6 +24,12 @@ export function Navbar() {
 
                 {isAuthenticated && (
                     <>
+                    <Link
+                        to="/profile"
+                        className="text-sm font-medium text-gray-700 hover:text-orange-700"
+                    >
+                        Profile
+                    </Link>
                     <Link to="/my-trails" className="text-gray-700 hover:text-orange-700">
                         My Trails
                     </Link>

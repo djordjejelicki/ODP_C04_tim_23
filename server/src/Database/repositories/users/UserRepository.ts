@@ -49,12 +49,26 @@ export class UserRepository implements IUserRepository {
 
   async getById(id: number): Promise<User> {
     try {
-      const query = `SELECT *FROM users WHERE id = ?`;
+      const query =   `SELECT id, username, email, role, password,first_name, last_name, bio, avatar_url, created_at
+                      FROM users
+                      WHERE id = ?`;
+
       const [rows] = await db.execute<RowDataPacket[]>(query, [id]);
 
       if (rows.length > 0) {
         const row = rows[0];
-        return new User(row.id, row.username, row.role, row.password);
+        return new User(
+          row.id,
+          row.username,
+          row.email,
+          row.role,
+          row.password,
+          row.first_name,
+          row.last_name,
+          row.bio,
+          row.avatar_url,
+          row.created_at
+        );
       }
 
       return new User();

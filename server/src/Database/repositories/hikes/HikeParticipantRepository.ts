@@ -7,7 +7,7 @@ export class HikeParticipantRepository implements IHikeParticipantRepository{
     async add(participant: HikeParticipant): Promise<boolean> {
         try{
             const query = `
-               INSERT INTO hike_participants (hike_id, user_id, status)
+                INSERT INTO hike_participants (hike_id, user_id, status)
                 VALUES (?, ?, ?) 
             `;
 
@@ -113,6 +113,40 @@ export class HikeParticipantRepository implements IHikeParticipantRepository{
             return result.affectedRows > 0;
         } catch(error) {
             console.log("updateStatus hikeParticipant error: ", error);
+            return false;
+        }
+    }
+
+    async deleteByHike(hike_id: number): Promise<boolean> {
+        try{
+            const query = `
+                DELETE FROM hike_participants
+                WHERE hike_id = ?
+            `;
+
+            const [result] = await db.execute<ResultSetHeader>(query, [hike_id]);
+            return result.affectedRows >= 0;
+        } catch(error){
+            console.log("deleteByHike hikeParticipant error: ", error);
+            return false;
+        }
+    }
+
+    async deleteOne(hike_id: number, user_id: number): Promise<boolean> {
+        try{
+            const query = `
+                DELETE FROM hike_participants
+                WHERE hike_id = ? AND user_id = ? 
+            `;
+
+            const [result] = await db.execute<ResultSetHeader>(query, [
+                hike_id,
+                user_id
+            ]);
+
+            return result.affectedRows > 0;
+        } catch(error){
+            console.log("deleteOne hikeParticipant error: ", error);
             return false;
         }
     }

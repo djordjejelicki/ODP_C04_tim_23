@@ -3,5 +3,12 @@ import type { AuthResponse } from "../../types/auth/AuthResponse";
 
 export interface IAuthAPIService {
   login(username: string, password: string): Promise<AuthResponse>;
-  register(username: string, email: string ,password: string, first_name: string, last_name: string): Promise<AuthResponse>;
+  register(
+    username: string, 
+    email: string ,
+    password: string, 
+    first_name: string, 
+    last_name: string,
+    avatar: File | null
+  ): Promise<AuthResponse>;
 }

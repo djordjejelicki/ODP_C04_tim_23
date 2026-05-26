@@ -148,6 +148,8 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
         await loadData();
     };
 
+    const previewImageUrl = image ? URL.createObjectURL(image) : imageUrl ? getImageUrl(imageUrl) : "";
+
     return(
         <main className="min-h-screen bg-slate-100">
             <section className="max-w-6xl mx-auto px-6 py-10">
@@ -231,9 +233,9 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
                             className="hidden"
                         />
 
-                        {imageUrl && (
+                        {previewImageUrl && (
                             <img
-                                src={getImageUrl(imageUrl)}
+                                src={previewImageUrl}
                                 alt={name}
                                 className="mt-4 h-48 w-full object-cover rounded-xl"
                             />
@@ -303,7 +305,7 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
                                 <div>
                                     {trail.image_url && (
                                         <img
-                                            src={`http://localhost:4000${trail.image_url}`}
+                                            src={getImageUrl(trail.image_url)}
                                             alt={trail.name}
                                             className="w-full md:w-64 h-40 object-cover rounded-xl mb-4"
                                         />

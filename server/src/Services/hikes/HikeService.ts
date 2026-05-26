@@ -10,6 +10,8 @@ import { IUserTrailRepository } from "../../Domain/repositories/userTrails/IUser
 import { UserTrail } from "../../Domain/models/UserTrail";
 import { UserTrailStatus } from "../../Domain/enums/UserTrailStatus";
 import { ITrailRepository } from "../../Domain/repositories/trails/ITrailRepository";
+import { HikeDetailsDto } from "../../Domain/DTOs/hikes/HikeDetailsDto";
+import { HikeParticipantDetailsDto } from "../../Domain/DTOs/hikes/HikeParticipantDetailsDto";
 
 export class HikeService implements IHikeService{
     public constructor(
@@ -184,5 +186,103 @@ export class HikeService implements IHikeService{
 
         return details;
 
+    }
+
+    async getDetaljiPohoda(hike_id: number): Promise<HikeDetailsDto> {
+        const hike = await this.hikeRepository.getById(hike_id);
+
+        if (hike.id === 0){
+            return new HikeDetailsDto();
+        }
+
+        const organizer = await this.userRepository.getById(hike.organizer_id);
+        const trail = await this.trailRepository.getById(hike.trail_id);
+        const participants = await this.hikeParticipantRepository.getByHike(hike_id);
+
+        const participantDetails: HikeParticipantDetailsDto[] = [];
+
+        for (const participant of participants){
+            const user = await this.userRepository.getById(participant.user_id);
+
+            participantDetails.push(
+                new HikeParticipantDetailsDto(
+                    participant.user_id,
+                    user.username,
+                    participant.status,
+                    participant.responded_at
+                )
+            );
+        }
+
+        return new HikeDetailsDto(
+            hike.id,
+            hike.organizer_id,
+            organizer.username,
+            hike.trail_id,
+            trail.name,
+            hike.name,
+            hike.description,
+            hike.scheduled_at,
+            hike.max_participants,
+            participantDetails
+        );
+    }
+
+    async izmeniPohod(id: number, organizer_id: number, trail_id: number, name: string, description: string | null, scheduled_at: Date, max_participants: number): Promise<boolean> {
+        const postojeciPohod = await this.hikeRepository.getById(id);
+        
+        if (postojeciPohod.id === 0){
+            return false;
+        }
+
+        if (postojeciPohod.organizer_id !== organizer_id){
+            return false;
+        }
+
+        const izmenjeniPohod = new Hike(
+            id,
+            organizer_id,
+            trail_id,
+            name,
+            description,
+            scheduled_at,
+            max_participants
+        );
+
+        return await this.hikeRepository.update(izmenjeniPohod);
+    }
+
+    async otkaziPohod(id: number, organizer_id: number): Promise<boolean> {
+        const postojeciPohod = await this.hikeRepository.getById(id);
+
+        if (postojeciPohod.id === 0){
+            return false;
+        }
+
+        if (postojeciPohod.organizer_id !== organizer_id){
+            return false;
+        }
+
+        const obrisaniUcesnici = await this.hikeParticipantRepository.deleteByHike(id);
+
+        if (!obrisaniUcesnici) {
+            return false;
+        }
+
+        return await this.hikeRepository.delete(id);
+    }
+
+    async ukloniUcesnika(hike_id: number, organizer_id: number, user_id: number): Promise<boolean> {
+        const hike = await this.hikeRepository.getById(hike_id);
+
+        if (hike.id === 0){
+            return false;
+        }
+
+        if (hike.organizer_id !== organizer_id){
+            return false;
+        }
+
+        return await this.hikeParticipantRepository.deleteOne(hike_id, user_id);
     }
 }

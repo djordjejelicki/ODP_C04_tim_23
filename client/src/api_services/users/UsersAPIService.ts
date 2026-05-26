@@ -22,4 +22,13 @@ export const usersApi: IUsersAPIService = {
       return false;
     }
   },
+  async getMe(): Promise<UserDto | null> {
+    try{
+      const res = await apiClient.get<UserDto>("users/me");
+      return res.data;
+    } catch(error){
+      console.error("Error loading current user: ", error);
+      return null;
+    }
+  },
 };

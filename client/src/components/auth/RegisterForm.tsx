@@ -12,6 +12,7 @@ export function RegisterForm({ authApi }: AuthFormProps) {
   const [lastName, setLastName]   = useState("");
   const [password, setPassword]   = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [avatar, setAvatar] = useState<File | null>(null);
   const [message, setMessage]     = useState("");
 
   const submitForm = async (e: React.FormEvent) => {
@@ -28,7 +29,8 @@ export function RegisterForm({ authApi }: AuthFormProps) {
       email,
       password,
       firstName,
-      lastName
+      lastName,
+      avatar
     );
 
     if (!response.success){
@@ -142,6 +144,23 @@ export function RegisterForm({ authApi }: AuthFormProps) {
           placeholder="Repeat password"
         />
       </div>
+
+      <label className="cursor-pointer rounded-xl border-2 border-dashed border-orange-300 bg-orange-50 px-4 py-5 text-center hover:bg-orange-100 transition block">
+        <span className="block font-semibold text-orange-800">
+          {avatar ? avatar.name : "Click to choose profile image"}
+        </span>
+
+        <span className="block text-sm text-orange-700 mt-1">
+          JPG, PNG or WEBP up to 5MB
+        </span>
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setAvatar(e.target.files?.[0] ?? null)}
+          className="hidden"
+        />
+      </label>
 
       <button
         type="submit"
