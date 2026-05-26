@@ -41,7 +41,7 @@ function App() {
 
       <Route element={<AppLayout />}>
         <Route path="/trails" element={<TrailsPage trailApi={trailApi}/>} />
-        <Route path="/trails/:id" element={<TrailDetailsPage trailApi={trailApi} myTrailApi={myTrailApi} />} />
+        <Route path="/trails/:id" element={<TrailDetailsPage trailApi={trailApi} myTrailApi={myTrailApi} ascentApi={ascentApi}/>} />
         <Route path="/" element={<Navigate to="/trails" replace />} />  
         <Route path="/my-trails" element = {
           <ProtectedRoute>

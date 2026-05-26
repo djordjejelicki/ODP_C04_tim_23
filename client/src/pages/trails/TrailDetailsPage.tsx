@@ -6,19 +6,24 @@ import type { IMyTrailAPIService } from "../../api_services/my_trails/IMyTrailAP
 import type { UserTrail } from "../../types/my_trails/UserTrail";
 import { useAuth } from "../../hooks/auth/useAuthHook";
 import { getImageUrl } from "../../helpers/get_image_url";
+import type { IAscentAPIService } from "../../api_services/ascents/IAscentAPIService";
+import type { AscentDetails } from "../../types/ascents/AscentDetails";
+import { formatDate } from "../../helpers/format_date";
 
 type TrailDetailsPageProps = {
     trailApi: ITrailAPIService;
     myTrailApi: IMyTrailAPIService;
+    ascentApi: IAscentAPIService;
 };
 
-export default function TrailDetailsPage({trailApi, myTrailApi}: TrailDetailsPageProps) {
+export default function TrailDetailsPage({trailApi, myTrailApi, ascentApi}: TrailDetailsPageProps) {
     const { id } = useParams();
     const { isAuthenticated } = useAuth();
     const [myTrail, setMyTrail] = useState<UserTrail | null>(null);
     const [message, setMessage] = useState("");
     const [trail, setTrail] = useState<TrailDetails | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [trailAscents, setTrailAscents] = useState<AscentDetails[]>([]);
 
     useEffect(() => {
         const loadTrail = async () => {
@@ -30,12 +35,14 @@ export default function TrailDetailsPage({trailApi, myTrailApi}: TrailDetailsPag
                 const myTrails = await myTrailApi.getAll();
                 const existing = myTrails.find((item) => item.trail_id === data.id) ?? null;
                 setMyTrail(existing);
+                const ascents = await ascentApi.getAll();
+                setTrailAscents(ascents.filter((ascent) => ascent.trail_id === data.id));
             }
             setIsLoading(false);
         };
 
         loadTrail();
-    }, [id, trailApi, myTrailApi, isAuthenticated]);
+    }, [id, trailApi, myTrailApi, ascentApi,isAuthenticated]);
 
     const handleAddToMyTrails = async () => {
         if (!trail) return;
@@ -191,6 +198,47 @@ export default function TrailDetailsPage({trailApi, myTrailApi}: TrailDetailsPag
                         ))}
                     </div>
                     </div>
+
+                    {isAuthenticated && (
+                        <div>
+                            <h2 className="text-2xl font-bold mb-4">
+                                Your ascents on this trail
+                            </h2>
+
+                            {trailAscents.length === 0 ? (
+                                <p className="text-gray-600">
+                                    You have not recorded any ascents for this trail yet.
+                                </p>
+                            ) : (
+                                <div className="grid gap-3">
+                                    {trailAscents.map((ascent) => (
+                                        <div
+                                            key={ascent.id}
+                                            className="border rounded-xl p-4"
+                                        >
+                                            <p className="font-semibold">
+                                                {formatDate(ascent.ascent_date)}
+                                            </p>
+
+                                            <p className="text-gray-600">
+                                                Duration: {ascent.duration_min} min
+                                            </p>
+
+                                            <p className="text-gray-600">
+                                                Rating: {ascent.rating}/10
+                                            </p>
+
+                                            {ascent.note && (
+                                                <p className="text-gray-500 mt-1">
+                                                    {ascent.note}
+                                                </p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
                     {message && (
                         <div className="rounded-lg bg-orange-100 text-orange-800 px-4 py-3">

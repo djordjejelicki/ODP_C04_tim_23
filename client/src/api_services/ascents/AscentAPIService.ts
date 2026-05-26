@@ -45,4 +45,28 @@ export const ascentApi: IAscentAPIService = {
             return false;
         }
     },
+
+    async update(
+        id: number, 
+        ascent_date: string, 
+        duration_min: number, 
+        note: string | null, 
+        rating: number, 
+        trail_id: number
+    ): Promise<boolean> {
+        try{
+            await apiClient.put(`ascents/${id}`,{
+                ascent_date,
+                duration_min,
+                note,
+                rating,
+                trail_id,
+            });
+
+            return true;
+        } catch(error){
+            console.error("Error updating ascent: ", error);
+            return false;
+        }
+    },
 };
