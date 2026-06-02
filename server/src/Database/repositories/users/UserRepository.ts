@@ -243,4 +243,44 @@ export class UserRepository implements IUserRepository {
       return false;
     }
   }
+
+  async searchPublic(query: string): Promise<User[]> {
+    try{
+      const search = `%${query}%`;
+
+      const sql = `
+        SELECT id, username, email, role, password,first_name, last_name, bio, avatar_url, created_at
+        FROM users
+        WHERE username LIKE ?
+        OR first_name LIKE ?
+        OR last_name LIKE ?
+        ORDER BY username ASC
+        LIMIT 50
+      `;
+
+      const [rows] = await db.execute<RowDataPacket[]>(sql, [
+        search,
+        search,
+        search
+      ]);
+
+      return rows.map(
+        (row) => new User(
+          row.id,
+          row.username,
+          row.email,
+          row.role,
+          row.password,
+          row.first_name,
+          row.last_name,
+          row.bio,
+          row.avatar_url,
+          row.created_at
+        )
+      );
+    } catch(error){
+      console.log("searchPublic users error: ", error);
+      return [];
+    }
+  }
 }

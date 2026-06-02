@@ -1,5 +1,6 @@
 import type { AuthResponse } from "../../types/auth/AuthResponse";
 import type { IAuthAPIService } from "./IAuthAPIService";
+import { getValueByKey } from "../../helpers/local_storage";
 import axios from "axios";
 
 const API_URL: string = import.meta.env.VITE_API_URL + "auth";
@@ -67,6 +68,26 @@ export const authApi: IAuthAPIService = {
         message,
         data: undefined,
       };
+    }
+  },
+  async logout(): Promise<boolean> {
+    try{
+      const token = getValueByKey("authToken");
+
+      await axios.post(
+        `${API_URL}/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return true;
+    } catch(error){
+      console.error("Logout audit error: ", error);
+      return false;
     }
   },
 };

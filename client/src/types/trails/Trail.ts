@@ -1,3 +1,5 @@
+import type { TerrainTag } from "./TrailDetails";
+
 export type TrailDifficulty = 
     | "easy"
     | "moderate"
@@ -16,4 +18,5 @@ export type Trail = {
     image_url: string;
     created_at: string | null;
     average_rating: number | null;
+    terrain_tags: TerrainTag[];
 };

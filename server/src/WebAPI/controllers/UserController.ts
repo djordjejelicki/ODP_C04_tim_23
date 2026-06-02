@@ -19,6 +19,8 @@ export class UserController {
     this.router.get("/users", authenticate, authorize(UserRole.ADMIN), this.korisnici.bind(this));
     this.router.put("/users/:id/role", authenticate, authorize(UserRole.ADMIN), this.promeniUlogu.bind(this));
     this.router.get("/users/me", authenticate, this.me.bind(this));
+    this.router.get("/users/search", this.searchPublic.bind(this));
+    this.router.get("/users/:id", this.getPublicById.bind(this));
   }
 
   private async korisnici(req: Request, res: Response): Promise<void> {
@@ -93,6 +95,40 @@ export class UserController {
 
       res.status(200).json(user);
     } catch{  
+      res.status(500).json({ success: false, message: "Greska na serveru" });
+    }
+  }
+
+  private async searchPublic(req: Request, res: Response): Promise<void> {
+    try{
+      const query = typeof req.query.q === "string" ? req.query.q : "";
+
+      const users = await this.userService.searchPublicKorisnici(query);
+
+      res.status(200).json(users);
+    } catch {
+      res.status(500).json({ success: false, message: "Greska na serveru" });
+    }
+  }
+
+  private async getPublicById(req: Request, res: Response): Promise<void> {
+    try{
+      const id = Number(req.params.id);
+
+      if (!Number.isInteger(id) || id <= 0){
+        res.status(400).json({ success: false, message: "Korisnik nije validan" });
+        return;
+      }
+
+      const user = await this.userService.getPublicKorisnikById(id);
+
+      if (user.id === 0){
+        res.status(404).json({ success: false, message: "Korisnik nije pronadjen" });
+        return;
+      }
+
+      res.status(200).json(user);
+    } catch {
       res.status(500).json({ success: false, message: "Greska na serveru" });
     }
   }

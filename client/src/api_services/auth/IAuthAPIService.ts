@@ -11,4 +11,5 @@ export interface IAuthAPIService {
     last_name: string,
     avatar: File | null
   ): Promise<AuthResponse>;
+  logout(): Promise<boolean>;
 }

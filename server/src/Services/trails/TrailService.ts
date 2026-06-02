@@ -39,6 +39,19 @@ export class TrailService implements ITrailService {
         const result: TrailCatalogDto[] = [];
 
         for (const trail of trails){
+            const trailTags = await this.trailTagRepository.getTagsForTrail(trail.id);
+            const terrainTags: TerrainTag[] = [];
+
+            for (const trailTag of trailTags){
+                const tag = await this.terrainTagRepository.getById(
+                    trailTag.terrain_tag_id
+                );
+
+                if (tag.id !== 0){
+                    terrainTags.push(tag);
+                }
+            }
+
             const averageRating = await this.ascentRepository.getAverageRatingByTrail(trail.id);
 
             result.push(new TrailCatalogDto(
@@ -52,7 +65,8 @@ export class TrailService implements ITrailService {
                 trail.elevation_m,
                 trail.image_url,
                 trail.created_at,
-                averageRating
+                averageRating,
+                terrainTags
             ));
         }
 

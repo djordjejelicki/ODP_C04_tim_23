@@ -28,6 +28,9 @@ import AdminTrailsPage from "./pages/admin/AdminTrailsPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import HikeDetailsPage from "./pages/hikes/HikeDetailsPage";
 import ProfilePage from "./pages/profile/ProfilePage";
+import MountainsPage from "./pages/mountains/MountainsPage";
+import UsersPage from "./pages/users/UsersPage";
+import UserPublicProfilePage from "./pages/users/UserPublicProfilePage";
 
 //components
 import { AppLayout } from "./components/layout/AppLayout";
@@ -40,8 +43,11 @@ function App() {
       <Route path="/register" element={<RegisterPage authApi={authApi} />} />
 
       <Route element={<AppLayout />}>
-        <Route path="/trails" element={<TrailsPage trailApi={trailApi}/>} />
+        <Route path="/trails" element={<TrailsPage trailApi={trailApi} mountainApi={mountainApi} terrainTagApi={terrainTagApi}/>} />
         <Route path="/trails/:id" element={<TrailDetailsPage trailApi={trailApi} myTrailApi={myTrailApi} ascentApi={ascentApi}/>} />
+        <Route path="/mountains" element={<MountainsPage mountainApi={mountainApi}/>} />
+        <Route path="/users" element={<UsersPage usersApi={usersApi}/>} />
+        <Route path="/users/:id" element={<UserPublicProfilePage usersApi={usersApi} />} />
         <Route path="/" element={<Navigate to="/trails" replace />} />  
         <Route path="/my-trails" element = {
           <ProtectedRoute>

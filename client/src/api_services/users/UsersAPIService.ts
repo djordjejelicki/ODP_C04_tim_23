@@ -1,5 +1,6 @@
 import { apiClient } from "../apiClient";
 import type { UserDto, UserRole } from "../../types/users/UserDto";
+import type { PublicUser } from "../../types/users/PublicUser";
 import type { IUsersAPIService } from "./IUsersAPIService";
 
 
@@ -28,6 +29,27 @@ export const usersApi: IUsersAPIService = {
       return res.data;
     } catch(error){
       console.error("Error loading current user: ", error);
+      return null;
+    }
+  },
+  async searchPublic(query: string): Promise<PublicUser[]> {
+    try{
+      const res = await apiClient.get<PublicUser[]>(
+        `users/search?q=${encodeURIComponent(query)}`
+      );
+
+      return res.data;
+    } catch (error){
+      console.error("Error searching users: ", error);
+      return [];
+    }
+  },
+  async getPublicById(id: number): Promise<PublicUser | null> {
+    try{
+      const res = await apiClient.get<PublicUser>(`users/${id}`);
+      return res.data;
+    } catch(error){
+      console.error("Error loading public user: ", error);
       return null;
     }
   },

@@ -1,3 +1,4 @@
+import { PublicUSerDto } from "../../Domain/DTOs/users/PublicUserDto";
 import { UserDto } from "../../Domain/DTOs/users/UserDto";
 import { UserRole } from "../../Domain/enums/UserRole";
 import { User } from "../../Domain/models/User";
@@ -48,6 +49,43 @@ export class UserService implements IUserService {
       user.email,
       user.role,
       user.avatar_url
+    );
+  }
+
+  async getPublicKorisnikById(id: number): Promise<PublicUSerDto> {
+    const user = await this.userRepository.getById(id);
+
+    if (user.id === 0){
+      return new PublicUSerDto();
+    }
+
+    return new PublicUSerDto(
+      user.id,
+      user.username,
+      user.first_name,
+      user.last_name,
+      user.bio,
+      user.avatar_url
+    );
+  }
+
+  async searchPublicKorisnici(query: string): Promise<PublicUSerDto[]> {
+    const normalizedQuery = query.trim();
+    if (normalizedQuery.length === 1){
+      return [];
+    }
+
+    const users = await this.userRepository.searchPublic(normalizedQuery);
+
+    return users.map(
+      (user) => new PublicUSerDto(
+        user.id,
+        user.username,
+        user.first_name,
+        user.last_name,
+        user.bio,
+        user.avatar_url
+      )
     );
   }
 }

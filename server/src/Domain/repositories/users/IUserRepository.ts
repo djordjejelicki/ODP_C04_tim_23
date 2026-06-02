@@ -12,4 +12,5 @@ export interface IUserRepository {
   exists(id: number): Promise<boolean>;
   getByEmail(email: string): Promise<User>;
   updateRole(id: number, role: UserRole): Promise<boolean>;
+  searchPublic(query: string): Promise<User[]>;
 }

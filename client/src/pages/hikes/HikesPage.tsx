@@ -4,6 +4,7 @@ import type { HikeParticipantStatus } from "../../types/hikes/HikeParticipant";
 import type { IHikeAPIService } from "../../api_services/hikes/IHikeAPIService";
 import type { IMyTrailAPIService } from "../../api_services/my_trails/IMyTrailAPIService";
 import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
+import { useSearchParams } from "react-router-dom";
 import { formatDate } from "../../helpers/format_date";
 import { Link } from "react-router-dom";
 
@@ -23,6 +24,7 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
     const [inviteHikeId, setInviteHikeId] = useState("");
     const [inviteUsername, setInviteUsername] = useState("");
     const [message, setMessage] = useState("");
+    const [searchParams] = useSearchParams();
 
     const loadData = async () => {
         const hikesData = await hikeApi.getAll();
@@ -33,8 +35,13 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
     };
 
     useEffect(() => {
+        const username = searchParams.get("inviteUsername");
+        if (username){
+            setInviteUsername(username);
+        }
+
         loadData();
-    }, []);
+    }, [searchParams]);
 
     const organizedHikes = hikes.filter((hike) => hike.current_user_status === null);
     const invitationHikes = hikes.filter((hike) => hike.current_user_status !== null);

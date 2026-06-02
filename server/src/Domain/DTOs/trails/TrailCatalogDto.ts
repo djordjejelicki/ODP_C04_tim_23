@@ -1,4 +1,5 @@
 import { TrailDifficulty } from "../../enums/TrailDifficulty";
+import { TerrainTag } from "../../models/TerrainTag";
 
 export class TrailCatalogDto {
     public constructor(
@@ -12,6 +13,7 @@ export class TrailCatalogDto {
         public elevation_m: number = 0,
         public image_url: string = "",
         public created_at: Date | null = null,
-        public average_rating: number | null = null
+        public average_rating: number | null = null,
+        public terrain_tags: TerrainTag[] = []
     ) {}
 }

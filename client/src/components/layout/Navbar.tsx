@@ -1,11 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/auth/useAuthHook";
+import { authApi } from "../../api_services/auth/AuthAPIService";
 
 export function Navbar() {
     const { user, isAuthenticated, logout } = useAuth();
     const navigate = useNavigate();
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await authApi.logout();
+
         logout();
         navigate("/login");        
     };
@@ -22,6 +25,14 @@ export function Navbar() {
                     Trails
                 </Link>
 
+                <Link to="/mountains" className="text-sm font-medium text-gray-700 hover:text-orange-700"
+                >
+                    Mountains
+                </Link>
+                <Link to="/users" className="text-sm font-medium text-gray-700 hover:text-orange-700"
+                >
+                    Users
+                </Link>
                 {isAuthenticated && (
                     <>
                     <Link
