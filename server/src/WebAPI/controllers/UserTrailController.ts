@@ -26,14 +26,14 @@ export class UserTrailController {
             const userId = req.user?.id;
 
             if (!userId) {
-                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
                 return;
             }
 
             const mojeRute = await this.userTrailService.getDetaljiMojihRuta(userId);
             res.status(200).json(mojeRute);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveri" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 
@@ -43,36 +43,40 @@ export class UserTrailController {
             const {trail_id, status} = req.body;
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                res.status(401).json({ success: false, message: "Unauthorized access.", data: null});
                 return;
             }
 
-            const validStatus = status === UserTrailStatus.WANT_TO_HIKE || UserTrailStatus.COMPLETED;
+            const trailId = Number(trail_id);
 
-            if (!Number.isInteger(Number(trail_id)) || Number(trail_id) <= 0){
-                res.status(400).json({ success: false, message: "Ruta nije validna" });
+            const validStatus = 
+                status === UserTrailStatus.WANT_TO_HIKE || 
+                status === UserTrailStatus.COMPLETED;
+
+            if (!Number.isInteger(trailId) || trailId <= 0){
+                res.status(400).json({ success: false, message: "Invalid trail id", data: null });
                 return;
             }
 
             if (!validStatus){
-                res.status(400).json({ success: false, message: "Status nije validan" });
+                res.status(400).json({ success: false, message: "Invalid trail status", data: null });
                 return;
             }
 
-            const novaRuta = await this.userTrailService.dodajRutu(
+            const result = await this.userTrailService.dodajRutu(
                 userId,
-                Number(trail_id),
+                trailId,
                 status as UserTrailStatus
             );
 
-            if (novaRuta.user_id === 0) {
-                res.status(400).json({ success: false, message: "Ruta je vec na vasoj listi."});
+            if (!result.success) {
+                res.status(400).json(result);
                 return;
             }
 
-            res.status(201).json(novaRuta);
+            res.status(201).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 
@@ -82,37 +86,38 @@ export class UserTrailController {
             const trailId = Number(req.params.trailId);
             const { status } = req.body;
 
-            console.log("STATUS iZ BODY: " , status);
             if (!userId) {
-                res.status(401).json({ success: false, message: "Neautorizovan pristup." });
+                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
                 return;
             }
 
-            const validStatus = status === UserTrailStatus.WANT_TO_HIKE || status === UserTrailStatus.COMPLETED;
+            const validStatus = 
+                status === UserTrailStatus.WANT_TO_HIKE || 
+                status === UserTrailStatus.COMPLETED;
 
             if (!Number.isInteger(trailId) || trailId <= 0) {
-                res.status(400).json({ success: false, message: "Ruta nije validna." });
+                res.status(400).json({ success: false, message: "Invalid trail id", data: null });
                 return;
             }
 
             if (!validStatus) {
-                res.status(400).json({ success: false, message: "Status nije validan." });
+                res.status(400).json({ success: false, message: "Invalid trail status", data: null });
                 return;
             }
 
-            const uspesno = await this.userTrailService.promeniStatus(
+            const result = await this.userTrailService.promeniStatus(
                 userId,
                 trailId,
                 status as UserTrailStatus
             );
 
-            if (!uspesno) {
-                res.status(404).json({ success: false, message: "Ruta nije pronadjena na vasoj listi" });
+            if (!result.success) {
+                res.status(404).json(result);
                 return;
             }
-            res.status(200).json({ success: true, message: "Status uspesno izmenjen" });
+            res.status(200).json(result);
         } catch{
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal Server error", data: null });
         }
     }
 
@@ -122,25 +127,25 @@ export class UserTrailController {
             const trailId = Number(req.params.trailId);
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
                 return;
             }
 
             if (!Number.isInteger(trailId) || trailId < 0) {
-                res.status(400).json({ success: false, message: "Ruta nije validna" });
+                res.status(400).json({ success: false, message: "Invalid trail id", data: null });
                 return;
             }
 
-            const uspesno = await this.userTrailService.ukloniRutu(userId, trailId);
+            const result = await this.userTrailService.ukloniRutu(userId, trailId);
 
-            if (!uspesno){
-                res.status(404).json({ success: false, message: "Ruta nije pronadjena na vasoj listi" });
+            if (!result.success){
+                res.status(404).json(result);
                 return;
             }
 
-            res.status(200).json({ success: true, message: "Ruta uspesno uklonjena" });
+            res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 

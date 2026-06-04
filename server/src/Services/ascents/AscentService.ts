@@ -1,10 +1,11 @@
 import { Ascent } from "../../Domain/models/Ascent";
 import { IAscentRepository } from "../../Domain/repositories/ascents/IAscentRepository";
 import { IUserTrailRepository } from "../../Domain/repositories/userTrails/IUserTrailRepository";
-import { IAscentService } from "../../Domain/services/acents/IAscentServuce";
+import { IAscentService } from "../../Domain/services/acents/IAscentService";
 import { UserTrailStatus } from "../../Domain/enums/UserTrailStatus";
 import { AscentDetailsDto } from "../../Domain/DTOs/ascents/AscentDetailsDto";
 import { ITrailRepository } from "../../Domain/repositories/trails/ITrailRepository";
+import { ServiceResult } from "../../Domain/common/ServiceResult";
 
 export class AscentService implements IAscentService {
     
@@ -47,11 +48,18 @@ export class AscentService implements IAscentService {
         return await this.ascentRepository.getById(id);
     }
 
-    async dodajUspon(user_id: number, trail_id: number, ascent_date: Date, duration_min: number, note: string | null, rating: number): Promise<Ascent> {
+    async dodajUspon(
+        user_id: number, 
+        trail_id: number, 
+        ascent_date: Date, 
+        duration_min: number, 
+        note: string | null, 
+        rating: number
+    ): Promise<ServiceResult<Ascent>> {
         const userTrail = await this.userTrailRepository.getOne(user_id, trail_id);
 
         if (userTrail.user_id === 0){
-            return new Ascent();
+            return ServiceResult.fail<Ascent>("Trail must be on your list before recording an ascent");
         }
 
         const noviUspon = new Ascent(
@@ -67,7 +75,7 @@ export class AscentService implements IAscentService {
         const kreiranUspon = await this.ascentRepository.add(noviUspon);
 
         if (kreiranUspon.id === 0){
-            return new Ascent();
+            return ServiceResult.fail<Ascent>("Failed to create ascent.");
         }
 
         await this.userTrailRepository.updateStatus(
@@ -76,15 +84,26 @@ export class AscentService implements IAscentService {
             UserTrailStatus.COMPLETED
         );
 
-        return kreiranUspon;
+        return ServiceResult.ok<Ascent>("Ascent recorded successfully", kreiranUspon);
     }
 
-    async izmeniUspon(user_id: number, id: number, ascent_date: Date, duration_min: number, note: string | null, rating: number): Promise<boolean> {
+    async izmeniUspon(
+        user_id: number, 
+        id: number, 
+        ascent_date: Date, 
+        duration_min: number, 
+        note: string | null, 
+        rating: number
+    ): Promise<ServiceResult<null>> {
         
         const postojeciUspon = await this.ascentRepository.getById(id);
 
-        if (postojeciUspon.id === 0 || postojeciUspon.user_id !== user_id){
-            return false;
+        if (postojeciUspon.id === 0){
+            return ServiceResult.fail<null>("Ascent not found");
+        }
+
+        if (postojeciUspon.user_id !== user_id){
+            return ServiceResult.fail<null>("You can only update your own ascents");
         }
 
         const izmenjeniUspon = new Ascent(
@@ -97,17 +116,33 @@ export class AscentService implements IAscentService {
             rating
         );
 
-        return await this.ascentRepository.update(izmenjeniUspon);
+        const uspesno =  await this.ascentRepository.update(izmenjeniUspon);
+
+        if (!uspesno){
+            return ServiceResult.fail<null>("failed to update ascent");
+        }
+
+        return ServiceResult.ok<null>("Ascent updated successfully");
     }
 
-    async obrisiUspon(user_id: number, id: number): Promise<boolean> {
+    async obrisiUspon(user_id: number, id: number): Promise<ServiceResult<null>> {
         
         const postojeciUspon = await this.ascentRepository.getById(id);
 
-        if (postojeciUspon.id === 0 || postojeciUspon.user_id !== user_id){
-            return false;
+        if (postojeciUspon.id === 0){
+            return ServiceResult.fail<null>("Ascnet not found");
         }
 
-        return await this.ascentRepository.delete(id);
+        if (postojeciUspon.user_id !== user_id){
+            return ServiceResult.fail<null>("You can delete only your own ascnets");
+        }
+
+        const uspesno =  await this.ascentRepository.delete(id);
+
+        if (!uspesno){
+            return ServiceResult.fail<null>("Failed to delete ascent");
+        }
+
+        return ServiceResult.ok<null>("Ascent deleted successfully");
     }
 }

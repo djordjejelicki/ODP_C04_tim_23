@@ -30,7 +30,7 @@ export class TrailController {
             const trails = await this.trailService.getSveRute();
             res.status(200).json(trails);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 
@@ -40,13 +40,13 @@ export class TrailController {
             const trail = await this.trailService.getRutaById(id);
 
             if (trail.id === 0) {
-                res.status(404).json({ success: false, message: "Ruta ne postoji" });
+                res.status(404).json({ success: false, message: "Trail not found", data: null });
                 return;
             }
 
             res.status(200).json(trail);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 
@@ -63,7 +63,9 @@ export class TrailController {
                 terrain_tag_ids
             } = req.body;
 
-            const imageUrl = req.file ? `/uploads/trails${req.file.filename}` : "";
+            const imageUrl = req.file ? `/uploads/trails/${req.file.filename}` : "";
+
+            const terrainIds = Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : [];
 
             const result = validateTrail(
                 Number(mountain_id),
@@ -74,15 +76,15 @@ export class TrailController {
                 Number(est_duration_min),
                 Number(elevation_m),
                 imageUrl,
-                Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : []
+                terrainIds
             );
 
             if (!result.valid){
-                res.status(400).json({ success: false, message: result.message });
+                res.status(400).json({ success: false, message: result.message, data: null });
                 return;
             }
 
-            const trail = await this.trailService.createRuta(
+            const serviceResult = await this.trailService.createRuta(
                 Number(mountain_id),
                 name,
                 description ?? null,
@@ -91,17 +93,17 @@ export class TrailController {
                 Number(est_duration_min),
                 Number(elevation_m),
                 imageUrl,
-                Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : []
+                terrainIds
             );
 
-            if (trail.id === 0){
-                res.status(400).json({ success: false, message: "Kreiranje nije uspelo" });
+            if (!serviceResult.success){
+                res.status(400).json(serviceResult);
                 return;
             }
 
-            res.status(201).json(trail);
+            res.status(201).json(serviceResult);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 
@@ -120,13 +122,13 @@ export class TrailController {
                 terrain_tag_ids
             } = req.body;
 
-            const imageUrl = req.file ? `/uploads/trails/${req.file.filename}` : image_url;
-
+            
             if (!Number.isInteger(id) || id <= 0){
-                res.status(400).json({ success: false, message: "Ruta nije validna" });
+                res.status(400).json({ success: false, message: "Invalid trail id", data: null });
                 return;
             }
-
+            
+            const imageUrl = req.file ? `/uploads/trails/${req.file.filename}` : image_url;
             const terrainIds = Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : [];
 
             const rezultat = validateTrail(
@@ -142,11 +144,11 @@ export class TrailController {
             );
 
             if (!rezultat.valid) {
-                res.status(400).json({ success: false, message: rezultat.message });
+                res.status(400).json({ success: false, message: rezultat.message, data: null });
                 return;
             }
 
-            const uspesno = await this.trailService.updateRuta(
+            const result = await this.trailService.updateRuta(
                 id,
                 Number(mountain_id),
                 name,
@@ -159,14 +161,14 @@ export class TrailController {
                 terrainIds
             );
 
-            if (!uspesno) {
-                res.status(404).json({ success: false, message: "Ruta nije pronadjena ili izmena nije uspela" });
+            if (!result.success) {
+                res.status(404).json(result);
                 return;
             }
 
-            res.status(200).json({ success: true, message: "Ruta uspesno izmenjena" });
+            res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 
@@ -175,20 +177,20 @@ export class TrailController {
             const id = Number(req.params.id);
 
             if (!Number.isInteger(id) || id <= 0){
-                res.status(400).json({ success: false, message: "Ruta nije validna" });
+                res.status(400).json({ success: false, message: "Invalid trail id", data: null });
                 return;
             }
 
-            const uspesno = await this.trailService.deleteRuta(id);
+            const result = await this.trailService.deleteRuta(id);
 
-            if (!uspesno){
-                res.status(400).json({ success: false, message: "Ruta ne moze biti obrisana jer ne postoji ili ima evidentirane uspone"});
+            if (!result.success){
+                res.status(400).json(result);
                 return;
             }
 
-            res.status(200).json({ success: true, message: "Ruta uspesno obrisana"});
+            res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 

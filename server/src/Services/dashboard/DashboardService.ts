@@ -3,7 +3,7 @@ import { UserTrailStatus } from "../../Domain/enums/UserTrailStatus";
 import { IMountainRepository } from "../../Domain/repositories/mountains/IMountainRepository";
 import { ITrailRepository } from "../../Domain/repositories/trails/ITrailRepository";
 import { IUserTrailRepository } from "../../Domain/repositories/userTrails/IUserTrailRepository";
-import { IDashboardService } from "../../Domain/repositories/dashboard/IDashboardService";
+import { IDashboardService } from "../../Domain/services/dashboard/IDashboardService";
 
 export class DashboardService implements IDashboardService {
     public constructor(

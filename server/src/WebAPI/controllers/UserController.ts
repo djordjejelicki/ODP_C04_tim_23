@@ -30,8 +30,8 @@ export class UserController {
 
       res.status(200).json(korisniciPodaci);
       return;
-    } catch (error) {
-      res.status(500).json({ success: false, message: error });
+    } catch {
+      res.status(500).json({ success: false, message: "Internal server error", data: null });
     }
   }
 
@@ -42,17 +42,17 @@ export class UserController {
       const {role} = req.body;
 
       if (!adminId){
-        res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+        res.status(401).json({ success: false, message: "Unauthorized access", data: null });
         return;
       }
 
       if (!Number.isInteger(id) || id <= 0){
-        res.status(400).json({ success: false, message: "Korisnik nije validan" });
+        res.status(400).json({ success: false, message: "Invalid user id", data: null });
         return;
       }
 
       if (adminId === id){
-        res.status(400).json({ success: false, message: "Ne mozete sami sebi menjati ulogu" });
+        res.status(400).json({ success: false, message: "You can not change your own role", data: null });
         return;
       }
 
@@ -60,20 +60,20 @@ export class UserController {
       const validRole = normalizedRole === UserRole.ADMIN || normalizedRole === UserRole.HIKER;
 
       if (!validRole) {
-        res.status(400).json({ success: false, message: "Uloga nije validna"});
+        res.status(400).json({ success: false, message: "Invalid role", data: null});
         return;
       }
 
-      const uspesno = await this.userService.promeniUlogu(id, normalizedRole as UserRole);
+      const result = await this.userService.promeniUlogu(id, normalizedRole as UserRole);
 
-      if (!uspesno) {
-        res.status(404).json({ success: false, message: "Korisnik nije pronadjen" });
+      if (!result.success) {
+        res.status(404).json(result);
         return;
       }
       
-      res.status(200).json({ success: true, message: "Uloga uspesno promenjena" });
+      res.status(200).json(result);
     } catch {
-      res.status(500).json({ success: false, message: "Greska na serveru" });
+      res.status(500).json({ success: false, message: "Internal server error", data: null });
     }
   }
 
@@ -82,20 +82,20 @@ export class UserController {
       const userId = req.user?.id;
 
       if (!userId){
-        res.status(401).json({ success: false, messsage: "Neautorizovan pristup" });
+        res.status(401).json({ success: false, message: "Unauthorized access", data: null });
         return;
       }
 
       const user = await this.userService.getKorisnikById(userId);
 
       if (user.id === 0){
-        res.status(404).json({ success: false, message: "Korisnik nije pronadjen" });
+        res.status(404).json({ success: false, message: "Uset not found", data: null });
         return;
       }
 
       res.status(200).json(user);
     } catch{  
-      res.status(500).json({ success: false, message: "Greska na serveru" });
+      res.status(500).json({ success: false, message: "Internal server error", data: null });
     }
   }
 
@@ -107,7 +107,7 @@ export class UserController {
 
       res.status(200).json(users);
     } catch {
-      res.status(500).json({ success: false, message: "Greska na serveru" });
+      res.status(500).json({ success: false, message: "Internal server error", data: null });
     }
   }
 
@@ -116,20 +116,20 @@ export class UserController {
       const id = Number(req.params.id);
 
       if (!Number.isInteger(id) || id <= 0){
-        res.status(400).json({ success: false, message: "Korisnik nije validan" });
+        res.status(400).json({ success: false, message: "Invali user id", data: null });
         return;
       }
 
       const user = await this.userService.getPublicKorisnikById(id);
 
       if (user.id === 0){
-        res.status(404).json({ success: false, message: "Korisnik nije pronadjen" });
+        res.status(404).json({ success: false, message: "User not found", data: null });
         return;
       }
 
       res.status(200).json(user);
     } catch {
-      res.status(500).json({ success: false, message: "Greska na serveru" });
+      res.status(500).json({ success: false, message: "Internal server error", data: null });
     }
   }
 

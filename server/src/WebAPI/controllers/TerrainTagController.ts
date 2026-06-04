@@ -26,7 +26,7 @@ export class TerrainTagController {
             const tags = await this.terrainTagService.getSviTipoviTerena();
             res.status(200).json(tags);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru"});
+            res.status(500).json({ success: false, message: "Internal server error", data: null});
         }
     }
 
@@ -36,13 +36,13 @@ export class TerrainTagController {
            const tag = await this.terrainTagService.getTipTerenaById(id);
            
            if (tag.id === 0){
-            res.status(404).json({ success: false, message: "Tip terena ne postoji" });
+            res.status(404).json({ success: false, message: "Terrain tag not found", data: null });
             return;
            }
 
            res.status(200).json(tag);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 
@@ -50,16 +50,16 @@ export class TerrainTagController {
         try{
             const {name, description} = req.body;
 
-            const tag = await this.terrainTagService.createTipTerena(name, description ?? null);
+            const result = await this.terrainTagService.createTipTerena(name, description ?? null);
 
-            if (tag.id === 0){
-                res.status(400).json({ success: false, message: "Kreiranje nije uspelo" });
+            if (!result.success){
+                res.status(400).json(result);
                 return;
             }
 
-            res.status(201).json(tag);
+            res.status(201).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru"});
+            res.status(500).json({ success: false, message: "Internal server error", data: null});
         }
     }
 
@@ -68,20 +68,20 @@ export class TerrainTagController {
             const id = Number(req.params.id);
 
             if (!Number.isInteger(id) || id <= 0){
-                res.status(400).json({ success: false, messsage: "Tip terena nije validan" });
+                res.status(400).json({ success: false, message: "Invalid terrain tag id", data: null });
                 return;
             }
 
-            const uspesno = await this.terrainTagService.obrisiTipTerena(id);
+            const result = await this.terrainTagService.obrisiTipTerena(id);
 
-            if (!uspesno){
-                res.status(400).json({ success: false, message: "Tip terena nije pronadjen ili je vezan za neku rutu"});
+            if (!result.success){
+                res.status(400).json(result);
                 return;
             }
 
-            res.status(200).json({ success: true, message: "Tip terena uspesno obrisan" });
+            res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 

@@ -11,6 +11,7 @@ import { TrailCatalogDto } from "../../Domain/DTOs/trails/TrailCatalogDto";
 import { IMountainRepository } from "../../Domain/repositories/mountains/IMountainRepository";
 import fs from "fs";
 import path from "path";
+import { ServiceResult } from "../../Domain/common/ServiceResult";
 
 
 export class TrailService implements ITrailService {
@@ -111,7 +112,25 @@ export class TrailService implements ITrailService {
         );
     }
 
-    async createRuta(mountain_id: number, name: string, description: string | null, length_km: number, difficulty: TrailDifficulty, est_duration_min: number, elevation_m: number, image_url: string, terrain_tag_ids: number[]): Promise<Trail> {
+    async createRuta(
+        mountain_id: number, 
+        name: string, 
+        description: string | null, 
+        length_km: number, 
+        difficulty: TrailDifficulty, 
+        est_duration_min: number, 
+        elevation_m: number, 
+        image_url: string, 
+        terrain_tag_ids: number[]
+    ): Promise<ServiceResult<Trail>> {
+        
+        const mountain = await this.mountainRepository.getById(mountain_id);
+
+        if (mountain.id === 0){
+            return ServiceResult.fail<Trail>("Mountain not found");
+        }
+        
+        
         const novaRuta = new Trail(
             0, 
             mountain_id,
@@ -128,21 +147,38 @@ export class TrailService implements ITrailService {
         const kreiranaRuta =  await this.trailRepository.create(novaRuta);
 
         if (kreiranaRuta.id === 0){
-            return new Trail();
+            return ServiceResult.fail<Trail>("Failed to create trail");
         }
 
         if (terrain_tag_ids.length > 0){
             await this.trailTagRepository.addTagsToTrail(kreiranaRuta.id, terrain_tag_ids);
         }
 
-        return kreiranaRuta;
+        return ServiceResult.ok<Trail>("Trail created successfully", kreiranaRuta);
     }
 
-    async updateRuta(id: number, mountain_id: number, name: string, description: string | null, length_km: number, difficulty: TrailDifficulty, est_duration_min: number, elevation_m: number, image_url: string, terrain_tag_ids: number[]): Promise<boolean> {
+    async updateRuta(
+        id: number, 
+        mountain_id: number, 
+        name: string, 
+        description: string | null, 
+        length_km: number, 
+        difficulty: TrailDifficulty, 
+        est_duration_min: number, 
+        elevation_m: number, 
+        image_url: string, 
+        terrain_tag_ids: number[]
+    ): Promise<ServiceResult<null>> {
         const postojecaRuta = await this.trailRepository.getById(id);
 
         if (postojecaRuta.id === 0) {
-            return false;
+            return ServiceResult.fail<null>("Trail not found");
+        }
+
+        const mountain  = await this.mountainRepository.getById(mountain_id);
+
+        if (mountain.id === 0){
+            return ServiceResult.fail<null>("Mountain not found");
         }
 
         const izmenjenaRuta = new Trail(
@@ -161,7 +197,7 @@ export class TrailService implements ITrailService {
         const uspesno = await this.trailRepository.update(izmenjenaRuta);
 
         if (!uspesno){
-            return false;
+            return ServiceResult.fail<null>("Failed to update trail");
         }
         
         if (postojecaRuta.image_url !== image_url && postojecaRuta.image_url){
@@ -171,36 +207,41 @@ export class TrailService implements ITrailService {
         const obrisaniTagovi = await this.trailTagRepository.deleteTagsForTrail(id);
 
         if (!obrisaniTagovi) {
-            return false;
+            return ServiceResult.fail<null>("Failed to update trail tags");
         }
 
         if (terrain_tag_ids.length > 0){
             await this.trailTagRepository.addTagsToTrail(id, terrain_tag_ids);
         }
 
-        return true;
+        return ServiceResult.ok<null>("Trail updated successfully");
     }
 
-    async deleteRuta(id: number): Promise<boolean> {
+    async deleteRuta(id: number): Promise<ServiceResult<null>> {
         const postojecaRuta = await this.trailRepository.getById(id);
 
         if (postojecaRuta.id === 0){
-            return false;
+            return ServiceResult.fail<null>("Trail not found");
         }
 
         const postojeUsponi = await this.ascentRepository.existsByTrail(id);
         if(postojeUsponi){
-            return false;
+            return ServiceResult.fail<null>("Trail cannot be deleted because it has recorded ascents");
         }
 
-        await this.trailTagRepository.deleteTagsForTrail(id);
+        const obrisaniTagovi = await this.trailTagRepository.deleteTagsForTrail(id);
+
+        if (!obrisaniTagovi){
+            return ServiceResult.fail<null>("Failed to delete trail tags");
+        }
 
         const uspesno =  await this.trailRepository.delete(id);
 
-        if(uspesno){
-            this.deleteTrailImage(postojecaRuta.image_url);
+        if(!uspesno){
+            return ServiceResult.fail<null>("Failed to delte trail");
         }
-
-        return uspesno;
+        
+        this.deleteTrailImage(postojecaRuta.image_url);
+        return ServiceResult.ok<null>("Trail deleted successfully");
     }
 }

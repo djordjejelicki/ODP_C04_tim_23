@@ -1,5 +1,6 @@
 import { AscentDetailsDto } from "../../DTOs/ascents/AscentDetailsDto";
 import { Ascent } from "../../models/Ascent";
+import { ServiceResult } from "../../common/ServiceResult";
 
 export interface IAscentService {
     getMojiUsponi(user_id: number): Promise<Ascent[]>;
@@ -12,7 +13,7 @@ export interface IAscentService {
         duration_min: number,
         note: string | null,
         rating: number
-    ): Promise<Ascent>;
+    ): Promise<ServiceResult<Ascent>>;
     izmeniUspon(
         user_id: number,
         id: number,
@@ -20,6 +21,6 @@ export interface IAscentService {
         duration_min: number,
         note: string | null,
         rating: number
-    ): Promise<boolean>;
-    obrisiUspon(user_id: number, id: number): Promise<boolean>;
+    ): Promise<ServiceResult<null>>;
+    obrisiUspon(user_id: number, id: number): Promise<ServiceResult<null>>;
 }

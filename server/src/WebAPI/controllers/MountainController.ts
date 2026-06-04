@@ -27,7 +27,7 @@ export class MountainController {
             const mountains = await this.mountainService.getSvePlanine();
             res.status(200).json(mountains);
         } catch (error) {
-            res.status(500).json({success: false, message: "Greska na serveru"});
+            res.status(500).json({success: false, message: "Internal server error", data: null});
         }
     }
 
@@ -37,13 +37,13 @@ export class MountainController {
             const mountain = await this.mountainService.getPlaninaById(id);
 
             if (mountain.id === 0){
-                res.status(404).json({ success: false, message: "Planina ne postoji" });
+                res.status(404).json({ success: false, message: "Mountain not found", data: null });
                 return;
             }
 
             res.status(200).json(mountain);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 
@@ -60,11 +60,11 @@ export class MountainController {
             );
 
             if (!rezultat.valid) {
-                res.status(400).json( {success: false, message: rezultat.message });
+                res.status(400).json( {success: false, message: rezultat.message, data: null });
                 return;
             }
 
-            const mountain = await this.mountainService.createPlanina(
+            const result = await this.mountainService.createPlanina(
                 name,
                 country,
                 region ?? null,
@@ -72,14 +72,14 @@ export class MountainController {
                 description ?? null
             );
 
-            if (mountain.id === 0) {
-                res.status(400).json({ success: false, message: "Kreiranje nije uspelo" });
+            if (!result.success) {
+                res.status(400).json(result);
                 return;
             }
 
-            res.status(201).json(mountain);
+            res.status(201).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na server" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 
@@ -89,7 +89,7 @@ export class MountainController {
             const {name, country, region, height, description} = req.body;
 
             if (!Number.isInteger(id) || id <= 0){
-                res.status(400).json({ success: false, message: "Planina nije validna" });
+                res.status(400).json({ success: false, message: "Invalid mountain id", data: null });
                 return;
             }
 
@@ -102,11 +102,11 @@ export class MountainController {
             );
 
             if (!rezultat.valid){
-                res.status(400).json({ success: false, message: rezultat.message });
+                res.status(400).json({ success: false, message: rezultat.message, data: null });
                 return;
             }
 
-            const uspesno = await this.mountainService.updatePlanina(
+            const result = await this.mountainService.updatePlanina(
                 id,
                 name,
                 country,
@@ -115,14 +115,14 @@ export class MountainController {
                 description ?? null
             );
 
-            if (!uspesno){
-                res.status(400).json({ success: false, message: "Planina nije pronadjena ili vec postoji sa tim nazivom" });
+            if (!result.success){
+                res.status(400).json(result);
                 return;
             }
 
-            res.status(200).json({ success: true, message: "Planina uspesno izmenjena" });
+            res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 

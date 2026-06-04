@@ -19,16 +19,16 @@ export class AuthService implements IAuthService {
     const user = await this.userRepository.getByUsername(username);
 
     if (user.id === 0) {
-      return new AuthResultDto(false, "Pogresno korisnicko ime ili lozinka");
+      return new AuthResultDto(false, "Invalid username or password");
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch){
-      return new AuthResultDto(false, "Pogresno korisnicko ime ili lozinka");
+      return new AuthResultDto(false, "Invalid username or password");
     }
 
-    return new AuthResultDto(true, "Uspesna prijava", user.id, user.username, user.role);
+    return new AuthResultDto(true, "Login successful", user.id, user.username, user.role);
   }
 
   async registracija(
@@ -37,18 +37,18 @@ export class AuthService implements IAuthService {
     password: string,
     first_name: string,
     last_name: string,
-    avatar_url: string
+    avatar_url: string | null
   ): Promise<AuthResultDto> {
     const existingUser = await this.userRepository.getByUsername(username);
     
     if (existingUser.id !== 0) {
-      return new AuthResultDto(false, "Korisnicko ime vec postoji.");
+      return new AuthResultDto(false, "Username is already taken");
     }
 
     const existingEmail = await this.userRepository.getByEmail(email);
 
     if (existingEmail.id !== 0){
-      return new AuthResultDto(false, "Email vec postoji");
+      return new AuthResultDto(false, "Email is already taken");
     }
 
     // Hash-ujemo lozinku pre čuvanja
@@ -70,10 +70,10 @@ export class AuthService implements IAuthService {
     );
 
     if (newUser.id === 0){
-      return new AuthResultDto(false, "Registracija nije uspela.");
+      return new AuthResultDto(false, "Registration failed");
     }
 
-    return new AuthResultDto(true, "Uspesna registracija", newUser.id, newUser.username, newUser.role);
+    return new AuthResultDto(true, "Registration successful", newUser.id, newUser.username, newUser.role);
   }
 
   async logout(user_id: number): Promise<boolean> {
@@ -82,7 +82,7 @@ export class AuthService implements IAuthService {
       AuditAction.LOGOUT,
       "auth",
       user_id,
-      "Korisnik se odjavio"
+      "User logged out"
     );
 
     return log.id !== 0;

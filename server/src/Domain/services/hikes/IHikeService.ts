@@ -3,6 +3,8 @@ import { HikeParticipant } from "../../models/HikeParticipant";
 import { HikeParticipantStatus } from "../../enums/HikeParticipantStatus";
 import { HikeWithUserStatusDto } from "../../DTOs/hikes/HikeWithUserStatusDto";
 import { HikeDetailsDto } from "../../DTOs/hikes/HikeDetailsDto";
+import { ServiceResult } from "../../common/ServiceResult";
+import { Serializable } from "node:child_process";
 
 export interface IHikeService {
     getSviPohodi(): Promise<Hike[]>;
@@ -16,13 +18,13 @@ export interface IHikeService {
         description: string | null,
         scheduled_at: Date,
         max_participants: number
-    ): Promise<Hike>;
-    pozoviUcesnika(hike_id: number, organizer_id: number, username: string): Promise<boolean>;
+    ): Promise<ServiceResult<Hike>>;
+    pozoviUcesnika(hike_id: number, organizer_id: number, username: string): Promise<ServiceResult<null>>;
     odgovoriNaPoziv(
         hike_id: number,
         user_id: number,
         status: HikeParticipantStatus
-    ): Promise<boolean>;
+    ): Promise<ServiceResult<null>>;
     getUcesnici(hike_id: number): Promise<HikeParticipant[]>;
     getDetaljiPohoda(hike_id: number): Promise<HikeDetailsDto>;
     izmeniPohod(
@@ -33,8 +35,8 @@ export interface IHikeService {
         description: string | null,
         scheduled_at: Date,
         max_participants: number
-    ): Promise<boolean>;
-    otkaziPohod(id: number, organizer_id: number): Promise<boolean>;
-    ukloniUcesnika(hike_id: number, organizer_id: number, user_id: number): Promise<boolean>;
+    ): Promise<ServiceResult<null>>;
+    otkaziPohod(id: number, organizer_id: number): Promise<ServiceResult<null>>;
+    ukloniUcesnika(hike_id: number, organizer_id: number, user_id: number): Promise<ServiceResult<null>>;
 
 }

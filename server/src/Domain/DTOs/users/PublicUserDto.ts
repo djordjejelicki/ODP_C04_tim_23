@@ -1,4 +1,4 @@
-export class PublicUSerDto {
+export class PublicUserDto {
     public constructor (
         public id: number = 0,
         public username: string = "",

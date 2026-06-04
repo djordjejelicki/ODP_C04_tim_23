@@ -41,7 +41,7 @@ import { UserTrailController } from './WebAPI/controllers/UserTrailController';
 
 import { IAscentRepository } from './Domain/repositories/ascents/IAscentRepository';
 import { AscentRepository } from './Database/repositories/ascents/AscentRepository';
-import { IAscentService } from './Domain/services/acents/IAscentServuce';
+import { IAscentService } from './Domain/services/acents/IAscentService';
 import { AscentService } from './Services/ascents/AscentService';
 import { AscentController } from './WebAPI/controllers/AscentController';
 
@@ -59,7 +59,7 @@ import { IAuditLogService } from './Domain/services/auditLogs/IAuditLogService';
 import { AuditLogService } from './Services/auditLogs/AuditLogService';
 import { AuditLogController } from './WebAPI/controllers/AuditLogController';
 
-import { IDashboardService } from './Domain/repositories/dashboard/IDashboardService';
+import { IDashboardService } from './Domain/services/dashboard/IDashboardService';
 import { DashboardService } from './Services/dashboard/DashboardService';
 import { DashboardController } from './WebAPI/controllers/DashboardController';
 

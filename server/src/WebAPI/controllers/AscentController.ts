@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { IAscentService } from "../../Domain/services/acents/IAscentServuce";
+import { IAscentService } from "../../Domain/services/acents/IAscentService";
 import { authenticate } from "../../Middlewares/authentification/AuthMiddleware";
 import { validateAscent } from "../validators/ascentValidator";
 
@@ -26,14 +26,14 @@ export class AscentController {
             const userId = req.user?.id;
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
                 return;
             }
 
             const usponi = await this.ascentService.getDetaljiMojihUspona(userId);
             res.status(200).json(usponi);
         } catch{
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 
@@ -43,7 +43,7 @@ export class AscentController {
             const {trail_id, ascent_date, duration_min, note, rating} = req.body;
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
                 return;
             }
 
@@ -56,11 +56,11 @@ export class AscentController {
             );
 
             if (!rezultat.valid){
-                res.status(400).json({ success: false, message: rezultat.message });
+                res.status(400).json({ success: false, message: rezultat.message, data: null });
                 return;
             }
 
-            const uspon = await this.ascentService.dodajUspon(
+            const result = await this.ascentService.dodajUspon(
                 userId,
                 Number(trail_id),
                 new Date(ascent_date),
@@ -69,14 +69,14 @@ export class AscentController {
                 Number(rating)
             );
 
-            if (uspon.id === 0){
-                res.status(400).json({ success: false, message: "Uspon nije moguce evidentirati. Ruta mora biti na vasoj listi" });
+            if (!result.success){
+                res.status(400).json(result);
                 return;
             }
 
-            res.status(201).json(uspon);
+            res.status(201).json(result);
         } catch{
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 
@@ -86,25 +86,25 @@ export class AscentController {
             const id = Number(req.params.id);
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
                 return;
             }
 
             if (!Number.isInteger(id) || id <= 0) {
-                res.status(400).json({ success: false, message: "Uspon nije validan" });
+                res.status(400).json({ success: false, message: "Invalid ascent id", data: null });
                 return;
             }
 
             const uspon = await this.ascentService.getUsponById(id);
 
             if (uspon.id === 0 || uspon.user_id !== userId){
-                res.status(404).json({ success: false, message: "Uspon nije pronadjen" });
+                res.status(404).json({ success: false, message: "Ascent not found", data: null });
                 return;
             }
 
             res.status(200).json(uspon);
         } catch{
-            res.status(500).json({ success: false, message: "Greska na serveru"});
+            res.status(500).json({ success: false, message: "Internal server error", data: null});
         }
     }
 
@@ -115,12 +115,12 @@ export class AscentController {
             const {ascent_date, duration_min, note, rating, trail_id} = req.body;
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
                 return;
             }
 
             if (!Number.isInteger(id) || id <= 0){
-                res.status(400).json({ success: false, message: "Uspon nije validan" });
+                res.status(400).json({ success: false, message: "Invalid ascent id", data: null });
                 return;
             }
 
@@ -133,11 +133,11 @@ export class AscentController {
             );
 
             if (!rezultat.valid){
-                res.status(400).json({ success: false, message: rezultat.message });
+                res.status(400).json({ success: false, message: rezultat.message, data: null });
                 return;
             }
 
-            const uspesno = await this.ascentService.izmeniUspon(
+            const result = await this.ascentService.izmeniUspon(
                 userId,
                 id,
                 new Date(ascent_date),
@@ -146,14 +146,14 @@ export class AscentController {
                 Number(rating)
             );
 
-            if (!uspesno) {
-                res.status(404).json({ success: false, message: "Uspon nije Pronadjen" });
+            if (!result.success) {
+                res.status(404).json(result);
                 return;
             }
 
-            res.status(200).json({ success: true, message: "Uspon uspesno izmenjen" });
+            res.status(200).json(result);
         } catch{
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 
@@ -163,24 +163,25 @@ export class AscentController {
             const id = Number(req.params.id);
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Neautorizovan pristup" });
+                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
                 return;
             }
 
             if (!Number.isInteger(id) || id <= 0){
-                res.status(400).json({ success: false, message: "Uspon nije validan" });
+                res.status(400).json({ success: false, message: "Invalid ascent id", data: null });
                 return;
             }
 
-            const uspesno = await this.ascentService.obrisiUspon(userId, id);
+            const result = await this.ascentService.obrisiUspon(userId, id);
 
-            if (!uspesno){
-                res.status(404).json({ success: false, message: "Uspon nije pronadjen" });
+            if (!result.success){
+                res.status(404).json(result);
+                return;
             }
 
-            res.status(200).json({ success: true, message: "Uspon uspesno obrisan" });
+            res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 

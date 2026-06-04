@@ -1,4 +1,5 @@
 import { Mountain } from "../../models/Mountain";
+import { ServiceResult } from "../../common/ServiceResult";
 
 export interface IMountainService {
     getSvePlanine(): Promise<Mountain[]>;
@@ -9,7 +10,7 @@ export interface IMountainService {
         region: string | null,
         height: number,
         description: string | null
-    ) : Promise<Mountain>;
+    ) : Promise<ServiceResult<Mountain>>;
     updatePlanina(
         id: number,
         name: string,
@@ -17,5 +18,5 @@ export interface IMountainService {
         region: string | null,
         height: number,
         description: string | null
-    ): Promise<boolean>;
+    ): Promise<ServiceResult<null>>;
 }

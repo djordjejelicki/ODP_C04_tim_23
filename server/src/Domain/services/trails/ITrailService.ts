@@ -2,6 +2,7 @@ import { TrailCatalogDto } from "../../DTOs/trails/TrailCatalogDto";
 import { Trail } from "../../models/Trail";
 import { TrailDetailsDto } from "../../DTOs/trails/TrailDetailsDto";    
 import { TrailDifficulty } from "../../enums/TrailDifficulty";
+import { ServiceResult } from "../../common/ServiceResult";
 
 export interface ITrailService {
     getSveRute(): Promise<TrailCatalogDto[]>;
@@ -16,7 +17,7 @@ export interface ITrailService {
         elevation_m: number,
         image_url: string,
         terrain_tag_ids: number[]
-    ): Promise<Trail>;
+    ): Promise<ServiceResult<Trail>>;
     updateRuta(
         id: number,
         mountain_id: number,
@@ -28,6 +29,6 @@ export interface ITrailService {
         elevation_m: number,
         image_url: string,
         terrain_tag_ids: number[]
-    ): Promise<boolean>;  
-    deleteRuta(id: number): Promise<boolean>;
+    ): Promise<ServiceResult<null>>;  
+    deleteRuta(id: number): Promise<ServiceResult<null>>;
 }

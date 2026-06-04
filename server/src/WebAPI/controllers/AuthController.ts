@@ -28,31 +28,27 @@ export class AuthController {
       const rezultat = validateLogin(username, password);
 
       if (!rezultat.valid) {
-        res.status(400).json({ success: false, message: rezultat.message });
+        res.status(400).json({ success: false, message: rezultat.message, data: null });
         return;
       }
 
       const result = await this.authService.prijava(username, password);
 
-      // Proveravamo da li je prijava uspešna
-      if (result.success) {
-        // Kreiranje jwt tokena
-        const token = jwt.sign(
-          { 
-            id: result.id, 
-            username: result.username, 
-            role: result.role,
-          }, process.env.JWT_SECRET ?? "", { expiresIn: '6h' });
-
-        res.status(200).json({success: true, message: result.message, data: token});
-        return;
-      } else {
-        res.status(401).json({success: false, message: result.message});
+      if (!result.success){
+        res.status(401).json({success: false, message: result.message, data: null})
         return;
       }
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({success: false, message: error});
+
+      const token = jwt.sign(
+        { 
+          id: result.id, 
+          username: result.username, 
+          role: result.role,
+        }, process.env.JWT_SECRET ?? "", { expiresIn: '6h' });
+
+      res.status(200).json({success: true, message: result.message, data: token});
+    } catch  {
+      res.status(500).json({success: false, message: "Internal server error", data: null});
     }
   }
 
@@ -66,7 +62,7 @@ export class AuthController {
       const rezultat = validateRegister(username, email, password, first_name, last_name);
 
       if (!rezultat.valid) {
-        res.status(400).json({ success: false, message: rezultat.message });
+        res.status(400).json({ success: false, message: rezultat.message, data: null });
         return;
       }
 
@@ -74,23 +70,21 @@ export class AuthController {
         username, email, password, first_name, last_name, avatarUrl 
       );
       
-      // Proveravamo da li je registracija uspešna
-      if (result.success) {
-        // Kreiranje jwt tokena
-        const token = jwt.sign(
-          { 
-            id: result.id, 
-            username: result.username, 
-            role: result.role,
-          }, process.env.JWT_SECRET ?? "", { expiresIn: '6h' });
-
-
-        res.status(201).json({success: true, message: result.message, data: token});
-      } else {
-        res.status(401).json({success: false, message: result.message });
+      if (!result.success){
+        res.status(400).json({ success: false, message: result.message, data: null});
+        return;
       }
-    } catch (error) {
-      res.status(500).json({success: false, message: error});
+
+      const token = jwt.sign(
+        { 
+          id: result.id, 
+          username: result.username, 
+          role: result.role,
+        }, process.env.JWT_SECRET ?? "", { expiresIn: '6h' });
+
+      res.status(201).json({ success: true, message: result.message, data: token});
+    } catch {
+      res.status(500).json({success: false, message: "Internal server error", data: null});
     }
   }
 
@@ -99,20 +93,20 @@ export class AuthController {
       const userId = req.user?.id;
 
       if (!userId){
-        res.status(401).json({ success: false, message: "Neautorizovan pristup"});
+        res.status(401).json({ success: false, message: "Unauthorized access", data: null});
         return;
       }
 
       const uspesno = await this.authService.logout(userId);
 
       if (!uspesno) {
-        res.status(400).json({ success: false, message: "Odjava nije evidentirana" });
+        res.status(400).json({ success: false, message: "Logout could not be recorded", data: null});
         return;
       }
 
-      res.status(200).json({ success: true, message: "Uspesna odjava" });
+      res.status(200).json({ success: true, message: "Logout successful", data: null });
     } catch{
-      res.status(500).json({ success: false, message: "Greska na serveru" });
+      res.status(500).json({ success: false, message: "Internal server error", data: null });
     }
   }
   

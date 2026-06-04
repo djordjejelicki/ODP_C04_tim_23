@@ -1,9 +1,10 @@
-import { PublicUSerDto } from "../../Domain/DTOs/users/PublicUserDto";
+import { PublicUserDto } from "../../Domain/DTOs/users/PublicUserDto";
 import { UserDto } from "../../Domain/DTOs/users/UserDto";
 import { UserRole } from "../../Domain/enums/UserRole";
 import { User } from "../../Domain/models/User";
 import { IUserRepository } from "../../Domain/repositories/users/IUserRepository";
 import { IUserService } from "../../Domain/services/users/IUserService";
+import { ServiceResult } from "../../Domain/common/ServiceResult";
 
 export class UserService implements IUserService {
   public constructor(private userRepository: IUserRepository) {}
@@ -25,14 +26,24 @@ export class UserService implements IUserService {
     return korisniciDto;
   }
 
-  async promeniUlogu(id: number, role: UserRole): Promise<boolean> {
+  async promeniUlogu(id: number, role: UserRole): Promise<ServiceResult<null>> {
     const korisnik = await this.userRepository.getById(id);
 
     if (korisnik.id === 0){
-      return false;
+      return ServiceResult.fail<null>("User not found");
     }
 
-    return await this.userRepository.updateRole(id, role);
+    if (korisnik.role === role){
+      return ServiceResult.fail<null>("User already has this role");
+    }
+
+    const updated =  await this.userRepository.updateRole(id, role);
+
+    if (!updated){
+      return ServiceResult.fail<null>("Failed to update user role");
+    }
+
+    return ServiceResult.ok<null>("User role updated successfully");
   }
 
   async getKorisnikById(id: number): Promise<UserDto> {
@@ -52,14 +63,14 @@ export class UserService implements IUserService {
     );
   }
 
-  async getPublicKorisnikById(id: number): Promise<PublicUSerDto> {
+  async getPublicKorisnikById(id: number): Promise<PublicUserDto> {
     const user = await this.userRepository.getById(id);
 
     if (user.id === 0){
-      return new PublicUSerDto();
+      return new PublicUserDto();
     }
 
-    return new PublicUSerDto(
+    return new PublicUserDto(
       user.id,
       user.username,
       user.first_name,
@@ -69,7 +80,7 @@ export class UserService implements IUserService {
     );
   }
 
-  async searchPublicKorisnici(query: string): Promise<PublicUSerDto[]> {
+  async searchPublicKorisnici(query: string): Promise<PublicUserDto[]> {
     const normalizedQuery = query.trim();
     if (normalizedQuery.length === 1){
       return [];
@@ -78,7 +89,7 @@ export class UserService implements IUserService {
     const users = await this.userRepository.searchPublic(normalizedQuery);
 
     return users.map(
-      (user) => new PublicUSerDto(
+      (user) => new PublicUserDto(
         user.id,
         user.username,
         user.first_name,

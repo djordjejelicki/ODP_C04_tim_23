@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { authenticate } from "../../Middlewares/authentification/AuthMiddleware";
-import { IDashboardService } from "../../Domain/repositories/dashboard/IDashboardService";
+import { IDashboardService } from "../../Domain/services/dashboard/IDashboardService";
 
 export class DashboardController {
     private router: Router;

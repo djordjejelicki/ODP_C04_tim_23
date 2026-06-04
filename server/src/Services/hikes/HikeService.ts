@@ -12,6 +12,8 @@ import { UserTrailStatus } from "../../Domain/enums/UserTrailStatus";
 import { ITrailRepository } from "../../Domain/repositories/trails/ITrailRepository";
 import { HikeDetailsDto } from "../../Domain/DTOs/hikes/HikeDetailsDto";
 import { HikeParticipantDetailsDto } from "../../Domain/DTOs/hikes/HikeParticipantDetailsDto";
+import { ServiceResult } from "../../Domain/common/ServiceResult";
+import { fail } from "node:assert";
 
 export class HikeService implements IHikeService{
     public constructor(
@@ -47,7 +49,21 @@ export class HikeService implements IHikeService{
 
     }
 
-    async kreirajPohod(organizer_id: number, trail_id: number, name: string, description: string | null, scheduled_at: Date, max_participants: number): Promise<Hike> {
+    async kreirajPohod(
+        organizer_id: number, 
+        trail_id: number, 
+        name: string, 
+        description: string | null, 
+        scheduled_at: Date, 
+        max_participants: number
+    ): Promise<ServiceResult<Hike>> {
+
+        const trail = await this.trailRepository.getById(trail_id);
+
+        if (trail_id === 0){
+            return ServiceResult.fail<Hike>("Trail not found");
+        }
+
         const noviPohod = new Hike(
             0,
             organizer_id,
@@ -58,39 +74,45 @@ export class HikeService implements IHikeService{
             max_participants
         );
 
-        return await this.hikeRepository.create(noviPohod);
+        const hike =  await this.hikeRepository.create(noviPohod);
+
+        if (hike.id === 0){
+            return ServiceResult.fail<Hike>("Failed to create hike");
+        }
+
+        return ServiceResult.ok<Hike>("Hike created successfully", hike);
     }
 
-    async pozoviUcesnika(hike_id: number, organizer_id: number, username: string): Promise<boolean> {
+    async pozoviUcesnika(hike_id: number, organizer_id: number, username: string): Promise<ServiceResult<null>> {
         
         const hike = await this.hikeRepository.getById(hike_id);
         
         if (hike.id === 0){
-            return false;
+            return ServiceResult.fail<null>("Hike not found");
         }
         
         if (hike.organizer_id !== organizer_id){
-            return false;
+            return ServiceResult.fail<null>("Only the organizer can invite participants");
         }
 
         if (username.trim().length < 3){
-            return false;
+            return ServiceResult.fail<null>("Invalid username");
         }
 
         const user = await this.userRepository.getByUsername(username.trim());
 
         if (user.id === 0){
-            return false;
+            return ServiceResult.fail<null>("User not found");
         }
 
         if (organizer_id === user.id){
-            return false;
+            return ServiceResult.fail<null>("You cannot invite yourself");
         }
         
         const postojeci = await this.hikeParticipantRepository.getOne(hike_id, user.id);
 
         if (postojeci.hike_id !== 0){
-            return false;
+            return ServiceResult.fail<null>("User is already invited");
         }
 
         const participant = new HikeParticipant(
@@ -100,27 +122,33 @@ export class HikeService implements IHikeService{
             null
         );
 
-        return await this.hikeParticipantRepository.add(participant);
+        const uspesno =  await this.hikeParticipantRepository.add(participant);
+
+        if (!uspesno){
+            return ServiceResult.fail<null>("Failed to send invitation");
+        }
+
+        return ServiceResult.ok<null>("Participant invited successfully");
     }
 
-    async odgovoriNaPoziv(hike_id: number, user_id: number, status: HikeParticipantStatus): Promise<boolean> {
+    async odgovoriNaPoziv(hike_id: number, user_id: number, status: HikeParticipantStatus): Promise<ServiceResult<null>> {
         const postojeci = await this.hikeParticipantRepository.getOne(hike_id, user_id);
 
         if (postojeci.hike_id === 0){
-            return false;
+            return ServiceResult.fail<null>("Invitation not found");
         }
 
         const uspesno = await this.hikeParticipantRepository.updateStatus(hike_id, user_id, status);
 
         if(!uspesno){
-            return false;
+            return ServiceResult.fail<null>("Failed to respond to invitation");
         }
 
         if (status === HikeParticipantStatus.CONFIRMED){
             const hike = await this.hikeRepository.getById(hike_id);
 
             if (hike.id === 0){
-                return false;
+                return ServiceResult.fail<null>("Hike not found");
             }
 
             const postojecaRuta = await this.userTrailRepository.getOne(user_id, hike.trail_id);
@@ -134,11 +162,17 @@ export class HikeService implements IHikeService{
                 );
 
                 const dodataRuta = await this.userTrailRepository.add(novaRuta);
-                return dodataRuta.user_id !== 0;
+                if(dodataRuta.user_id !== 0){
+                    return ServiceResult.fail<null>("Invitation accepted , but failed to add trail to your list");
+                }
+
+                return ServiceResult.ok<null>("Invitation accepted successfully. Trail was added to your list")
             }
+
+            return ServiceResult.ok<null>("Invitation accepted successfully");
         }
 
-        return true;
+        return ServiceResult.ok<null>("Invitation declined successfully");
     }
 
     async getUcesnici(hike_id: number): Promise<HikeParticipant[]> {
@@ -228,15 +262,29 @@ export class HikeService implements IHikeService{
         );
     }
 
-    async izmeniPohod(id: number, organizer_id: number, trail_id: number, name: string, description: string | null, scheduled_at: Date, max_participants: number): Promise<boolean> {
+    async izmeniPohod(
+        id: number, 
+        organizer_id: number, 
+        trail_id: number, 
+        name: string, 
+        description: string | null, 
+        scheduled_at: Date, 
+        max_participants: number
+    ): Promise<ServiceResult<null>> {
         const postojeciPohod = await this.hikeRepository.getById(id);
         
         if (postojeciPohod.id === 0){
-            return false;
+            return ServiceResult.fail<null>("Hike not found");
         }
 
         if (postojeciPohod.organizer_id !== organizer_id){
-            return false;
+            return ServiceResult.fail<null>("Only the organizer can update this hike");
+        }
+
+        const trail = await this.trailRepository.getById(trail_id);
+
+        if (trail.id === 0){
+            return ServiceResult.fail<null>("Trail not found");
         }
 
         const izmenjeniPohod = new Hike(
@@ -249,40 +297,69 @@ export class HikeService implements IHikeService{
             max_participants
         );
 
-        return await this.hikeRepository.update(izmenjeniPohod);
+
+        const uspesno =  await this.hikeRepository.update(izmenjeniPohod);
+
+        if (!uspesno){
+            return ServiceResult.fail<null>("Failed to update hike");
+        }
+
+        return ServiceResult.ok<null>("Hike updated successfully");
     }
 
-    async otkaziPohod(id: number, organizer_id: number): Promise<boolean> {
+    async otkaziPohod(id: number, organizer_id: number): Promise<ServiceResult<null>> {
         const postojeciPohod = await this.hikeRepository.getById(id);
 
         if (postojeciPohod.id === 0){
-            return false;
+            return ServiceResult.fail<null>("Hike not found");
         }
 
         if (postojeciPohod.organizer_id !== organizer_id){
-            return false;
+            return ServiceResult.fail<null>("Only the organizer can cancel this hike");
         }
 
         const obrisaniUcesnici = await this.hikeParticipantRepository.deleteByHike(id);
 
         if (!obrisaniUcesnici) {
-            return false;
+            return ServiceResult.fail<null>("Failed to remove hike participants");
         }
 
-        return await this.hikeRepository.delete(id);
+        const uspesno =  await this.hikeRepository.delete(id);
+
+        if (!uspesno){
+            return ServiceResult.fail<null>("Failed to cancel hike");
+        }
+
+        return ServiceResult.ok<null>("Hike canceled successfully");
     }
 
-    async ukloniUcesnika(hike_id: number, organizer_id: number, user_id: number): Promise<boolean> {
+    async ukloniUcesnika(hike_id: number, organizer_id: number, user_id: number): Promise<ServiceResult<null>> {
         const hike = await this.hikeRepository.getById(hike_id);
 
         if (hike.id === 0){
-            return false;
+            return ServiceResult.fail<null>("Hike not found");
         }
 
         if (hike.organizer_id !== organizer_id){
-            return false;
+            return ServiceResult.fail<null>("Only the organizer can remove participant");
         }
 
-        return await this.hikeParticipantRepository.deleteOne(hike_id, user_id);
+        if (organizer_id === user_id){
+            return ServiceResult.fail<null>("Organizer cannot be removed from the hike");
+        }
+
+        const participant = await this.hikeParticipantRepository.getOne(hike_id, user_id);
+
+        if (participant.hike_id === 0){
+            return ServiceResult.fail<null>("Participant not found");
+        }
+
+        const uspesno =  await this.hikeParticipantRepository.deleteOne(hike_id, user_id);
+
+        if (!uspesno){
+            return ServiceResult.fail<null>("Failed to remove participant");
+        }
+
+        return ServiceResult.ok<null>("Participant removed successfully");
     }
 }

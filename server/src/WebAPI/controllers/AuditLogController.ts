@@ -22,7 +22,7 @@ export class AuditLogController {
             const logs = await this.auditLogService.getSviLogovi();
             res.status(200).json(logs);
         } catch {
-            res.status(500).json({ success: false, message: "Greska na serveru" });
+            res.status(500).json({ success: false, message: "Internal server error", data: null });
         }
     }
 

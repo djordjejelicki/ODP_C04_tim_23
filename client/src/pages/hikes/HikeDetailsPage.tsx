@@ -250,10 +250,10 @@ export default function HikeDetailsPage({ hikeApi }: HikeDetailsPageProps){
                                         className="border rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
                                     >
                                         <div>
+
                                             <p className="font-semibold">
                                                 {participant.username}
                                             </p>
-
                                             <p className="text-sm text-gray-500">
                                                 Responded at:{" "}
                                                 {formatDate(participant.responded_at)}
