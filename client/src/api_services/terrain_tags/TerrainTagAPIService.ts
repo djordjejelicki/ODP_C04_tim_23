@@ -1,6 +1,8 @@
 import { apiClient } from "../apiClient";
 import type { TerrainTag } from "../../types/trails/TrailDetails";
 import type { ITerrainTagAPIService } from "./ITerrainTagAPIService";
+import type { ApiResponse } from "../../types/common/ApiResponse";
+import axios from "axios";
 
 export const terrainTagApi: ITerrainTagAPIService = {
     async getAll(): Promise<TerrainTag[]> {
@@ -13,27 +15,45 @@ export const terrainTagApi: ITerrainTagAPIService = {
         }
     },
 
-    async create(name: string, description: string | null): Promise<boolean> {
+    async create(name: string, description: string | null): Promise<ApiResponse<TerrainTag>> {
         try{
-            await apiClient.post("terrain-tags", {
+            const res = await apiClient.post<ApiResponse<TerrainTag>>("terrain-tags", {
                 name,
                 description
             });
 
-            return true;
+            return res.data;
         } catch(error){
-            console.error("Error creating terrain tag: ", error);
-            return false;
+            let message = "Failed to create terrain tag";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message;
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
 
-    async remove(id: number): Promise<boolean> {
+    async remove(id: number): Promise<ApiResponse> {
         try{
-            await apiClient.delete(`terrain-tags/${id}`);
-            return true;
+            const res = await apiClient.delete<ApiResponse>(`terrain-tags/${id}`);
+            return res.data;
         } catch(error){
-            console.error("Error removin terrain tag: ", error);
-            return false;
+            let message = "Failed to delete terrain tag";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message;
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     }
 }

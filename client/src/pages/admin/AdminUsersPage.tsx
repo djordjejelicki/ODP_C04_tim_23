@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import type { IUsersAPIService } from "../../api_services/users/IUsersAPIService";
-import type { UserDto, UserRole } from "../../types/users/UserDto";
-import { usersApi } from "../../api_services/users/UsersAPIService";
+import type { UserDto } from "../../types/users/UserDto";
+import type { UserRole } from "../../types/users/UserRole";
+import { USER_ROLES } from "../../types/users/UserRole";
 
 type AdminUsersPageProps = {
     userApi: IUsersAPIService;
@@ -18,18 +19,18 @@ export default function AdminUsersPage ({ userApi }: AdminUsersPageProps) {
 
     useEffect(() => {
         loadUsers();
-    },[usersApi]);
+    },[userApi]);
 
     const handleRoleChange = async (id: number, role: UserRole) => {
         setMessage("");
 
-        const success = await userApi.updateRole(id, role);
-        if (!success) {
-            setMessage("Failed to update user role. ");
+        const result = await userApi.updateRole(id, role);
+        if (!result.success) {
+            setMessage(result.message);
             return;
         }
 
-        setMessage("User role updated.");
+        setMessage(result.message);
         await loadUsers();
     };
 
@@ -83,7 +84,7 @@ export default function AdminUsersPage ({ userApi }: AdminUsersPageProps) {
                                     <td className="px-4 py-3">
                                         <span
                                             className={`rounded-full px-3 py-1 text-sm font-semibold ${
-                                                user.role === "admin"
+                                                user.role === USER_ROLES.ADMIN
                                                     ? "bg-red-100 text-red-800"
                                                     : "bg-green-100 text-green-800"
                                             }`}
@@ -93,12 +94,12 @@ export default function AdminUsersPage ({ userApi }: AdminUsersPageProps) {
                                     </td>
 
                                     <td className="px-4 py-3">
-                                        {user.role === "admin" ? (
+                                        {user.role === USER_ROLES.ADMIN ? (
                                             <button
                                                 onClick={() =>
                                                     handleRoleChange(
                                                         user.id,
-                                                        "hiker"
+                                                        USER_ROLES.HIKER
                                                     )
                                                 }
                                                 className="rounded-lg bg-green-700 text-white px-4 py-2 hover:bg-green-800"
@@ -110,7 +111,7 @@ export default function AdminUsersPage ({ userApi }: AdminUsersPageProps) {
                                                 onClick={() =>
                                                     handleRoleChange(
                                                         user.id,
-                                                        "admin"
+                                                        USER_ROLES.ADMIN
                                                     )
                                                 }
                                                 className="rounded-lg bg-red-700 text-white px-4 py-2 hover:bg-red-800"

@@ -1,10 +1,5 @@
-import type { UserTrailStatus } from "./UserTrail";
-
-export type TrailDifficulty = 
-            | "easy"
-            | "moderate"
-            | "hard"
-            | "expert";
+import type { UserTrailStatus } from "./UserTrailStatus";
+import type { TrailDifficulty } from "../trails/TrailDifficulty";
 
 export type UserTrailDetails = {
     user_id: number;

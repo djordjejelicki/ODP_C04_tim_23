@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import type { TerrainTag } from "../../types/trails/TrailDetails";
+import type { TerrainTag } from "../../types/terrain_tags/TerrainTag";
 import type { ITerrainTagAPIService } from "../../api_services/terrain_tags/ITerrainTagAPIService";
+import { validateTerrainTag } from "../../validators/terrainTagValidator";
 
 type AdminTerrainTagsPageProps = {
     terrainTagApi: ITerrainTagAPIService;
@@ -25,33 +26,39 @@ export default function AdminTerrainTagsPage({ terrainTagApi }: AdminTerrainTags
         e.preventDefault();
         setMessage("");
 
-        const success = await terrainTagApi.create(
+        const validation = validateTerrainTag(name, description || null);
+        if (!validation.valid){
+            setMessage(validation.message);
+            return;
+        } 
+
+        const result = await terrainTagApi.create(
             name,
             description || null
         );
 
-        if (!success){
-            setMessage("Failed to create terrain tag.");
+        if (!result.success){
+            setMessage(result.message);
             return;
         }
 
         setName("");
         setDescription("");
-        setMessage("Terrain tag created");
+        setMessage(result.message);
         await loadTags();
     };
 
     const handleDelete = async (id: number) => {
         setMessage("");
 
-        const success = await terrainTagApi.remove(id);
+        const result = await terrainTagApi.remove(id);
 
-        if (!success){
-            setMessage("Failed to delete terrain tag. It may be used by a trail");
+        if (!result.success){
+            setMessage(result.message);
             return;
         }
 
-        setMessage("Terrain tag deleted.");
+        setMessage(result.message);
         await loadTags();
     };
 

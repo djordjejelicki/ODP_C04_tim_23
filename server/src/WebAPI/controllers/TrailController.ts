@@ -65,7 +65,7 @@ export class TrailController {
 
             const imageUrl = req.file ? `/uploads/trails/${req.file.filename}` : "";
 
-            const terrainIds = Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : [];
+            const terrainIds = Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : terrain_tag_ids ? [Number(terrain_tag_ids)] : [];
 
             const result = validateTrail(
                 Number(mountain_id),
@@ -129,7 +129,7 @@ export class TrailController {
             }
             
             const imageUrl = req.file ? `/uploads/trails/${req.file.filename}` : image_url;
-            const terrainIds = Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : [];
+            const terrainIds = Array.isArray(terrain_tag_ids) ? terrain_tag_ids.map(Number) : terrain_tag_ids ? [Number(terrain_tag_ids)] : [];
 
             const rezultat = validateTrail(
                 Number(mountain_id),

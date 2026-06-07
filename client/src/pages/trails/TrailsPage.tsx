@@ -5,8 +5,8 @@ import { TrailCard } from "../../components/trails/TrailCard";
 import type { IMountainAPIService } from "../../api_services/mountains/IMountainAPIService";
 import type { ITerrainTagAPIService } from "../../api_services/terrain_tags/ITerrainTagAPIService";
 import type { Mountain } from "../../types/mountains/Mountain";
-import type { TerrainTag } from "../../types/trails/TrailDetails";
-import type { TrailDifficulty } from "../../types/trails/Trail";
+import type { TerrainTag } from "../../types/terrain_tags/TerrainTag";
+import type { TrailDifficulty } from "../../types/trails/TrailDifficulty";
 
 type TrailsPageProps = {
     trailApi: ITrailAPIService;

@@ -1,4 +1,5 @@
 import { Routes,Route,Navigate } from "react-router-dom";
+import { USER_ROLES } from "./types/users/UserRole";
 
 //apis
 import { authApi } from "./api_services/auth/AuthAPIService";
@@ -65,31 +66,31 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path="/admin" element={
-            <ProtectedRoute requiredRole="admin">
+            <ProtectedRoute requiredRole = {USER_ROLES.ADMIN}>
               <AdminDashboardPage/>
             </ProtectedRoute>
           }
         />
         <Route path="/admin/audit-logs" element={
-            <ProtectedRoute requiredRole="admin">
+            <ProtectedRoute requiredRole= {USER_ROLES.ADMIN}>
               <AdminAuditLogsPage auditLogApi={auditLogApi}/>
             </ProtectedRoute>
           }
         />
         <Route path="/admin/mountains" element={
-          <ProtectedRoute requiredRole="admin">
+          <ProtectedRoute requiredRole= {USER_ROLES.ADMIN} >
             <AdminMountainsPage mountainApi={mountainApi}/>
           </ProtectedRoute>
           }
         />
         <Route path="/admin/terrain-tags" element={
-          <ProtectedRoute requiredRole="admin">
+          <ProtectedRoute requiredRole= {USER_ROLES.ADMIN} >
             <AdminTerrainTagsPage terrainTagApi={terrainTagApi}/>
           </ProtectedRoute>
           }
         />
         <Route path="/admin/trails" element={
-          <ProtectedRoute requiredRole="admin">
+          <ProtectedRoute requiredRole= {USER_ROLES.ADMIN} >
             <AdminTrailsPage
               trailApi={trailApi}
               mountainApi={mountainApi}
@@ -99,7 +100,7 @@ function App() {
           }
         />
         <Route path="/admin/users" element={
-          <ProtectedRoute requiredRole="admin">
+          <ProtectedRoute requiredRole= {USER_ROLES.ADMIN} >
             <AdminUsersPage userApi={usersApi}/>
           </ProtectedRoute>
           }

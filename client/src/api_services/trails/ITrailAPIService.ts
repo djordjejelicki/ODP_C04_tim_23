@@ -1,5 +1,6 @@
 import type { Trail, TrailDifficulty } from "../../types/trails/Trail";
 import type { TrailDetails } from "../../types/trails/TrailDetails";
+import type { ApiResponse } from "../../types/common/ApiResponse";
 
 export interface ITrailAPIService {
     getAll(): Promise<Trail[]>;
@@ -14,7 +15,7 @@ export interface ITrailAPIService {
         elevation_m: number,
         image: File | null,
         terrain_tag_ids: number[]
-    ): Promise<boolean>;
+    ): Promise<ApiResponse<Trail>>;
     update(
         id: number,
         mountain_id: number,
@@ -27,6 +28,6 @@ export interface ITrailAPIService {
         image: File | null,
         image_url: string,
         terrain_tag_ids: number[]
-    ): Promise<boolean>;
-    remove(id: number): Promise<boolean>;
+    ): Promise<ApiResponse>;
+    remove(id: number): Promise<ApiResponse>;
 }

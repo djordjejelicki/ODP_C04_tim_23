@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Mountain } from "../../types/mountains/Mountain";
 import type { IMountainAPIService } from "../../api_services/mountains/IMountainAPIService";
+import { validateMountain } from "../../validators/mountainValidator";
 
 type AdminMountainsPageProps = {
     mountainApi: IMountainAPIService;
@@ -39,7 +40,13 @@ export default function AdminMountainsPage({ mountainApi }: AdminMountainsPagePr
         e.preventDefault();
         setMessage("");
 
-        const success = 
+        const validation = validateMountain(name, country, region || null, Number(height), description || null);
+        if (!validation.valid){
+            setMessage(validation.message);
+            return;
+        }
+
+        const result = 
             editingId === null 
                 ? await mountainApi.create(
                     name,
@@ -57,12 +64,12 @@ export default function AdminMountainsPage({ mountainApi }: AdminMountainsPagePr
                     description || null
                 );
 
-        if (!success){
-            setMessage("Failed to save mountain.");
+        if (!result.success){
+            setMessage(result.message);
             return;
         }
 
-        setMessage(editingId === null ? "Mountain created." : "Mountain updated.");
+        setMessage(result.message);
         resetForm();
         await loadMountains();
     }

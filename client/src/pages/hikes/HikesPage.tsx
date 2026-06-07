@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import type { HikeWithUserStatus } from "../../types/hikes/HikeWithUserStatus";
-import type { HikeParticipantStatus } from "../../types/hikes/HikeParticipant";
+import { HIKE_PARTICIPANT_STATUS, type HikeParticipantStatus } from "../../types/hikes/HikeParticipantStatus";
 import type { IHikeAPIService } from "../../api_services/hikes/IHikeAPIService";
 import type { IMyTrailAPIService } from "../../api_services/my_trails/IMyTrailAPIService";
 import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
 import { useSearchParams } from "react-router-dom";
 import { formatDate } from "../../helpers/format_date";
 import { Link } from "react-router-dom";
+import { validateHike } from "../../validators/hikeValidator";
 
 type HikesPageProps = {
     hikeApi: IHikeAPIService;
@@ -50,7 +51,19 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
         e.preventDefault();
         setMessage("");
 
-        const success = await hikeApi.create(
+        const validation = validateHike(
+            Number(trailId),
+            name,
+            description || null,
+            scheduledAt,
+            Number(maxParticipants)
+        );
+        if (!validation.valid){
+            setMessage(validation.message);
+            return;
+        }
+
+        const result = await hikeApi.create(
             Number(trailId),
             name,
             description || null,
@@ -58,8 +71,8 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
             Number(maxParticipants)
         );
 
-        if (!success) {
-            setMessage("Failed to create hike.");
+        if (!result.success) {
+            setMessage(result.message);
             return;
         }
 
@@ -68,7 +81,7 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
         setDescription("");
         setScheduledAt("");
         setMaxParticipants("");
-        setMessage("Hike created successfully.");
+        setMessage(result.message);
         await loadData();
     };
 
@@ -76,19 +89,19 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
         e.preventDefault();
         setMessage("");
 
-        const success = await hikeApi.invite(
+        const result = await hikeApi.invite(
             Number(inviteHikeId),
             inviteUsername
         );
 
-        if (!success){
-            setMessage("Failed to invite participant.");
+        if (!result.success){
+            setMessage(result.message);
             return;
         }
 
         setInviteHikeId("");
         setInviteUsername("");
-        setMessage("Participant invited successfully.");
+        setMessage(result.message);
         await loadData();
     };
 
@@ -96,14 +109,14 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
         hikeId: number,
         status: HikeParticipantStatus
     ) => {
-        const success = await hikeApi.respond(hikeId, status);
+        const result = await hikeApi.respond(hikeId, status);
 
-        if (!success) {
-            setMessage("Failed ti respond to invite.");
+        if (!result.success) {
+            setMessage(result.message);
             return;
         }
 
-        setMessage(`Invite ${status}`);
+        setMessage(result.message);
         await loadData();
     };
 
@@ -291,17 +304,17 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
                                                 View details
                                             </Link>
 
-                                            {hike.current_user_status === "invited" && (
+                                            {hike.current_user_status === HIKE_PARTICIPANT_STATUS.INVITED && (
                                                 <>
                                                     <button
-                                                        onClick={() => handleRespond(hike.id, "confirmed")}
+                                                        onClick={() => handleRespond(hike.id, HIKE_PARTICIPANT_STATUS.CONFIRMED)}
                                                         className="rounded-lg bg-green-700 text-white px-4 py-2 hover:bg-green-800"
                                                     >
                                                         Confirm
                                                     </button>
 
                                                     <button
-                                                        onClick={() => handleRespond(hike.id, "declined")}
+                                                        onClick={() => handleRespond(hike.id, HIKE_PARTICIPANT_STATUS.DECLINED)}
                                                         className="rounded-lg bg-red-700 text-white px-4 py-2 hover:bg-red-800"
                                                     >
                                                         Decline

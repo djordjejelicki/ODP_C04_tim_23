@@ -2,7 +2,8 @@ import { apiClient } from "../apiClient";
 import type { UserDto, UserRole } from "../../types/users/UserDto";
 import type { PublicUser } from "../../types/users/PublicUser";
 import type { IUsersAPIService } from "./IUsersAPIService";
-
+import type { ApiResponse } from "../../types/common/ApiResponse";
+import axios from "axios";
 
 export const usersApi: IUsersAPIService = {
   async getAll(): Promise<UserDto[]> {
@@ -14,13 +15,22 @@ export const usersApi: IUsersAPIService = {
       return [];
     }
   },
-  async updateRole(id: number, role: UserRole): Promise<boolean> {
+  async updateRole(id: number, role: UserRole): Promise<ApiResponse> {
     try{
-      await apiClient.put(`users/${id}/role`, {role,});
-      return true;
+      const res = await apiClient.put<ApiResponse>(`users/${id}/role`, {role,});
+      return res.data;
     } catch(error){
-      console.error("Error updating user role: ", error);
-      return false;
+        let message = "Failed to update user role.";
+
+        if (axios.isAxiosError(error)) {
+            message = error.response?.data?.message || message;
+        }
+
+        return {
+            success: false,
+            message,
+            data: null
+        };
     }
   },
   async getMe(): Promise<UserDto | null> {

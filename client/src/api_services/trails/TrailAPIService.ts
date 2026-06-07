@@ -1,7 +1,10 @@
 import { apiClient } from "../apiClient";
-import type { Trail, TrailDifficulty } from "../../types/trails/Trail";
+import type { Trail } from "../../types/trails/Trail";
+import type { TrailDifficulty } from "../../types/trails/TrailDifficulty";
 import type { TrailDetails } from "../../types/trails/TrailDetails";
 import type { ITrailAPIService } from "./ITrailAPIService";
+import type { ApiResponse } from "../../types/common/ApiResponse";
+import axios from "axios";
 
 export const trailApi: ITrailAPIService = {
     async getAll(): Promise<Trail[]> {
@@ -13,6 +16,7 @@ export const trailApi: ITrailAPIService = {
             return [];
         }    
     },
+
     async getById(id: number): Promise<TrailDetails | null> {
         try{
             const res = await apiClient.get<TrailDetails>(`trails/${id}`);
@@ -22,6 +26,7 @@ export const trailApi: ITrailAPIService = {
             return null;
         }
     },
+
     async create(
         mountain_id: number, 
         name: string, 
@@ -32,10 +37,10 @@ export const trailApi: ITrailAPIService = {
         elevation_m: number, 
         image: File | null, 
         terrain_tag_ids: number[]
-    ): Promise<boolean> {
+    ): Promise<ApiResponse<Trail>> {
         try{
 
-             const formData = new FormData();
+            const formData = new FormData();
 
             formData.append("mountain_id", String(mountain_id));
             formData.append("name", name);
@@ -53,18 +58,27 @@ export const trailApi: ITrailAPIService = {
                 formData.append("image", image);
             }
 
-            await apiClient.post("trails", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
+            const res =  await apiClient.post<ApiResponse<Trail>>("trails", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
             });
            
-            return true;
+            return res.data;
         } catch(error){
-            console.error("Error creating trail: ", error);
-            return false;
+            let message = "Failed to create trail";
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message;
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
+
     async update(
         id: number, 
         mountain_id: number, 
@@ -77,7 +91,7 @@ export const trailApi: ITrailAPIService = {
         image: File | null, 
         image_url: string, 
         terrain_tag_ids: number[]
-    ): Promise<boolean> {
+    ): Promise<ApiResponse> {
         try{
             const formData = new FormData();
 
@@ -98,24 +112,42 @@ export const trailApi: ITrailAPIService = {
                 formData.append("image", image);
             }
 
-            await apiClient.put(`trails/${id}`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                }
+            const res = await apiClient.put<ApiResponse>(`trails/${id}`, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
             });
-            return true;
+
+            return res.data;
         } catch(error){
-            console.error("Error updating trail: ", error);
-            return false;
+            let message = "Failed to update trail";
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message;
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
-    async remove(id: number): Promise<boolean> {
+    async remove(id: number): Promise<ApiResponse> {
         try{
-            await apiClient.delete(`trails/${id}`);
-            return true;
+            const res = await apiClient.delete<ApiResponse>(`trails/${id}`);
+            return res.data;
         } catch(error){
-            console.error("Error deleting trails: ", error);
-            return false;
+            let message = "Failed to delete trail";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message;
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
 }

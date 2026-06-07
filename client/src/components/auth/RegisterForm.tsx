@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import type { AuthFormProps } from "../../types/props/auth_form_props/AuthFormProps";
+import { validateRegister } from "../../validators/authValidator";
 
 export function RegisterForm({ authApi }: AuthFormProps) {
   
@@ -21,6 +22,12 @@ export function RegisterForm({ authApi }: AuthFormProps) {
 
     if (password !== confirmPassword) {
       setMessage("Passwords do not match.");
+      return;
+    }
+
+    const validation = validateRegister(username, email, password, firstName, lastName);
+    if (!validation.valid){
+      setMessage(validation.message);
       return;
     }
 

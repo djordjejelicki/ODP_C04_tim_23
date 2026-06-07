@@ -1,4 +1,4 @@
-export type UserTrailStatus = "want_to_hike" | "completed";
+import type { UserTrailStatus } from "./UserTrailStatus";
 
 export type UserTrail = {
     user_id: number;

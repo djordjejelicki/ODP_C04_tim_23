@@ -2,6 +2,8 @@ import { apiClient } from "../apiClient";
 import type { Ascent } from "../../types/ascents/Ascent";
 import type { IAscentAPIService } from "./IAscentAPIService";
 import type { AscentDetails } from "../../types/ascents/AscentDetails";
+import type { ApiResponse } from "../../types/common/ApiResponse";
+import axios from "axios";
 
 export const ascentApi: IAscentAPIService = {
     async getAll(): Promise<AscentDetails[]> {
@@ -20,29 +22,47 @@ export const ascentApi: IAscentAPIService = {
         duration_min: number, 
         note: string | null, 
         rating: number
-    ): Promise<boolean> {
+    ): Promise<ApiResponse<Ascent>> {
         try{
-            await apiClient.post("ascents", {
+            const res = await apiClient.post<ApiResponse<Ascent>>("ascents", {
                 trail_id,
                 ascent_date,
                 duration_min,
                 note,
                 rating,
             });
-            return true;
+            return res.data;
         } catch(error){
-            console.error("Error creating ascent: ", error);
-            return false;
+            let message = "Failed to create ascent";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message;
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
 
-    async remove(id: number): Promise<boolean> {
+    async remove(id: number): Promise<ApiResponse> {
         try{
-            await apiClient.delete(`ascents/${id}`);
-            return true;
+            const res = await apiClient.delete<ApiResponse>(`ascents/${id}`);
+            return res.data;
         } catch(error){
-            console.error("Error deleting ascent: ", error);
-            return false;
+            let message = "Failed to delete ascent";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message;
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
 
@@ -53,9 +73,9 @@ export const ascentApi: IAscentAPIService = {
         note: string | null, 
         rating: number, 
         trail_id: number
-    ): Promise<boolean> {
+    ): Promise<ApiResponse> {
         try{
-            await apiClient.put(`ascents/${id}`,{
+            const res = await apiClient.put<ApiResponse>(`ascents/${id}`,{
                 ascent_date,
                 duration_min,
                 note,
@@ -63,10 +83,19 @@ export const ascentApi: IAscentAPIService = {
                 trail_id,
             });
 
-            return true;
+            return res.data;
         } catch(error){
-            console.error("Error updating ascent: ", error);
-            return false;
+            let message = "Failed to update ascent";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message;
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
 };

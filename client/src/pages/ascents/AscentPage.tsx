@@ -4,6 +4,7 @@ import type { IAscentAPIService } from "../../api_services/ascents/IAscentAPISer
 import type { IMyTrailAPIService } from "../../api_services/my_trails/IMyTrailAPIService";
 import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
 import { formatDate } from "../../helpers/format_date";
+import { validateAscent } from "../../validators/ascentValidator";
 
 type AscentsPageProps = {
     ascentApi: IAscentAPIService;
@@ -45,7 +46,19 @@ export default function AscentsPage({ ascentApi, myTrailApi }: AscentsPageProps)
         e.preventDefault();
         setMessage("");
 
-        const success = 
+        const validation = validateAscent(
+            Number(trailId),
+            ascentDate,
+            Number(durationMin),
+            note || null,
+            Number(rating)
+        );
+        if(!validation.valid){
+            setMessage(validation.message);
+            return;
+        }
+
+        const result = 
             editingId === null
                 ? await ascentApi.create(
                     Number(trailId),
@@ -63,28 +76,25 @@ export default function AscentsPage({ ascentApi, myTrailApi }: AscentsPageProps)
                     Number(trailId)
                 );
 
-        if (!success){
-            setMessage(editingId === null 
-                ? "Failed to create ascent. Make sure the trail is on your list." 
-                : "Failed to update ascent"
-            );
+        if (!result.success){
+            setMessage(result.message);
             return;
         }
 
-        setMessage(editingId === null ? "Ascent created successfully." : "Ascent updated successfully");
+        setMessage(result.message);
         resetForm();
         await loadData();
     };
 
     const handleDelete = async (id: number) => {
-        const success = await ascentApi.remove(id);
+        const result = await ascentApi.remove(id);
 
-        if (!success){
-            setMessage("Failed to delete ascent.");
+        if (!result.success){
+            setMessage(result.message);
             return;
         }
 
-        setMessage("Ascent deleted successfully.");
+        setMessage(result.message);
         await loadData();
     };
 

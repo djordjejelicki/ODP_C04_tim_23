@@ -4,6 +4,7 @@ import type { HikeDetails } from "../../types/hikes/HikeDetails";
 import type { IHikeAPIService } from "../../api_services/hikes/IHikeAPIService";
 import { formatDate } from "../../helpers/format_date";
 import { useAuth } from "../../hooks/auth/useAuthHook";
+import { validateHike } from "../../validators/hikeValidator";
 
 type HikeDetailsPageProps = {
     hikeApi: IHikeAPIService;
@@ -42,10 +43,10 @@ export default function HikeDetailsPage({ hikeApi }: HikeDetailsPageProps){
     const handleCancel = async () => {
         if (!details) return;
 
-        const success = await hikeApi.cancel(details.id);
+        const result = await hikeApi.cancel(details.id);
 
-        if(!success){
-            setMessage("Failed to cancel hike.");
+        if(!result.success){
+            setMessage(result.message);
             return;
         }
 
@@ -55,15 +56,15 @@ export default function HikeDetailsPage({ hikeApi }: HikeDetailsPageProps){
     const handleRemoveParticipant = async (userId: number) => {
         if (!details) return;
 
-        const success = await hikeApi.removeParticipant(details.id, userId);
+        const result = await hikeApi.removeParticipant(details.id, userId);
 
-        if(!success){
-            setMessage("Failed to remove participant");
+        if(!result.success){
+            setMessage(result.message);
             return;
         }
 
         await loadDetails();
-        setMessage("Participant removed.");
+        setMessage(result.message);
     }
 
     const startEdit = () => {
@@ -81,7 +82,19 @@ export default function HikeDetailsPage({ hikeApi }: HikeDetailsPageProps){
 
         if (!details) return;
 
-        const success = await hikeApi.update(
+        const validation = validateHike(
+            details.trail_id,
+            editName,
+            editDescription || null,
+            editScheduledAt,
+            Number(editMaxParticipants)
+        );
+        if (!validation.valid){
+            setMessage(validation.message);
+            return;
+        }
+
+        const result = await hikeApi.update(
             details.id,
             details.trail_id,
             editName,
@@ -90,14 +103,14 @@ export default function HikeDetailsPage({ hikeApi }: HikeDetailsPageProps){
             Number(editMaxParticipants)
         );
 
-        if (!success) {
-            setMessage("Failed to update hike. ");
+        if (!result.success) {
+            setMessage(result.message);
             return;
         }
 
         await loadDetails();
         setIsEditing(false);
-        setMessage("Hike updated");
+        setMessage(result.message);
     }
 
     if (isLoading){

@@ -1,4 +1,4 @@
-export type RezultatValidacije = {
-  uspesno: boolean;
-  poruka?: string;
+export type ValidationResult = {
+  valid: boolean;
+  message: string;
 };

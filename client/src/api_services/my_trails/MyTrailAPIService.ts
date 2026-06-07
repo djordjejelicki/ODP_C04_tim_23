@@ -2,6 +2,8 @@ import { apiClient } from "../apiClient";
 import type { IMyTrailAPIService } from "./IMyTrailAPIService";
 import type { UserTrail, UserTrailStatus } from "../../types/my_trails/UserTrail";
 import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
+import type { ApiResponse } from "../../types/common/ApiResponse";
+import axios from "axios";
 
 export const myTrailApi: IMyTrailAPIService = {
     async getAll(): Promise<UserTrailDetails[]> {
@@ -13,31 +15,58 @@ export const myTrailApi: IMyTrailAPIService = {
             return [];
         }
     },
-    async add(trail_id: number, status: UserTrailStatus): Promise<boolean> {
+    async add(trail_id: number, status: UserTrailStatus): Promise<ApiResponse<UserTrail>> {
         try{
-            await apiClient.post("my-trails", {trail_id, status});
-            return true;
+            const res = await apiClient.post<ApiResponse<UserTrail>>("my-trails", {trail_id, status});
+            return res.data;
         } catch(error){
-            console.error("Error adding trail to list: ", error);
-            return false;
+            let message = "Failed to add trail to your list";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message;
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
-    async updateStatus(trail_id: number, status: UserTrailStatus): Promise<boolean> {
+    async updateStatus(trail_id: number, status: UserTrailStatus): Promise<ApiResponse> {
         try{
-            await apiClient.patch(`my-trails/${trail_id}/status`, {status});
-            return true;
+            const res = await apiClient.patch<ApiResponse>(`my-trails/${trail_id}/status`, {status});
+            return res.data;
         } catch(error){
-            console.error("Error updating trail status: ", error);
-            return false;
+            let message = "Failed to update trail status";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message;
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
-    async remove(trail_id: number): Promise<boolean> {
+    async remove(trail_id: number): Promise<ApiResponse> {
         try{
-            await apiClient.delete(`my-trails/${trail_id}`);
-            return true;
+            const res = await apiClient.delete<ApiResponse>(`my-trails/${trail_id}`);
+            return res.data;
         } catch(error){
-            console.error("Error removing trail from list: ", error);
-            return false;
+          let message = "Failed to remove trail from your list";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message;
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     }
 }

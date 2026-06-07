@@ -1,4 +1,4 @@
-export type HikeParticipantStatus = "invited" | "confirmed" | "declined";
+import type { HikeParticipantStatus } from "./HikeParticipantStatus";
 
 export type HikePartipant = {
     hike_id: number;

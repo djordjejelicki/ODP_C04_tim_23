@@ -1,6 +1,8 @@
 import { apiClient } from "../apiClient";
 import type { Mountain } from "../../types/mountains/Mountain";
 import type { IMountainAPIService } from "./IMountainAPIService";
+import type { ApiResponse } from "../../types/common/ApiResponse";
+import axios from "axios";
 
 export const mountainApi: IMountainAPIService = {
     async getAll(): Promise<Mountain[]> {
@@ -19,19 +21,28 @@ export const mountainApi: IMountainAPIService = {
         region: string | null, 
         height: number, 
         description: string | null
-    ): Promise<boolean> {
+    ): Promise<ApiResponse<Mountain>> {
         try{
-            await apiClient.post("mountains", {
+            const res = await apiClient.post<ApiResponse<Mountain>>("mountains", {
                 name,
                 country,
                 region,
                 height,
                 description
             });
-            return true;
+            return res.data;
         } catch(error){
-            console.error("Error creating mountain: ", error);
-            return false
+            let message = "Failed to create mountain";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message ;
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
 
@@ -42,9 +53,9 @@ export const mountainApi: IMountainAPIService = {
         region: string | null, 
         height: number, 
         description: string | null
-    ): Promise<boolean> {
+    ): Promise<ApiResponse> {
         try{
-            await apiClient.put(`mountains/${id}`,{
+            const res = await apiClient.put<ApiResponse>(`mountains/${id}`,{
                 name,
                 country,
                 region,
@@ -52,10 +63,19 @@ export const mountainApi: IMountainAPIService = {
                 description
             });
 
-            return true
+            return res.data;
         } catch(error){
-            console.log("Error updating mountain: ", error);
-            return false;
+            let message = "Failed to update mountain";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message ;
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }     
     },
 }

@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/auth/useAuthHook";
 import { authApi } from "../../api_services/auth/AuthAPIService";
+import { USER_ROLES } from "../../types/users/UserRole";
 
 export function Navbar() {
     const { user, isAuthenticated, logout } = useAuth();
@@ -55,7 +56,7 @@ export function Navbar() {
                     </>
                 )}
 
-                {user?.role === "admin" && (
+                {user?.role === USER_ROLES.ADMIN && (
                     <Link to="/admin" className="text-gray-700 hover:text-orange-700">
                     Admin
                     </Link>

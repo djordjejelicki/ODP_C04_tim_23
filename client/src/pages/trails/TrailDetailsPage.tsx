@@ -8,6 +8,7 @@ import { useAuth } from "../../hooks/auth/useAuthHook";
 import { getImageUrl } from "../../helpers/get_image_url";
 import type { IAscentAPIService } from "../../api_services/ascents/IAscentAPIService";
 import type { AscentDetails } from "../../types/ascents/AscentDetails";
+import { USER_TRAIL_STATUS } from "../../types/my_trails/UserTrailStatus";
 import { formatDate } from "../../helpers/format_date";
 
 type TrailDetailsPageProps = {
@@ -47,56 +48,56 @@ export default function TrailDetailsPage({trailApi, myTrailApi, ascentApi}: Trai
     const handleAddToMyTrails = async () => {
         if (!trail) return;
 
-        const success = await myTrailApi.add(trail.id, "want_to_hike");
+        const result = await myTrailApi.add(trail.id, USER_TRAIL_STATUS.WANT_TO_HIKE);
 
-        if (!success) {
-            setMessage("Failed to add trail to your list.");
+        if (!result.success) {
+            setMessage(result.message);
             return;
         }
 
         setMyTrail({
             user_id: 0,
             trail_id: trail.id,
-            status: "want_to_hike",
+            status: USER_TRAIL_STATUS.WANT_TO_HIKE,
             added_at: new Date().toISOString(),
         });
 
-        setMessage("Trail added to your list");
+        setMessage(result.message);
     };
 
     const handleMarkCompleted = async () => {
         if (!trail) return;
 
-        const success = await myTrailApi.updateStatus(trail.id, "completed");
+        const result = await myTrailApi.updateStatus(trail.id, USER_TRAIL_STATUS.COMPLETED);
 
-        if (!success) {
-            setMessage("Failed to update trail status.");
+        if (!result.success) {
+            setMessage(result.message);
             return;
         }
 
         setMyTrail({
             user_id: myTrail?.user_id ?? 0,
             trail_id: trail.id,
-            status: "completed",
+            status: USER_TRAIL_STATUS.COMPLETED,
             added_at: myTrail?.added_at ?? null
         });
 
-        setMessage("Trail marked as completed.");
+        setMessage(result.message);
 
     };
 
     const handleRemoveFromMyTrails = async () => {
         if (!trail) return;
 
-        const success = await myTrailApi.remove(trail.id);
+        const result = await myTrailApi.remove(trail.id);
 
-        if (!success){
-            setMessage("Failed to remove trail from your list.");
+        if (!result.success){
+            setMessage(result.message);
             return;
         }
 
         setMyTrail(null);
-        setMessage("Trail removed from your list.");
+        setMessage(result.message);
     };
 
     if (isLoading){
@@ -261,7 +262,7 @@ export default function TrailDetailsPage({trailApi, myTrailApi, ascentApi}: Trai
                             Status: {myTrail.status}
                             </span>
 
-                            {myTrail.status !== "completed" && (
+                            {myTrail.status !== USER_TRAIL_STATUS.COMPLETED && (
                             <button
                                 onClick={handleMarkCompleted}
                                 className="rounded-lg bg-green-700 text-white px-5 py-2 font-semibold hover:bg-green-800"

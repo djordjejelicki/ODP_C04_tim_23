@@ -1,10 +1,5 @@
-import type { TerrainTag } from "./TrailDetails";
-
-export type TrailDifficulty = 
-    | "easy"
-    | "moderate"
-    | "hard"
-    | "expert";
+import type { TerrainTag } from "../terrain_tags/TerrainTag";
+import type { TrailDifficulty } from "./TrailDifficulty";
 
 export type Trail = {
     id: number;

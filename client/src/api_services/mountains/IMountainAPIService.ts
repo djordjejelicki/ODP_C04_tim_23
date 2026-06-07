@@ -1,4 +1,5 @@
 import type { Mountain } from "../../types/mountains/Mountain";
+import type { ApiResponse } from "../../types/common/ApiResponse";
 
 export interface IMountainAPIService {
     getAll(): Promise<Mountain[]>;
@@ -8,7 +9,7 @@ export interface IMountainAPIService {
         region: string | null,
         height: number,
         description: string | null
-    ): Promise<boolean>;
+    ): Promise<ApiResponse<Mountain>>;
     update(
         id: number,
         name: string,
@@ -16,5 +17,5 @@ export interface IMountainAPIService {
         region: string | null,
         height: number,
         description: string | null
-    ): Promise<boolean>;
+    ): Promise<ApiResponse>;
 };

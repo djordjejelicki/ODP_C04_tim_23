@@ -3,7 +3,9 @@ import type { IHikeAPIService } from "./IHikeAPIService";
 import type { HikeParticipantStatus } from "../../types/hikes/HikeParticipant";
 import type { HikeWithUserStatus } from "../../types/hikes/HikeWithUserStatus";
 import type { HikeDetails } from "../../types/hikes/HikeDetails";
-
+import type { ApiResponse } from "../../types/common/ApiResponse";
+import type { Hike } from "../../types/hikes/Hike";
+import axios from "axios";
 
 export const hikeApi: IHikeAPIService = {
     async getAll(): Promise<HikeWithUserStatus[]> {
@@ -22,39 +24,66 @@ export const hikeApi: IHikeAPIService = {
         description: string | null, 
         scheduled_at: string, 
         max_participants: number
-    ): Promise<boolean> {
+    ): Promise<ApiResponse<Hike>> {
         try{
-            await apiClient.post("hikes", {
+            const res = await apiClient.post<ApiResponse<Hike>>("hikes", {
                 trail_id,
                 name,
                 description,
                 scheduled_at,
                 max_participants
             });
-            return true;
+            return res.data;
         } catch(error){
-            console.log("Error creating hike: ", error);
-            return false;
+            let message = "Failed to create hike";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
 
-    async invite(hike_id: number, username: string): Promise<boolean> {
+    async invite(hike_id: number, username: string): Promise<ApiResponse> {
         try{
-            await apiClient.post(`hikes/${hike_id}/invite`, {username});
-            return true;
+            const res = await apiClient.post<ApiResponse>(`hikes/${hike_id}/invite`, {username});
+            return res.data;
         } catch(error){
-            console.error("Error inviting participant: ", error);
-            return false;
+            let message = "Failed to invite participant";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
 
-    async respond(hike_id: number, status: HikeParticipantStatus): Promise<boolean> {
+    async respond(hike_id: number, status: HikeParticipantStatus): Promise<ApiResponse> {
         try{
-            await apiClient.patch(`hikes/${hike_id}/respond`, {status});
-            return true;
+            const res = await apiClient.patch<ApiResponse>(`hikes/${hike_id}/respond`, {status});
+            return res.data;
         } catch(error){
-            console.error("Error responding to hike invite: ", error);
-            return false;
+            let message = "Failed to respond to invite";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
 
@@ -75,39 +104,66 @@ export const hikeApi: IHikeAPIService = {
         description: string | null, 
         scheduled_at: string, 
         max_participants: number
-    ): Promise<boolean> {
+    ): Promise<ApiResponse> {
         try{
-            await apiClient.put(`hikes/${id}`,{
+            const res = await apiClient.put<ApiResponse>(`hikes/${id}`,{
                 trail_id,
                 name,
                 description,
                 scheduled_at,
                 max_participants
             });
-            return true;
+            return res.data;
         } catch(error){
-            console.error("Error updating hike: ", error);
-            return false;
+            let message = "Failed to update hike";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
 
-    async cancel(id: number): Promise<boolean> {
+    async cancel(id: number): Promise<ApiResponse> {
         try{
-            await apiClient.delete(`hikes/${id}`);
-            return true;
+            const res = await apiClient.delete<ApiResponse>(`hikes/${id}`);
+            return res.data;
         } catch(error){
-            console.error("Error canceling hike: ", error);
-            return false;
+            let message = "Failed to cancel hike";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
 
-    async removeParticipant(hike_id: number, user_id: number): Promise<boolean> {
+    async removeParticipant(hike_id: number, user_id: number): Promise<ApiResponse> {
         try{
-            await apiClient.delete(`hikes/${hike_id}/participants/${user_id}`);
-            return true;
+            const res = await apiClient.delete<ApiResponse>(`hikes/${hike_id}/participants/${user_id}`);
+            return res.data;
         } catch(error){
-            console.error("Error removing participant: ", error);
-            return false;
+            let message = "Failed to remove participant from hike";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message
+            }
+
+            return {
+                success: false,
+                message,
+                data: null
+            };
         }
     },
 };

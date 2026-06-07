@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import type { AuthFormProps } from "../../types/props/auth_form_props/AuthFormProps";
 import { useAuth } from "../../hooks/auth/useAuthHook";
 import { useState } from "react";
+import { validateLogin } from "../../validators/authValidator";
 
 export function LoginForm({ authApi }: AuthFormProps) {
   const navigate = useNavigate();
@@ -14,6 +15,12 @@ export function LoginForm({ authApi }: AuthFormProps) {
   const submitForm = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage("");
+
+    const validation = validateLogin(username, password);
+    if (!validation.valid){
+      setMessage(validation.message);
+      return;
+    }
 
     const response = await authApi.login(username, password);
 

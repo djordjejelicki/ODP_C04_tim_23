@@ -1,4 +1,3 @@
-import type { UserTrail } from "../../types/my_trails/UserTrail";
 import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
 import { formatDate } from "../../helpers/format_date";
 

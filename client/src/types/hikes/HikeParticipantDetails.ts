@@ -1,4 +1,4 @@
-import type { HikeParticipantStatus } from "./HikeParticipant";
+import type { HikeParticipantStatus } from "./HikeParticipantStatus";
 
 export type HikeParticipantDetials = {
     user_id: number;

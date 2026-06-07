@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import type { Trail, TrailDifficulty } from "../../types/trails/Trail";
+import type { Trail } from "../../types/trails/Trail";
+import type { TrailDifficulty } from "../../types/trails/TrailDifficulty";
 import type { Mountain } from "../../types/mountains/Mountain";
-import type { TerrainTag } from "../../types/trails/TrailDetails";
+import type { TerrainTag } from "../../types/terrain_tags/TerrainTag";
 import type { ITrailAPIService } from "../../api_services/trails/ITrailAPIService";
 import type { IMountainAPIService } from "../../api_services/mountains/IMountainAPIService";
 import type { ITerrainTagAPIService } from "../../api_services/terrain_tags/ITerrainTagAPIService";
 import { getImageUrl } from "../../helpers/get_image_url";
-
+import { validateTrail } from "../../validators/trailValidator";
+import { TRAIL_DIFFICULTIES } from "../../types/trails/TrailDifficulty";
 
 type AdminTrailsPageProps = {
     trailApi: ITrailAPIService;
@@ -75,7 +77,26 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
         e.preventDefault();
         setMessage("");
 
-        const success = 
+        const validation = validateTrail(
+            Number(mountainId), 
+            name, 
+            description || null,
+            Number(lengthKm),
+            difficulty,
+            Number(estDurationMin),
+            Number(elevationM),
+            imageUrl,
+            image,
+            selectedTagIds,
+            editingId !== null
+        );
+
+        if (!validation.valid) {
+            setMessage(validation.message);
+            return;
+        }
+
+        const result = 
             editingId === null
             ? await trailApi.create(
                 Number(mountainId),
@@ -102,12 +123,12 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
                 selectedTagIds
             );
 
-        if (!success){
-            setMessage("Failed to save trail.");
+        if (!result.success){
+            setMessage(result.message);
             return;
         }
 
-        setMessage(editingId === null ? "Trail created." : "Trail updated.");
+        setMessage(result.message);
         resetForm();
         await loadData();
     };
@@ -137,14 +158,14 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
     const handleDelete = async (id: number) => {
         setMessage("");
 
-        const success = await trailApi.remove(id);
+        const result = await trailApi.remove(id);
 
-        if (!success) {
-            setMessage("Failed to delete trail. It may have ascents.");
+        if (!result.success) {
+            setMessage(result.message);
             return;
         }
 
-        setMessage("Trail deleted.");
+        setMessage(result.message);
         await loadData();
     };
 
@@ -197,10 +218,11 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
                         value={difficulty}
                         onChange={(e) => setDifficulty(e.target.value as TrailDifficulty)}
                     >
-                        <option value="easy">Easy</option>
-                        <option value="moderate">Moderate</option>
-                        <option value="hard">Hard</option>
-                        <option value="expert">Expert</option>
+                        {TRAIL_DIFFICULTIES.map((difficulty) => (
+                            <option key={difficulty} value={difficulty}>
+                                {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+                            </option>
+                        ))}
                     </select>
 
                     <input
