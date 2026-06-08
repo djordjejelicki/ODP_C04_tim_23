@@ -2,9 +2,6 @@ import { IAscentRepository } from "../../../Domain/repositories/ascents/IAscentR
 import { Ascent } from "../../../Domain/models/Ascent";
 import { RowDataPacket, ResultSetHeader } from "mysql2";
 import db from "../../connection/DbConnectionPool";
-import { AsyncResource } from "node:async_hooks";
-import { error } from "node:console";
-import { AscentDetailsDto } from "../../../Domain/DTOs/ascents/AscentDetailsDto";
 
 export class AscentRepository implements IAscentRepository {
     

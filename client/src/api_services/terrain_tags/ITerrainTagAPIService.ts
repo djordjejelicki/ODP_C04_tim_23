@@ -1,4 +1,4 @@
-import type { TerrainTag } from "../../types/trails/TrailDetails";
+import type { TerrainTag } from "../../types/terrain_tags/TerrainTag";
 import type { ApiResponse } from "../../types/common/ApiResponse";
 
 export interface ITerrainTagAPIService {

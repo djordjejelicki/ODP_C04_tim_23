@@ -147,4 +147,22 @@ export class TrailRepository implements ITrailRepository {
             return false;
         }
     }
+
+    async existsByMountainId(mountain_id: number): Promise<boolean> {
+        try{
+            const query = `
+                SELECT id
+                FROM trails
+                WHERE mountain_id = ?
+                LIMIT 1
+            `;
+
+            const [rows] = await db.execute<RowDataPacket[]>(query, [mountain_id]);
+            return rows.length > 0;
+
+        } catch(error){
+            console.log("existsByMountainId trail error: ", error);
+            return false;
+        }
+    }
 }

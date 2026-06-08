@@ -26,7 +26,7 @@ export class TerrainTagController {
             const tags = await this.terrainTagService.getSviTipoviTerena();
             res.status(200).json(tags);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null});
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -36,13 +36,13 @@ export class TerrainTagController {
            const tag = await this.terrainTagService.getTipTerenaById(id);
            
            if (tag.id === 0){
-            res.status(404).json({ success: false, message: "Terrain tag not found", data: null });
+            res.status(404).json({ success: false, message: "Terrain tag not found"});
             return;
            }
 
            res.status(200).json(tag);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -59,7 +59,7 @@ export class TerrainTagController {
 
             res.status(201).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null});
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -68,7 +68,7 @@ export class TerrainTagController {
             const id = Number(req.params.id);
 
             if (!Number.isInteger(id) || id <= 0){
-                res.status(400).json({ success: false, message: "Invalid terrain tag id", data: null });
+                res.status(400).json({ success: false, message: "Invalid terrain tag id"});
                 return;
             }
 
@@ -81,7 +81,7 @@ export class TerrainTagController {
 
             res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 

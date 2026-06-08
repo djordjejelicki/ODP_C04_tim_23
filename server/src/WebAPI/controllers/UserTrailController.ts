@@ -26,14 +26,14 @@ export class UserTrailController {
             const userId = req.user?.id;
 
             if (!userId) {
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             const mojeRute = await this.userTrailService.getDetaljiMojihRuta(userId);
             res.status(200).json(mojeRute);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -43,7 +43,7 @@ export class UserTrailController {
             const {trail_id, status} = req.body;
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Unauthorized access.", data: null});
+                res.status(401).json({ success: false, message: "Unauthorized access."});
                 return;
             }
 
@@ -54,12 +54,12 @@ export class UserTrailController {
                 status === UserTrailStatus.COMPLETED;
 
             if (!Number.isInteger(trailId) || trailId <= 0){
-                res.status(400).json({ success: false, message: "Invalid trail id", data: null });
+                res.status(400).json({ success: false, message: "Invalid trail id"});
                 return;
             }
 
             if (!validStatus){
-                res.status(400).json({ success: false, message: "Invalid trail status", data: null });
+                res.status(400).json({ success: false, message: "Invalid trail status"});
                 return;
             }
 
@@ -76,7 +76,7 @@ export class UserTrailController {
 
             res.status(201).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -87,7 +87,7 @@ export class UserTrailController {
             const { status } = req.body;
 
             if (!userId) {
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
@@ -96,12 +96,12 @@ export class UserTrailController {
                 status === UserTrailStatus.COMPLETED;
 
             if (!Number.isInteger(trailId) || trailId <= 0) {
-                res.status(400).json({ success: false, message: "Invalid trail id", data: null });
+                res.status(400).json({ success: false, message: "Invalid trail id"});
                 return;
             }
 
             if (!validStatus) {
-                res.status(400).json({ success: false, message: "Invalid trail status", data: null });
+                res.status(400).json({ success: false, message: "Invalid trail status"});
                 return;
             }
 
@@ -117,7 +117,7 @@ export class UserTrailController {
             }
             res.status(200).json(result);
         } catch{
-            res.status(500).json({ success: false, message: "Internal Server error", data: null });
+            res.status(500).json({ success: false, message: "Internal Server error"});
         }
     }
 
@@ -127,12 +127,12 @@ export class UserTrailController {
             const trailId = Number(req.params.trailId);
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             if (!Number.isInteger(trailId) || trailId < 0) {
-                res.status(400).json({ success: false, message: "Invalid trail id", data: null });
+                res.status(400).json({ success: false, message: "Invalid trail id"});
                 return;
             }
 
@@ -145,7 +145,7 @@ export class UserTrailController {
 
             res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 

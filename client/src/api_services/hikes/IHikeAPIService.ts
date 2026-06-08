@@ -1,4 +1,4 @@
-import type { HikeParticipantStatus } from "../../types/hikes/HikeParticipant";
+import type { HikeParticipantStatus } from "../../types/hikes/HikeParticipantStatus";
 import type { HikeWithUserStatus } from "../../types/hikes/HikeWithUserStatus";
 import type { HikeDetails } from "../../types/hikes/HikeDetails";
 import type { Hike } from "../../types/hikes/Hike";

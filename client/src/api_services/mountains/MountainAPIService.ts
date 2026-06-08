@@ -78,4 +78,24 @@ export const mountainApi: IMountainAPIService = {
             };
         }     
     },
+
+    async remove(id: number): Promise<ApiResponse> {
+        try{
+            const res = await apiClient.delete<ApiResponse>(`mountains/${id}`);
+
+            return res.data;
+        } catch (error){
+            let message = "Failed to delete mountain";
+
+            if (axios.isAxiosError(error)){
+                message = error.response?.data?.message || message;
+            }
+
+            return{
+                success: false,
+                message,
+                data: null
+            }
+        }
+    },
 }

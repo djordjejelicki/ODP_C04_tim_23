@@ -17,7 +17,7 @@ export interface ITrailService {
         elevation_m: number,
         image_url: string,
         terrain_tag_ids: number[]
-    ): Promise<ServiceResult<Trail>>;
+    ): Promise<ServiceResult>;
     updateRuta(
         id: number,
         mountain_id: number,
@@ -29,6 +29,6 @@ export interface ITrailService {
         elevation_m: number,
         image_url: string,
         terrain_tag_ids: number[]
-    ): Promise<ServiceResult<null>>;  
-    deleteRuta(id: number): Promise<ServiceResult<null>>;
+    ): Promise<ServiceResult>;  
+    deleteRuta(id: number): Promise<ServiceResult>;
 }

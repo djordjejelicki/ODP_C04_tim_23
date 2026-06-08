@@ -1,6 +1,7 @@
 import { apiClient } from "../apiClient";
 import type { IMyTrailAPIService } from "./IMyTrailAPIService";
-import type { UserTrail, UserTrailStatus } from "../../types/my_trails/UserTrail";
+import type { UserTrail } from "../../types/my_trails/UserTrail";
+import type { UserTrailStatus } from "../../types/my_trails/UserTrailStatus";
 import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
 import type { ApiResponse } from "../../types/common/ApiResponse";
 import axios from "axios";

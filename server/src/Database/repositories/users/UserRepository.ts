@@ -49,7 +49,7 @@ export class UserRepository implements IUserRepository {
 
   async getById(id: number): Promise<User> {
     try {
-      const query =   `SELECT id, username, email, role, password,first_name, last_name, bio, avatar_url, created_at
+      const query =  `SELECT id, username, email, role, password,first_name, last_name, bio, avatar_url, created_at
                       FROM users
                       WHERE id = ?`;
 
@@ -281,6 +281,55 @@ export class UserRepository implements IUserRepository {
     } catch(error){
       console.log("searchPublic users error: ", error);
       return [];
+    }
+  }
+
+  async updateProfile(
+    id: number, 
+    username: string, 
+    email: string, 
+    first_name: string, 
+    last_name: string, 
+    bio: string | null, 
+    avatar_url: string | null
+  ): Promise<boolean> {
+    try{
+      const query = `
+        UPDATE users
+        SET username = ?, email = ?, first_name = ?, last_name = ?, bio = ?, avatar_url = ?
+        WHERE id = ?
+      `;
+
+      const [result] = await db.execute<ResultSetHeader>(query, [
+        username,
+        email,
+        first_name,
+        last_name,
+        bio,
+        avatar_url,
+        id
+      ]);
+
+      return result.affectedRows > 0;
+    } catch (error){
+      console.log("updateProfile user error: ", error);
+      return false;
+    }
+  }
+
+  async updatePassword(id: number, hashedPassword: string): Promise<boolean> {
+    try{
+      const query = `
+        UPDATE users
+        SET password = ?
+        WHERE id = ?
+      `;
+
+      const [result] = await db.execute<ResultSetHeader>(query, [hashedPassword, id]);
+      return result.affectedRows > 0;
+    } catch(error){
+      console.log("updatePassword user error: ", error);
+      return false;
     }
   }
 }

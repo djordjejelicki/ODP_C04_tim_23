@@ -1,6 +1,6 @@
 import { apiClient } from "../apiClient";
 import type { IHikeAPIService } from "./IHikeAPIService";
-import type { HikeParticipantStatus } from "../../types/hikes/HikeParticipant";
+import type { HikeParticipantStatus } from "../../types/hikes/HikeParticipantStatus";
 import type { HikeWithUserStatus } from "../../types/hikes/HikeWithUserStatus";
 import type { HikeDetails } from "../../types/hikes/HikeDetails";
 import type { ApiResponse } from "../../types/common/ApiResponse";

@@ -6,4 +6,5 @@ export interface IMountainRepository {
     getByNaziv(name : string) : Promise<Mountain>;
     create(mountain : Mountain) : Promise<Mountain>;
     update(mountain : Mountain) : Promise<boolean>;
+    delete(id: number): Promise<boolean>;    
 }

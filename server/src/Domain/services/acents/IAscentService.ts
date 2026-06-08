@@ -13,7 +13,7 @@ export interface IAscentService {
         duration_min: number,
         note: string | null,
         rating: number
-    ): Promise<ServiceResult<Ascent>>;
+    ): Promise<ServiceResult>;
     izmeniUspon(
         user_id: number,
         id: number,
@@ -21,6 +21,6 @@ export interface IAscentService {
         duration_min: number,
         note: string | null,
         rating: number
-    ): Promise<ServiceResult<null>>;
-    obrisiUspon(user_id: number, id: number): Promise<ServiceResult<null>>;
+    ): Promise<ServiceResult>;
+    obrisiUspon(user_id: number, id: number): Promise<ServiceResult>;
 }

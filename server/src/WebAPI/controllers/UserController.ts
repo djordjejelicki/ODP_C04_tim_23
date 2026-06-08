@@ -4,6 +4,8 @@ import { UserDto } from "../../Domain/DTOs/users/UserDto";
 import { authenticate } from "../../Middlewares/authentification/AuthMiddleware";
 import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
 import { UserRole } from "../../Domain/enums/UserRole";
+import { uploadAvatar } from "../../Middlewares/uploads/UploadAvatarMiddleware";
+import { validateUpdateProfile, validateChangePassword } from "../validators/userValidator";
 
 export class UserController {
   private router: Router;
@@ -20,6 +22,8 @@ export class UserController {
     this.router.put("/users/:id/role", authenticate, authorize(UserRole.ADMIN), this.promeniUlogu.bind(this));
     this.router.get("/users/me", authenticate, this.me.bind(this));
     this.router.get("/users/search", this.searchPublic.bind(this));
+    this.router.put("/users/me", authenticate, uploadAvatar.single("avatar"), this.updateProfile.bind(this));
+    this.router.put("/users/me/password", authenticate, this.changePassword.bind(this));
     this.router.get("/users/:id", this.getPublicById.bind(this));
   }
 
@@ -82,20 +86,20 @@ export class UserController {
       const userId = req.user?.id;
 
       if (!userId){
-        res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+        res.status(401).json({ success: false, message: "Unauthorized access"});
         return;
       }
 
       const user = await this.userService.getKorisnikById(userId);
 
       if (user.id === 0){
-        res.status(404).json({ success: false, message: "Uset not found", data: null });
+        res.status(404).json({ success: false, message: "User not found"});
         return;
       }
 
       res.status(200).json(user);
     } catch{  
-      res.status(500).json({ success: false, message: "Internal server error", data: null });
+      res.status(500).json({ success: false, message: "Internal server error"});
     }
   }
 
@@ -107,7 +111,7 @@ export class UserController {
 
       res.status(200).json(users);
     } catch {
-      res.status(500).json({ success: false, message: "Internal server error", data: null });
+      res.status(500).json({ success: false, message: "Internal server error"});
     }
   }
 
@@ -116,20 +120,108 @@ export class UserController {
       const id = Number(req.params.id);
 
       if (!Number.isInteger(id) || id <= 0){
-        res.status(400).json({ success: false, message: "Invali user id", data: null });
+        res.status(400).json({ success: false, message: "Invalid user id"});
         return;
       }
 
       const user = await this.userService.getPublicKorisnikById(id);
 
       if (user.id === 0){
-        res.status(404).json({ success: false, message: "User not found", data: null });
+        res.status(404).json({ success: false, message: "User not found"});
         return;
       }
 
       res.status(200).json(user);
     } catch {
-      res.status(500).json({ success: false, message: "Internal server error", data: null });
+      res.status(500).json({ success: false, message: "Internal server error"});
+    }
+  }
+
+  private async updateProfile(req: Request, res: Response): Promise<void> {
+    try{
+      const userId = req.user?.id;
+
+      if (!userId) {
+        res.status(401).json({ success: false, message: "Unauthorized access"});
+        return;
+      }
+
+      const {
+        username,
+        email,
+        first_name,
+        last_name,
+        bio
+      } = req.body;
+
+      const avatarUrl = req.file
+      ? `/uploads/avatars/${req.file.filename}`
+      : null;
+
+      const validation = validateUpdateProfile(
+        username,
+        email,
+        first_name,
+        last_name,
+        bio ?? null
+      );
+
+      if (!validation.valid){
+        res.status(400).json({ success: false, message: validation.message});
+        return;
+      }
+
+      const result = await this.userService.updateProfile(
+        userId,
+        username,
+        email,
+        first_name,
+        last_name,
+        bio ?? null,
+        avatarUrl
+      );
+
+      if (!result.success) {
+        res.status(400).json(result);
+        return;
+      }
+
+      res.status(200).json(result);
+    } catch {
+      res.status(500).json({success: false, message: "Internal server error"});
+    }
+  }
+
+  private async changePassword(req: Request, res: Response): Promise<void> {
+    try{
+      const userId = req.user?.id;
+
+      if (!userId){
+        res.status(401).json({success: false, message: "Unathorized access"});
+        return;
+      }
+
+      const { currentPassword, newPassword } = req.body;
+
+      const validation = validateChangePassword(currentPassword, newPassword);
+      if (!validation.valid){
+        res.status(400).json({
+          success: false,
+          message: validation.message,
+          data: null
+        })
+        return;
+      }
+
+      const result = await this.userService.changePassword(userId, currentPassword, newPassword);
+
+      if (!result.success){
+        res.status(400).json(result);
+        return;
+      }
+      res.status(200).json(result);
+    } catch {
+      res.status(500).json({ success: false, message: "Internal server error"});
     }
   }
 

@@ -26,14 +26,14 @@ export class AscentController {
             const userId = req.user?.id;
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             const usponi = await this.ascentService.getDetaljiMojihUspona(userId);
             res.status(200).json(usponi);
         } catch{
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -43,7 +43,7 @@ export class AscentController {
             const {trail_id, ascent_date, duration_min, note, rating} = req.body;
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
@@ -56,7 +56,7 @@ export class AscentController {
             );
 
             if (!rezultat.valid){
-                res.status(400).json({ success: false, message: rezultat.message, data: null });
+                res.status(400).json({ success: false, message: rezultat.message });
                 return;
             }
 
@@ -76,7 +76,7 @@ export class AscentController {
 
             res.status(201).json(result);
         } catch{
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -86,25 +86,25 @@ export class AscentController {
             const id = Number(req.params.id);
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             if (!Number.isInteger(id) || id <= 0) {
-                res.status(400).json({ success: false, message: "Invalid ascent id", data: null });
+                res.status(400).json({ success: false, message: "Invalid ascent id"});
                 return;
             }
 
             const uspon = await this.ascentService.getUsponById(id);
 
             if (uspon.id === 0 || uspon.user_id !== userId){
-                res.status(404).json({ success: false, message: "Ascent not found", data: null });
+                res.status(404).json({ success: false, message: "Ascent not found"});
                 return;
             }
 
             res.status(200).json(uspon);
         } catch{
-            res.status(500).json({ success: false, message: "Internal server error", data: null});
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -115,12 +115,12 @@ export class AscentController {
             const {ascent_date, duration_min, note, rating, trail_id} = req.body;
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             if (!Number.isInteger(id) || id <= 0){
-                res.status(400).json({ success: false, message: "Invalid ascent id", data: null });
+                res.status(400).json({ success: false, message: "Invalid ascent id"});
                 return;
             }
 
@@ -133,7 +133,7 @@ export class AscentController {
             );
 
             if (!rezultat.valid){
-                res.status(400).json({ success: false, message: rezultat.message, data: null });
+                res.status(400).json({ success: false, message: rezultat.message});
                 return;
             }
 
@@ -153,7 +153,7 @@ export class AscentController {
 
             res.status(200).json(result);
         } catch{
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -163,12 +163,12 @@ export class AscentController {
             const id = Number(req.params.id);
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             if (!Number.isInteger(id) || id <= 0){
-                res.status(400).json({ success: false, message: "Invalid ascent id", data: null });
+                res.status(400).json({ success: false, message: "Invalid ascent id"});
                 return;
             }
 
@@ -181,7 +181,7 @@ export class AscentController {
 
             res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 

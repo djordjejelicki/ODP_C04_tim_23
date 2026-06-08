@@ -30,7 +30,7 @@ export class TrailController {
             const trails = await this.trailService.getSveRute();
             res.status(200).json(trails);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -40,13 +40,13 @@ export class TrailController {
             const trail = await this.trailService.getRutaById(id);
 
             if (trail.id === 0) {
-                res.status(404).json({ success: false, message: "Trail not found", data: null });
+                res.status(404).json({ success: false, message: "Trail not found"});
                 return;
             }
 
             res.status(200).json(trail);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -80,7 +80,7 @@ export class TrailController {
             );
 
             if (!result.valid){
-                res.status(400).json({ success: false, message: result.message, data: null });
+                res.status(400).json({ success: false, message: result.message});
                 return;
             }
 
@@ -103,7 +103,7 @@ export class TrailController {
 
             res.status(201).json(serviceResult);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -124,7 +124,7 @@ export class TrailController {
 
             
             if (!Number.isInteger(id) || id <= 0){
-                res.status(400).json({ success: false, message: "Invalid trail id", data: null });
+                res.status(400).json({ success: false, message: "Invalid trail id"});
                 return;
             }
             
@@ -144,7 +144,7 @@ export class TrailController {
             );
 
             if (!rezultat.valid) {
-                res.status(400).json({ success: false, message: rezultat.message, data: null });
+                res.status(400).json({ success: false, message: rezultat.message});
                 return;
             }
 
@@ -168,7 +168,7 @@ export class TrailController {
 
             res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -177,7 +177,7 @@ export class TrailController {
             const id = Number(req.params.id);
 
             if (!Number.isInteger(id) || id <= 0){
-                res.status(400).json({ success: false, message: "Invalid trail id", data: null });
+                res.status(400).json({ success: false, message: "Invalid trail id"});
                 return;
             }
 
@@ -190,7 +190,7 @@ export class TrailController {
 
             res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 

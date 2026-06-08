@@ -53,17 +53,17 @@ export class UserTrailService implements IUserTrailService {
         return details;
     }
 
-    async dodajRutu(user_id: number, trail_id: number, status: UserTrailStatus): Promise<ServiceResult<UserTrail>> {
+    async dodajRutu(user_id: number, trail_id: number, status: UserTrailStatus): Promise<ServiceResult> {
         const postojecaRuta = await this.userTrailRepository.getOne(user_id, trail_id);
     
         if (postojecaRuta.user_id !== 0) {
-            return ServiceResult.fail<UserTrail>("Trail is already on your list.");
+            return ServiceResult.fail("Trail is already on your list.");
         }
         
         const trail = await this.trailRepository.getById(trail_id);
 
         if (trail.id === 0){
-            return ServiceResult.fail<UserTrail>("Trail not found");
+            return ServiceResult.fail("Trail not found");
         }
 
         const newTrail = new UserTrail(
@@ -76,17 +76,17 @@ export class UserTrailService implements IUserTrailService {
         const addedTrail = await this.userTrailRepository.add(newTrail);
 
         if (addedTrail.user_id === 0){
-            return ServiceResult.fail<UserTrail>("Failed to add trail");
+            return ServiceResult.fail("Failed to add trail");
         }
 
-        return ServiceResult.ok<UserTrail>("Trail added successfully", addedTrail);
+        return ServiceResult.ok("Trail added successfully");
     }
 
-    async promeniStatus(user_id: number, trail_id: number, status: UserTrailStatus): Promise<ServiceResult<null>> {
+    async promeniStatus(user_id: number, trail_id: number, status: UserTrailStatus): Promise<ServiceResult> {
         const postojecaRuta = await this.userTrailRepository.getOne(user_id, trail_id);
 
         if (postojecaRuta.user_id === 0){
-            return ServiceResult.fail<null>("Trail is not on your list");
+            return ServiceResult.fail("Trail is not on your list");
         }
 
         const uspesno = await this.userTrailRepository.updateStatus(
@@ -96,23 +96,23 @@ export class UserTrailService implements IUserTrailService {
         );
 
         if(!uspesno){
-            return ServiceResult.fail<null>("Failed to update trail status");
+            return ServiceResult.fail("Failed to update trail status");
         }
 
-        return ServiceResult.ok<null>("Trail status updated successfully");
+        return ServiceResult.ok("Trail status updated successfully");
     }
 
-    async ukloniRutu(user_id: number, trail_id: number): Promise<ServiceResult<null>> {
+    async ukloniRutu(user_id: number, trail_id: number): Promise<ServiceResult> {
         const postojecaRuta = await this.userTrailRepository.getOne(user_id, trail_id);
 
         if (postojecaRuta.user_id === 0){
-            return ServiceResult.fail<null>("Trail is not on your list");
+            return ServiceResult.fail("Trail is not on your list");
         }
 
         const imaUspon = await this.ascentRepository.existsByUserAndTrail(user_id, trail_id);
         
         if(imaUspon){
-            return ServiceResult.fail<null>("Trail cannot be removed because it has recored ascents");
+            return ServiceResult.fail("Trail cannot be removed because it has recored ascents");
         }
 
         const organizovaniPohodi = await this.hikeRepository.getByUserId(user_id);
@@ -122,7 +122,7 @@ export class UserTrailService implements IUserTrailService {
         );
 
         if (imaOrganizovanPohod) {
-            return ServiceResult.fail<null>("Trail cannot be removed because it is used in one of your organized hikes");
+            return ServiceResult.fail("Trail cannot be removed because it is used in one of your organized hikes");
         }
 
         const ucesca = await this.hikeParticipantRepository.getByUser(user_id);
@@ -131,16 +131,16 @@ export class UserTrailService implements IUserTrailService {
             const hike = await this.hikeRepository.getById(ucesce.hike_id);
 
             if(hike.id !== 0 && hike.trail_id === trail_id && ucesce.status === HikeParticipantStatus.CONFIRMED){
-                return ServiceResult.fail<null>("Trail cannot be removed because it is used in one of your confirmed hike invitations");
+                return ServiceResult.fail("Trail cannot be removed because it is used in one of your confirmed hike invitations");
             }
         }
 
         const uspesno =  await this.userTrailRepository.delete(user_id, trail_id);
 
         if (!uspesno){
-            return ServiceResult.fail<null>("Failed to remove trail");
+            return ServiceResult.fail("Failed to remove trail");
         }
 
-        return ServiceResult.ok<null>("Trail removed successfully");
+        return ServiceResult.ok("Trail removed successfully");
     }
 }

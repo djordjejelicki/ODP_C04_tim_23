@@ -8,6 +8,7 @@ export class UserDto {
     public last_name: string = "",
     public email: string = "",
     public role: UserRole = UserRole.HIKER,
-    public avatar_url: string | null = null
+    public avatar_url: string | null = null,
+    public bio: string | null = null
   ) {}
 }

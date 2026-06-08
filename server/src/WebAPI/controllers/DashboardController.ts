@@ -21,14 +21,14 @@ export class DashboardController {
             const userId = req.user?.id;
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             const stats = await this.dashboardService.getStats(userId);
             res.status(200).json(stats);
         } catch{
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 

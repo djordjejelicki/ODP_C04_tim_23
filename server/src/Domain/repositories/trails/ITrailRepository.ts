@@ -6,4 +6,5 @@ export interface ITrailRepository {
     create(trail: Trail): Promise<Trail>;
     update(trail: Trail): Promise<boolean>;
     delete(id: number): Promise<boolean>;
+    existsByMountainId(mountain_id: number): Promise<boolean>;
 }

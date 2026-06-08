@@ -20,6 +20,7 @@ export class MountainController {
         this.router.get("/mountains/:id", this.getById.bind(this));
         this.router.post("/mountains", authenticate, authorize(UserRole.ADMIN), this.create.bind(this));
         this.router.put("/mountains/:id", authenticate, authorize(UserRole.ADMIN), this.update.bind(this));
+        this.router.delete("/mountains/:id", authenticate, authorize(UserRole.ADMIN), this.delete.bind(this));
     }
     
     private async getAll(req: Request, res: Response): Promise<void> {
@@ -27,7 +28,7 @@ export class MountainController {
             const mountains = await this.mountainService.getSvePlanine();
             res.status(200).json(mountains);
         } catch (error) {
-            res.status(500).json({success: false, message: "Internal server error", data: null});
+            res.status(500).json({success: false, message: "Internal server error"});
         }
     }
 
@@ -37,13 +38,13 @@ export class MountainController {
             const mountain = await this.mountainService.getPlaninaById(id);
 
             if (mountain.id === 0){
-                res.status(404).json({ success: false, message: "Mountain not found", data: null });
+                res.status(404).json({ success: false, message: "Mountain not found"});
                 return;
             }
 
             res.status(200).json(mountain);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -60,7 +61,7 @@ export class MountainController {
             );
 
             if (!rezultat.valid) {
-                res.status(400).json( {success: false, message: rezultat.message, data: null });
+                res.status(400).json( {success: false, message: rezultat.message});
                 return;
             }
 
@@ -79,7 +80,7 @@ export class MountainController {
 
             res.status(201).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -89,7 +90,7 @@ export class MountainController {
             const {name, country, region, height, description} = req.body;
 
             if (!Number.isInteger(id) || id <= 0){
-                res.status(400).json({ success: false, message: "Invalid mountain id", data: null });
+                res.status(400).json({ success: false, message: "Invalid mountain id"});
                 return;
             }
 
@@ -102,7 +103,7 @@ export class MountainController {
             );
 
             if (!rezultat.valid){
-                res.status(400).json({ success: false, message: rezultat.message, data: null });
+                res.status(400).json({ success: false, message: rezultat.message});
                 return;
             }
 
@@ -122,7 +123,29 @@ export class MountainController {
 
             res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
+        }
+    }
+
+    private async delete(req: Request, res: Response): Promise<void> {
+        try{
+            const id = Number(req.params.id);
+
+            if (!Number.isInteger(id) || id <= 0){
+                res.status(400).json({ success: false, message: "Invalid mountain id"});
+                return;
+            }
+
+            const result = await this.mountainService.deletePlanina(id);
+
+            if (!result.success){
+                res.status(400).json(result);
+                return;
+            }
+
+            res.status(200).json(result);
+        } catch {
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 

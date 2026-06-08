@@ -84,6 +84,20 @@ export default function AdminMountainsPage({ mountainApi }: AdminMountainsPagePr
         setMessage("");
     };
 
+    const handleDelete = async (id: number) => {
+        setMessage("");
+
+        const result = await mountainApi.remove(id);
+
+        if (!result.success) {
+            setMessage(result.message);
+            return;
+        }
+
+        setMessage(result.message);
+        loadMountains();
+    };
+
     return(
         <main className="min-h-screen bg-slate-100">
             <section className="max-w-6xl mx-auto px-6 py-10">
@@ -186,13 +200,20 @@ export default function AdminMountainsPage({ mountainApi }: AdminMountainsPagePr
                                         </p>
                                     )}
                                 </div>
-
-                                <button
-                                    onClick={() => handleEdit(mountain)}
-                                    className="rounded-lg bg-gray-900 text-white px-4 py-2 hover:bg-gray-800"
-                                >
-                                    Edit
-                                </button>
+                                <div className="flex gap-2"> 
+                                    <button
+                                        onClick={() => handleEdit(mountain)}
+                                        className="rounded-lg bg-gray-900 text-white px-4 py-2 hover:bg-gray-800"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(mountain.id)}
+                                        className="rounded-lg bg-red-700 text-white px-4 py-2 hover:bg-red-800"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
                             </div>
                         ))
                     )}

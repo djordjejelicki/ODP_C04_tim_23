@@ -1,15 +1,14 @@
-export class ServiceResult<T> {
-    public constructor(
+export class ServiceResult {
+    private constructor(
         public success: boolean,
         public message: string,
-        public data: T | null = null
     ){}
 
-    public static ok<T>(message: string, data: T | null = null): ServiceResult<T> {
-        return new ServiceResult<T>(true, message, data);
+    static ok(message: string): ServiceResult {
+        return new ServiceResult(true, message);
     }
 
-    public static fail<T>(message: string): ServiceResult<T> {
-        return new ServiceResult<T>(false, message, null);
+    static fail(message: string): ServiceResult {
+        return new ServiceResult(false, message);
     }
 }

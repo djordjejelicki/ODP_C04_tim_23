@@ -1,11 +1,14 @@
-import { serialize, Serializer } from "node:v8";
 import { ServiceResult } from "../../Domain/common/ServiceResult";
 import { Mountain } from "../../Domain/models/Mountain";
 import { IMountainRepository } from "../../Domain/repositories/mountains/IMountainRepository";
+import { ITrailRepository } from "../../Domain/repositories/trails/ITrailRepository";
 import { IMountainService } from "../../Domain/services/mountains/IMountainService";
 
 export class MountainService implements IMountainService{
-    public constructor(private mountainRepository : IMountainRepository){}
+    public constructor(
+        private mountainRepository : IMountainRepository,
+        private trailRepository: ITrailRepository
+    ){}
 
     async getSvePlanine(): Promise<Mountain[]> {
         return await this.mountainRepository.getAll();
@@ -21,11 +24,11 @@ export class MountainService implements IMountainService{
         region: string | null, 
         height: number, 
         description: string | null
-    ): Promise<ServiceResult<Mountain>> {
+    ): Promise<ServiceResult> {
         
         const postojecaPlanina = await this.mountainRepository.getByNaziv(name);
         if(postojecaPlanina.id !== 0){
-            return ServiceResult.fail<Mountain>("Mountain with this name already exists");
+            return ServiceResult.fail("Mountain with this name already exists");
         }
         
         const novaPlanina = new Mountain(
@@ -41,10 +44,10 @@ export class MountainService implements IMountainService{
         const createdMountain =  await this.mountainRepository.create(novaPlanina);
 
         if (createdMountain.id === 0){
-            return ServiceResult.fail<Mountain>("Failed to create mountain");
+            return ServiceResult.fail("Failed to create mountain");
         }
 
-        return ServiceResult.ok<Mountain>("Mountain created successfully", createdMountain);
+        return ServiceResult.ok("Mountain created successfully");
 
     }
 
@@ -55,17 +58,17 @@ export class MountainService implements IMountainService{
         region: string | null, 
         height: number, 
         description: string | null
-    ): Promise<ServiceResult<null>> {
+    ): Promise<ServiceResult> {
         const postojecaPlanina = await this.mountainRepository.getById(id);
 
         if (postojecaPlanina.id === 0){
-            return ServiceResult.fail<null>("Mountain not found");
+            return ServiceResult.fail("Mountain not found");
         }
 
         const planinaSaIstimNazivom = await this.mountainRepository.getByNaziv(name);
 
         if (planinaSaIstimNazivom.id !== 0 && planinaSaIstimNazivom.id !== id){
-            return ServiceResult.fail<null>("Mountain with this name already exists");
+            return ServiceResult.fail("Mountain with this name already exists");
         }
 
         const izmenjenaPlanina = new Mountain(
@@ -81,9 +84,31 @@ export class MountainService implements IMountainService{
         const updated =  await this.mountainRepository.update(izmenjenaPlanina);
 
         if (!updated){
-            return ServiceResult.fail<null>("Failed to update mountain");
+            return ServiceResult.fail("Failed to update mountain");
         }
 
-        return ServiceResult.ok<null>("Mountain updated successfully");
+        return ServiceResult.ok("Mountain updated successfully");
+    }
+
+    async deletePlanina(id: number): Promise<ServiceResult> {
+        const postojecaPlanina = await this.mountainRepository.getById(id);
+
+        if (postojecaPlanina.id === 0){
+            return ServiceResult.fail("Mountain not found");
+        }
+
+        const koristiSe = await this.trailRepository.existsByMountainId(id);
+
+        if (koristiSe){
+            return ServiceResult.fail("Mountain cannot be deleted because it is used by one or more trails");
+        }
+
+        const deleted = await this.mountainRepository.delete(id);
+
+        if (!deleted){
+            return ServiceResult.fail("Failed to delete mountain");
+        }
+
+        return ServiceResult.ok("Mountain deleted successfully");
     }
 }

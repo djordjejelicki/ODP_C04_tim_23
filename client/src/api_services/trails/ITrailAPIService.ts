@@ -1,4 +1,5 @@
-import type { Trail, TrailDifficulty } from "../../types/trails/Trail";
+import type { Trail } from "../../types/trails/Trail";
+import type { TrailDifficulty } from "../../types/trails/TrailDifficulty";
 import type { TrailDetails } from "../../types/trails/TrailDetails";
 import type { ApiResponse } from "../../types/common/ApiResponse";
 

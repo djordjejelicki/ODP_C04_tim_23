@@ -4,7 +4,7 @@ import { HikeParticipantStatus } from "../../enums/HikeParticipantStatus";
 import { HikeWithUserStatusDto } from "../../DTOs/hikes/HikeWithUserStatusDto";
 import { HikeDetailsDto } from "../../DTOs/hikes/HikeDetailsDto";
 import { ServiceResult } from "../../common/ServiceResult";
-import { Serializable } from "node:child_process";
+
 
 export interface IHikeService {
     getSviPohodi(): Promise<Hike[]>;
@@ -18,13 +18,13 @@ export interface IHikeService {
         description: string | null,
         scheduled_at: Date,
         max_participants: number
-    ): Promise<ServiceResult<Hike>>;
-    pozoviUcesnika(hike_id: number, organizer_id: number, username: string): Promise<ServiceResult<null>>;
+    ): Promise<ServiceResult>;
+    pozoviUcesnika(hike_id: number, organizer_id: number, username: string): Promise<ServiceResult>;
     odgovoriNaPoziv(
         hike_id: number,
         user_id: number,
         status: HikeParticipantStatus
-    ): Promise<ServiceResult<null>>;
+    ): Promise<ServiceResult>;
     getUcesnici(hike_id: number): Promise<HikeParticipant[]>;
     getDetaljiPohoda(hike_id: number): Promise<HikeDetailsDto>;
     izmeniPohod(
@@ -35,8 +35,8 @@ export interface IHikeService {
         description: string | null,
         scheduled_at: Date,
         max_participants: number
-    ): Promise<ServiceResult<null>>;
-    otkaziPohod(id: number, organizer_id: number): Promise<ServiceResult<null>>;
-    ukloniUcesnika(hike_id: number, organizer_id: number, user_id: number): Promise<ServiceResult<null>>;
+    ): Promise<ServiceResult>;
+    otkaziPohod(id: number, organizer_id: number): Promise<ServiceResult>;
+    ukloniUcesnika(hike_id: number, organizer_id: number, user_id: number): Promise<ServiceResult>;
 
 }

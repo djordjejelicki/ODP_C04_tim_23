@@ -18,4 +18,5 @@ export interface IMountainAPIService {
         height: number,
         description: string | null
     ): Promise<ApiResponse>;
+    remove(id: number): Promise<ApiResponse>;
 };

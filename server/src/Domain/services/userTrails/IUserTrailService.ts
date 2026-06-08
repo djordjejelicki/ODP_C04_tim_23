@@ -6,7 +6,7 @@ import { ServiceResult } from "../../common/ServiceResult";
 export interface IUserTrailService {
     getMojeRute(user_id: number): Promise<UserTrail[]>;
     getDetaljiMojihRuta(user_id: number): Promise<UserTrailDetailsDto[]>;
-    dodajRutu(user_id: number, trail_id: number, status: UserTrailStatus): Promise<ServiceResult<UserTrail>>;
-    promeniStatus(user_id: number, trail_id: number, status: UserTrailStatus): Promise<ServiceResult<null>>;
-    ukloniRutu(user_id: number, trail_id: number): Promise<ServiceResult<null>>;
+    dodajRutu(user_id: number, trail_id: number, status: UserTrailStatus): Promise<ServiceResult>;
+    promeniStatus(user_id: number, trail_id: number, status: UserTrailStatus): Promise<ServiceResult>;
+    ukloniRutu(user_id: number, trail_id: number): Promise<ServiceResult>;
 }

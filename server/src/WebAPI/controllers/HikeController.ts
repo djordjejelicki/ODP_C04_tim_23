@@ -30,14 +30,14 @@ export class HikeController {
             const userId = req.user?.id;
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             const hikes = await this.hikeService.getPohodiZaKorisnika(userId);
             res.status(200).json(hikes);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -47,7 +47,7 @@ export class HikeController {
             const { trail_id, name, description, scheduled_at, max_participants } = req.body;
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
@@ -60,7 +60,7 @@ export class HikeController {
             );
 
             if (!rezultat.valid) {
-                res.status(400).json({ success: false, message: rezultat.message, data: null });
+                res.status(400).json({ success: false, message: rezultat.message});
                 return;
             }
 
@@ -80,7 +80,7 @@ export class HikeController {
 
             res.status(201).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -90,37 +90,37 @@ export class HikeController {
             const userId = req.user?.id;
 
             if (!userId) {
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             if (!Number.isInteger(id) || id <= 0){
-                res.status(400).json({ success: false, message: "Invalid hike id", data: null });
+                res.status(400).json({ success: false, message: "Invalid hike id"});
                 return;
             }
 
             const hike = await this.hikeService.getPohodById(id);
 
             if (hike.id === 0){
-                res.status(404).json({ success: false, message: "Hike not found", data: null });
+                res.status(404).json({ success: false, message: "Hike not found"});
                 return;
             }
 
             const imaPristup = await this.hikeService.korisnikImaPristupPohodu(id, userId);
 
             if (!imaPristup){
-                res.status(403).json({ success: false, message: "You dont have access to this hike", data: null });
+                res.status(403).json({ success: false, message: "You dont have access to this hike"});
                 return;
             }
 
             const details = await this.hikeService.getDetaljiPohoda(id);
             if (details.id === 0){
-                res.status(404).json({success: false, message: "Hike not found", data: null });
+                res.status(404).json({success: false, message: "Hike not found"});
                 return;
             }
             res.status(200).json(details);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -131,17 +131,17 @@ export class HikeController {
             const { username } = req.body;
 
             if (!organizerId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null});
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             if (!Number.isInteger(hikeId) || hikeId <= 0){
-                res.status(400).json({ success: false, message: "Invalid hike id", data: null });
+                res.status(400).json({ success: false, message: "Invalid hike id"});
                 return;
             }
 
             if (typeof username !== "string" || username.trim().length < 3){
-                res.status(400).json({ success: false, message: "Invalid username", data: null});
+                res.status(400).json({ success: false, message: "Invalid username"});
                 return;
             }
 
@@ -154,7 +154,7 @@ export class HikeController {
 
             res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -165,12 +165,12 @@ export class HikeController {
             const {status} = req.body;
 
             if (!userId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             if (!Number.isInteger(hikeId) || hikeId <= 0){
-                res.status(400).json({ success: false, message: "Invalid hike id", data: null });
+                res.status(400).json({ success: false, message: "Invalid hike id"});
                 return;
             }
 
@@ -181,7 +181,7 @@ export class HikeController {
                 normalizedStatus === HikeParticipantStatus.DECLINED;
             
             if (!validStatus) {
-                res.status(400).json({ success: false, message: "Invalid response status", data: null });
+                res.status(400).json({ success: false, message: "Invalid response status"});
                 return;
             }
 
@@ -198,7 +198,7 @@ export class HikeController {
 
             res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -209,12 +209,12 @@ export class HikeController {
             const { trail_id, name, description, scheduled_at, max_participants } = req.body;
 
             if (!organizerId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             if (!Number.isInteger(hikeId) || hikeId <= 0){
-                res.status(400).json({ success: false, message: "Invalid hike id", data: null });
+                res.status(400).json({ success: false, message: "Invalid hike id"});
                 return;
             }
 
@@ -227,7 +227,7 @@ export class HikeController {
             );
 
             if (!rezultat.valid){
-                res.status(400).json({ success: false, message: rezultat.message, data: null });
+                res.status(400).json({ success: false, message: rezultat.message});
                 return;
             }
 
@@ -248,7 +248,7 @@ export class HikeController {
 
             res.status(200).json(result);
         } catch {
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -258,12 +258,12 @@ export class HikeController {
             const hikeId = Number(req.params.id);
 
             if (!organizerId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             if (!Number.isInteger(hikeId) || hikeId <= 0){
-                res.status(400).json({ success: false, message: "Invalid hike id", data: null });
+                res.status(400).json({ success: false, message: "Invalid hike id"});
                 return;
             }
 
@@ -276,7 +276,7 @@ export class HikeController {
 
             res.status(200).json(result);
         } catch{
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 
@@ -287,17 +287,17 @@ export class HikeController {
             const userId = Number(req.params.userId);
 
             if (!organizerId){
-                res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+                res.status(401).json({ success: false, message: "Unauthorized access"});
                 return;
             }
 
             if (!Number.isInteger(hikeId) || hikeId <= 0){
-                res.status(400).json({ success: false, message: "Invalid hike id", data: null });
+                res.status(400).json({ success: false, message: "Invalid hike id"});
                 return;
             }
 
             if (!Number.isInteger(userId) || userId <= 0){
-                res.status(400).json({ success: false, message: "Invalid user id", data: null });
+                res.status(400).json({ success: false, message: "Invalid user id"});
                 return;
             }
 
@@ -310,7 +310,7 @@ export class HikeController {
 
             res.status(200).json(result);
         } catch{
-            res.status(500).json({ success: false, message: "Internal server error", data: null });
+            res.status(500).json({ success: false, message: "Internal server error"});
         }
     }
 

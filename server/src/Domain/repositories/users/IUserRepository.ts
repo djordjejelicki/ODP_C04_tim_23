@@ -13,4 +13,17 @@ export interface IUserRepository {
   getByEmail(email: string): Promise<User>;
   updateRole(id: number, role: UserRole): Promise<boolean>;
   searchPublic(query: string): Promise<User[]>;
+  updateProfile(
+    id: number,
+    username: string,
+    email: string,
+    first_name: string,
+    last_name: string,
+    bio: string | null,
+    avatar_url: string | null
+  ): Promise<boolean>;
+  updatePassword(
+    id: number,
+    hashedPassword: string
+  ): Promise<boolean>;
 }

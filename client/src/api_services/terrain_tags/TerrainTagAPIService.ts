@@ -1,5 +1,5 @@
 import { apiClient } from "../apiClient";
-import type { TerrainTag } from "../../types/trails/TrailDetails";
+import type { TerrainTag } from "../../types/terrain_tags/TerrainTag";
 import type { ITerrainTagAPIService } from "./ITerrainTagAPIService";
 import type { ApiResponse } from "../../types/common/ApiResponse";
 import axios from "axios";

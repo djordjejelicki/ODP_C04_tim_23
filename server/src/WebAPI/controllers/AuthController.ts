@@ -28,14 +28,14 @@ export class AuthController {
       const rezultat = validateLogin(username, password);
 
       if (!rezultat.valid) {
-        res.status(400).json({ success: false, message: rezultat.message, data: null });
+        res.status(400).json({ success: false, message: rezultat.message});
         return;
       }
 
       const result = await this.authService.prijava(username, password);
 
       if (!result.success){
-        res.status(401).json({success: false, message: result.message, data: null})
+        res.status(401).json({success: false, message: result.message})
         return;
       }
 
@@ -48,7 +48,7 @@ export class AuthController {
 
       res.status(200).json({success: true, message: result.message, data: token});
     } catch  {
-      res.status(500).json({success: false, message: "Internal server error", data: null});
+      res.status(500).json({success: false, message: "Internal server error"});
     }
   }
 
@@ -62,7 +62,7 @@ export class AuthController {
       const rezultat = validateRegister(username, email, password, first_name, last_name);
 
       if (!rezultat.valid) {
-        res.status(400).json({ success: false, message: rezultat.message, data: null });
+        res.status(400).json({ success: false, message: rezultat.message});
         return;
       }
 
@@ -71,7 +71,7 @@ export class AuthController {
       );
       
       if (!result.success){
-        res.status(400).json({ success: false, message: result.message, data: null});
+        res.status(400).json({ success: false, message: result.message});
         return;
       }
 
@@ -84,7 +84,7 @@ export class AuthController {
 
       res.status(201).json({ success: true, message: result.message, data: token});
     } catch {
-      res.status(500).json({success: false, message: "Internal server error", data: null});
+      res.status(500).json({success: false, message: "Internal server error"});
     }
   }
 
@@ -93,20 +93,20 @@ export class AuthController {
       const userId = req.user?.id;
 
       if (!userId){
-        res.status(401).json({ success: false, message: "Unauthorized access", data: null});
+        res.status(401).json({ success: false, message: "Unauthorized access"});
         return;
       }
 
       const uspesno = await this.authService.logout(userId);
 
       if (!uspesno) {
-        res.status(400).json({ success: false, message: "Logout could not be recorded", data: null});
+        res.status(400).json({ success: false, message: "Logout could not be recorded"});
         return;
       }
 
-      res.status(200).json({ success: true, message: "Logout successful", data: null });
+      res.status(200).json({ success: true, message: "Logout successful" });
     } catch{
-      res.status(500).json({ success: false, message: "Internal server error", data: null });
+      res.status(500).json({ success: false, message: "Internal server error"});
     }
   }
   
