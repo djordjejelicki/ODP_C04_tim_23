@@ -70,7 +70,6 @@ export class UserTrailService implements IUserTrailService {
             user_id,
             trail_id,
             status,
-            null
         );
 
         const addedTrail = await this.userTrailRepository.add(newTrail);

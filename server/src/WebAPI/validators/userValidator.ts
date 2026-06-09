@@ -5,7 +5,7 @@ export const validateUpdateProfile = (
     email: string,
     first_name: string,
     last_name: string,
-    bio: string | null
+    bio: string
 ): ValidationResault => {
     const usernameRegex = /^[a-zA-Z0-9-]{3,40}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -38,7 +38,7 @@ export const validateUpdateProfile = (
         };
     }
 
-    if (bio !== null && (typeof bio !== "string" || bio.length > 500)) {
+    if (typeof bio !== "string" || bio.length > 500) {
         return {
         valid: false,
         message: "Bio cannot be longer than 500 characters."

@@ -70,7 +70,7 @@ export class TrailController {
             const result = validateTrail(
                 Number(mountain_id),
                 name,
-                description ?? null,
+                description ?? "",
                 Number(length_km),
                 difficulty,
                 Number(est_duration_min),
@@ -87,7 +87,7 @@ export class TrailController {
             const serviceResult = await this.trailService.createRuta(
                 Number(mountain_id),
                 name,
-                description ?? null,
+                description ?? "",
                 Number(length_km),
                 difficulty as TrailDifficulty,
                 Number(est_duration_min),
@@ -134,7 +134,7 @@ export class TrailController {
             const rezultat = validateTrail(
                 Number(mountain_id),
                 name,
-                description ?? null,
+                description ?? "",
                 Number(length_km),
                 difficulty,
                 Number(est_duration_min),
@@ -152,7 +152,7 @@ export class TrailController {
                 id,
                 Number(mountain_id),
                 name,
-                description ?? null,
+                description ?? "",
                 Number(length_km),
                 difficulty as TrailDifficulty,
                 Number(est_duration_min),

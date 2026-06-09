@@ -1,26 +1,25 @@
 import type { HikeParticipantStatus } from "../../types/hikes/HikeParticipantStatus";
 import type { HikeWithUserStatus } from "../../types/hikes/HikeWithUserStatus";
 import type { HikeDetails } from "../../types/hikes/HikeDetails";
-import type { Hike } from "../../types/hikes/Hike";
 import type { ApiResponse } from "../../types/common/ApiResponse";
 
 export interface IHikeAPIService {
     getAll(): Promise<HikeWithUserStatus[]>;
-    getById(id: number): Promise<HikeDetails | null>;
+    getById(id: number): Promise<HikeDetails>;
     create(
         trail_id: number,
         name: string,
-        description: string | null,
+        description: string,
         scheduled_at: string,
         max_participants: number
-    ): Promise<ApiResponse<Hike>>;
+    ): Promise<ApiResponse>;
     invite(hike_id: number, username: string): Promise<ApiResponse>;
     respond(hike_id: number, status: HikeParticipantStatus): Promise<ApiResponse>;
     update(
         id: number,
         trail_id: number,
         name: string,
-        description: string | null,
+        description: string,
         scheduled_at: string,
         max_participants: number
     ): Promise<ApiResponse>;

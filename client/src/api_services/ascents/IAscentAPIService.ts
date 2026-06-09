@@ -1,4 +1,4 @@
-import type { Ascent } from "../../types/ascents/Ascent";
+
 import type { AscentDetails } from "../../types/ascents/AscentDetails";
 import type { ApiResponse } from "../../types/common/ApiResponse";
 
@@ -10,7 +10,7 @@ export interface IAscentAPIService {
         duration_min: number,
         note: string | null,
         rating: number
-    ): Promise<ApiResponse<Ascent>>;
+    ): Promise<ApiResponse>;
     remove(id: number): Promise<ApiResponse>;
     update(
         id: number,

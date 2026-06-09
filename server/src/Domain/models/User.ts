@@ -9,8 +9,8 @@ export class User {
     public password: string = '',
     public first_name: string = '',
     public last_name: string = '',
-    public bio: string | null = null,
-    public avatar_url: string | null = null,
-    public created_at: Date | null = null
+    public bio: string = "",
+    public avatar_url: string = '',
+    public created_at: Date = new Date()
   ) {}
 }

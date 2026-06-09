@@ -6,17 +6,17 @@ export interface IMountainAPIService {
     create(
         name: string,
         country: string,
-        region: string | null,
+        region: string,
         height: number,
-        description: string | null
-    ): Promise<ApiResponse<Mountain>>;
+        description: string
+    ): Promise<ApiResponse>;
     update(
         id: number,
         name: string,
         country: string,
-        region: string | null,
+        region: string,
         height: number,
-        description: string | null
+        description: string
     ): Promise<ApiResponse>;
     remove(id: number): Promise<ApiResponse>;
 };

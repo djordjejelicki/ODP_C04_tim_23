@@ -1,5 +1,4 @@
 import { apiClient } from "../apiClient";
-import type { Ascent } from "../../types/ascents/Ascent";
 import type { IAscentAPIService } from "./IAscentAPIService";
 import type { AscentDetails } from "../../types/ascents/AscentDetails";
 import type { ApiResponse } from "../../types/common/ApiResponse";
@@ -20,11 +19,11 @@ export const ascentApi: IAscentAPIService = {
         trail_id: number, 
         ascent_date: string, 
         duration_min: number, 
-        note: string | null, 
+        note: string, 
         rating: number
-    ): Promise<ApiResponse<Ascent>> {
+    ): Promise<ApiResponse> {
         try{
-            const res = await apiClient.post<ApiResponse<Ascent>>("ascents", {
+            const res = await apiClient.post<ApiResponse>("ascents", {
                 trail_id,
                 ascent_date,
                 duration_min,
@@ -42,7 +41,6 @@ export const ascentApi: IAscentAPIService = {
             return {
                 success: false,
                 message,
-                data: null
             };
         }
     },
@@ -61,7 +59,6 @@ export const ascentApi: IAscentAPIService = {
             return {
                 success: false,
                 message,
-                data: null
             };
         }
     },
@@ -70,7 +67,7 @@ export const ascentApi: IAscentAPIService = {
         id: number, 
         ascent_date: string, 
         duration_min: number, 
-        note: string | null, 
+        note: string, 
         rating: number, 
         trail_id: number
     ): Promise<ApiResponse> {
@@ -94,7 +91,6 @@ export const ascentApi: IAscentAPIService = {
             return {
                 success: false,
                 message,
-                data: null
             };
         }
     },

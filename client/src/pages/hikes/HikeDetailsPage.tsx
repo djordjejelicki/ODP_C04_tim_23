@@ -85,7 +85,7 @@ export default function HikeDetailsPage({ hikeApi }: HikeDetailsPageProps){
         const validation = validateHike(
             details.trail_id,
             editName,
-            editDescription || null,
+            editDescription || "",
             editScheduledAt,
             Number(editMaxParticipants)
         );
@@ -98,7 +98,7 @@ export default function HikeDetailsPage({ hikeApi }: HikeDetailsPageProps){
             details.id,
             details.trail_id,
             editName,
-            editDescription || null,
+            editDescription || "",
             editScheduledAt,
             Number(editMaxParticipants)
         );
@@ -121,7 +121,7 @@ export default function HikeDetailsPage({ hikeApi }: HikeDetailsPageProps){
         );
     }
 
-    if (!details) {
+    if (!details || details.id === 0) {
         return (
             <main className="min-h-screen bg-slate-100 p-10">
                 <p>Hike not found or access denied.</p>

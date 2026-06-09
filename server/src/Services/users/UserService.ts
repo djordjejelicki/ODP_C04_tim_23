@@ -17,8 +17,8 @@ export class UserService implements IUserService {
     10
   );
 
-  private deleteAvatar(avatarUrl: string | null): void {
-    if (!avatarUrl || !avatarUrl.startsWith("/uploads/avatars/")){
+  private deleteAvatar(avatarUrl: string): void {
+    if (avatarUrl.trim().length === 0 || !avatarUrl.startsWith("/uploads/avatars/")){
       return;
     }
 
@@ -129,8 +129,8 @@ export class UserService implements IUserService {
     email: string, 
     first_name: string, 
     last_name: string, 
-    bio: string | null, 
-    avatar_url: string | null
+    bio: string, 
+    avatar_url: string
   ): Promise<ServiceResult> {
       const user = await this.userRepository.getById(id);
 
@@ -150,7 +150,7 @@ export class UserService implements IUserService {
         return ServiceResult.fail("Email is already taken");
       }
 
-      const newAvatarUrl = avatar_url ?? user.avatar_url;
+      const newAvatarUrl = avatar_url.trim().length > 0 ? avatar_url : user.avatar_url;
 
       const updated = await this.userRepository.updateProfile(
         id,
@@ -166,7 +166,7 @@ export class UserService implements IUserService {
         return ServiceResult.fail("Failed to update profile");
       }
 
-      if (avatar_url && user.avatar_url !== avatar_url){
+      if (avatar_url.trim().length > 0 && user.avatar_url !== avatar_url){
         this.deleteAvatar(user.avatar_url);
       }
 

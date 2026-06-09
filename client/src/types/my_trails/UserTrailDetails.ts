@@ -5,7 +5,7 @@ export type UserTrailDetails = {
     user_id: number;
     trail_id: number;
     status: UserTrailStatus;
-    added_at: string | null;
+    added_at: string;
     trail_name: string;
     length_km: number;
     elevation_m: number;

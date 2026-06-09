@@ -15,9 +15,9 @@ export const terrainTagApi: ITerrainTagAPIService = {
         }
     },
 
-    async create(name: string, description: string | null): Promise<ApiResponse<TerrainTag>> {
+    async create(name: string, description: string): Promise<ApiResponse> {
         try{
-            const res = await apiClient.post<ApiResponse<TerrainTag>>("terrain-tags", {
+            const res = await apiClient.post<ApiResponse>("terrain-tags", {
                 name,
                 description
             });
@@ -33,7 +33,6 @@ export const terrainTagApi: ITerrainTagAPIService = {
             return {
                 success: false,
                 message,
-                data: null
             };
         }
     },
@@ -51,8 +50,7 @@ export const terrainTagApi: ITerrainTagAPIService = {
 
             return {
                 success: false,
-                message,
-                data: null
+                message
             };
         }
     }

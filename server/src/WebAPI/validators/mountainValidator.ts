@@ -3,9 +3,9 @@ import { ValidationResault } from "../../Domain/types/ValidationResult";
 export const validateMountain = (
     name: string,
     country: string,
-    region: string | null,
+    region: string,
     height: number,
-    description: string | null
+    description: string
 ) : ValidationResault => {
     
     if (typeof name !== "string" || name.trim().length < 2 || name.trim().length > 100){
@@ -16,7 +16,7 @@ export const validateMountain = (
         return { valid: false, message: "Country must be between 2 and 100 characters." };
     }
    
-    if (region !== null && (typeof region !== "string" || region.trim().length < 2 || region.trim().length > 100)){
+    if (typeof region !== "string" || region.trim().length < 2 || region.trim().length > 100){
         return { valid: false, message: "Region must be between 2 and 100 characters." }
     }
 
@@ -24,7 +24,7 @@ export const validateMountain = (
         return { valid: false, message: "Height must be greater than 0." };
     }
 
-    if (description !== null && (typeof description !== "string" || description.length > 2000)){
+    if (typeof description !== "string" || description.length > 2000){
         return { valid: false, message: "Description cannot be longer than 2000 characters." }
     }
 

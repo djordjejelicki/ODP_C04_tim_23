@@ -7,7 +7,7 @@ export class AuditLog {
         public action: AuditAction = AuditAction.LOGOUT,
         public entity: string = "",
         public entity_id: number = 0,
-        public details: string | null = null,
-        public created_at: Date | null = null
+        public details: string = "",
+        public created_at: Date = new Date()
     ) {}
 }

@@ -21,9 +21,9 @@ export class MountainService implements IMountainService{
     async createPlanina(
         name: string, 
         country: string, 
-        region: string | null, 
+        region: string, 
         height: number, 
-        description: string | null
+        description: string
     ): Promise<ServiceResult> {
         
         const postojecaPlanina = await this.mountainRepository.getByNaziv(name);
@@ -38,7 +38,6 @@ export class MountainService implements IMountainService{
             region,
             height,
             description,
-            null
         );
 
         const createdMountain =  await this.mountainRepository.create(novaPlanina);
@@ -55,9 +54,9 @@ export class MountainService implements IMountainService{
         id: number, 
         name: string, 
         country: string, 
-        region: string | null, 
+        region: string, 
         height: number, 
-        description: string | null
+        description: string
     ): Promise<ServiceResult> {
         const postojecaPlanina = await this.mountainRepository.getById(id);
 

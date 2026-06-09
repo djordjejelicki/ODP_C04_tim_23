@@ -5,7 +5,7 @@ import type { ApiResponse } from "../../types/common/ApiResponse";
 
 export interface ITrailAPIService {
     getAll(): Promise<Trail[]>;
-    getById(id: number): Promise<TrailDetails | null>;
+    getById(id: number): Promise<TrailDetails>;
     create(
         mountain_id: number,
         name: string,
@@ -16,7 +16,7 @@ export interface ITrailAPIService {
         elevation_m: number,
         image: File | null,
         terrain_tag_ids: number[]
-    ): Promise<ApiResponse<Trail>>;
+    ): Promise<ApiResponse>;
     update(
         id: number,
         mountain_id: number,

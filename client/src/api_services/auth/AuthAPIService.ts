@@ -21,7 +21,6 @@ export const authApi: IAuthAPIService = {
       return {
         success: false,
         message,
-        data: null,
       };
     }
   },
@@ -66,7 +65,6 @@ export const authApi: IAuthAPIService = {
       return {
         success: false,
         message,
-        data: null,
       };
     }
   },

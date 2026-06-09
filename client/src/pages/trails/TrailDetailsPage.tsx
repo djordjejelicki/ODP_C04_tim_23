@@ -32,7 +32,7 @@ export default function TrailDetailsPage({trailApi, myTrailApi, ascentApi}: Trai
 
             const data = await trailApi.getById(Number(id));
             setTrail(data);
-            if (isAuthenticated && data){
+            if (isAuthenticated && data.id !== 0){
                 const myTrails = await myTrailApi.getAll();
                 const existing = myTrails.find((item) => item.trail_id === data.id) ?? null;
                 setMyTrail(existing);
@@ -79,7 +79,7 @@ export default function TrailDetailsPage({trailApi, myTrailApi, ascentApi}: Trai
             user_id: myTrail?.user_id ?? 0,
             trail_id: trail.id,
             status: USER_TRAIL_STATUS.COMPLETED,
-            added_at: myTrail?.added_at ?? null
+            added_at: myTrail?.added_at ?? ""
         });
 
         setMessage(result.message);
@@ -108,7 +108,7 @@ export default function TrailDetailsPage({trailApi, myTrailApi, ascentApi}: Trai
         );
     }
 
-    if (!trail) {
+    if (!trail || trail.id === 0) {
         return(
             <main className="min-h-screen bg-slate-100 p-10">
                 <p>Trail not found.</p>
@@ -177,7 +177,7 @@ export default function TrailDetailsPage({trailApi, myTrailApi, ascentApi}: Trai
                     <p className="text-gray-700">
                         Average rating:{" "}
                         <span className="font-semibold">
-                            {trail.average_rating !== null
+                            {trail.average_rating > 0
                             ? trail.average_rating.toFixed(1)
                             : "No ratings"}
                         </span>

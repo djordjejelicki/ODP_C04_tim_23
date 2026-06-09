@@ -11,7 +11,7 @@ export type Trail = {
     est_duration_min: number;
     elevation_m: number;
     image_url: string;
-    created_at: string | null;
-    average_rating: number | null;
+    created_at: string;
+    average_rating: number;
     terrain_tags: TerrainTag[];
 };

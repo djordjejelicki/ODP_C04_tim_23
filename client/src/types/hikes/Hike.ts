@@ -3,7 +3,7 @@ export type Hike = {
     organizer_id: number;
     trail_id: number;
     name: string;
-    description: string | null;
+    description: string;
     scheduled_at: string;
     max_participants: number;
 };

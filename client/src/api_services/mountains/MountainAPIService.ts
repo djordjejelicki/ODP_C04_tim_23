@@ -18,12 +18,12 @@ export const mountainApi: IMountainAPIService = {
     async create(
         name: string, 
         country: string, 
-        region: string | null, 
+        region: string, 
         height: number, 
-        description: string | null
-    ): Promise<ApiResponse<Mountain>> {
+        description: string 
+    ): Promise<ApiResponse> {
         try{
-            const res = await apiClient.post<ApiResponse<Mountain>>("mountains", {
+            const res = await apiClient.post<ApiResponse>("mountains", {
                 name,
                 country,
                 region,
@@ -41,7 +41,6 @@ export const mountainApi: IMountainAPIService = {
             return {
                 success: false,
                 message,
-                data: null
             };
         }
     },
@@ -50,9 +49,9 @@ export const mountainApi: IMountainAPIService = {
         id: number, 
         name: string, 
         country: string, 
-        region: string | null, 
+        region: string, 
         height: number, 
-        description: string | null
+        description: string
     ): Promise<ApiResponse> {
         try{
             const res = await apiClient.put<ApiResponse>(`mountains/${id}`,{
@@ -74,7 +73,6 @@ export const mountainApi: IMountainAPIService = {
             return {
                 success: false,
                 message,
-                data: null
             };
         }     
     },
@@ -94,7 +92,6 @@ export const mountainApi: IMountainAPIService = {
             return{
                 success: false,
                 message,
-                data: null
             }
         }
     },

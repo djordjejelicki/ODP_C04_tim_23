@@ -9,7 +9,7 @@ export interface IAuthService {
     password: string,
     first_name: string,
     last_name: string,
-    avatar_url: string | null
+    avatar_url: string 
   ): Promise<AuthResultDto>;
   logout(user_id: number): Promise<boolean>;
 }

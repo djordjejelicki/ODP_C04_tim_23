@@ -170,24 +170,24 @@ export class AscentRepository implements IAscentRepository {
         }   
     }
 
-    async getAverageRatingByTrail(trail_id: number): Promise<number | null> {
+    async getAverageRatingByTrail(trail_id: number): Promise<number> {
         try{
             const query = `
-                SELECT AVG(rating) AS average_rating
+                SELECT COALESCE(AVG(rating),0) AS average_rating
                 FROM ascents
                 WHERE trail_id = ?
             `;
 
             const [rows] = await db.execute<RowDataPacket[]>(query, [trail_id]);
 
-            if (rows.length === 0 || rows[0].average_rating === null){
-                return null;
+            if (rows.length === 0){
+                return 0;
             }
 
             return Number(rows[0].average_rating);
         } catch(error){
             console.log("getAverageRatingByTrail error: ", error);
-            return null;
+            return 0;
         }
     }
 }

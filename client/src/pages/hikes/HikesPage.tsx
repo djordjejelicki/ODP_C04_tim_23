@@ -44,8 +44,8 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
         loadData();
     }, [searchParams]);
 
-    const organizedHikes = hikes.filter((hike) => hike.current_user_status === null);
-    const invitationHikes = hikes.filter((hike) => hike.current_user_status !== null);
+    const organizedHikes = hikes.filter((hike) => hike.is_organizer);
+    const invitationHikes = hikes.filter((hike) => !hike.is_organizer);
 
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -54,7 +54,7 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
         const validation = validateHike(
             Number(trailId),
             name,
-            description || null,
+            description || "",
             scheduledAt,
             Number(maxParticipants)
         );
@@ -66,7 +66,7 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
         const result = await hikeApi.create(
             Number(trailId),
             name,
-            description || null,
+            description || "",
             scheduledAt,
             Number(maxParticipants)
         );

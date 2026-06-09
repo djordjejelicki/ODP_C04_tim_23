@@ -4,6 +4,6 @@ export type Ascent = {
     trail_id: number;
     ascent_date: string;
     duration_min: number;
-    note: string | null;
+    note: string;
     rating: number;
 };

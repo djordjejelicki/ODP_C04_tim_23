@@ -50,7 +50,7 @@ export class TerrainTagController {
         try{
             const {name, description} = req.body;
 
-            const result = await this.terrainTagService.createTipTerena(name, description ?? null);
+            const result = await this.terrainTagService.createTipTerena(name, description ?? "");
 
             if (!result.success){
                 res.status(400).json(result);

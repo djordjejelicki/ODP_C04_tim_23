@@ -7,6 +7,6 @@ export type UserDto = {
     role: UserRole;
     first_name: string;
     last_name: string;
-    bio: string | null;
-    avatar_url: string | null;
+    bio: string;
+    avatar_url: string;
 }

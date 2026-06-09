@@ -7,9 +7,10 @@ export class HikeWithUserStatusDto {
         public trail_id: number = 0,
         public trail_name: string = "",
         public name: string = "",
-        public description: string | null = null,
-        public scheduled_at: Date | null = null,
+        public description: string = "",
+        public scheduled_at: Date =  new Date(),
         public max_participants: number = 0,
-        public current_user_status: HikeParticipantStatus | null = null
+        public current_user_status: HikeParticipantStatus = HikeParticipantStatus.NONE,
+        public is_organizer: boolean = false
    ){}
 }

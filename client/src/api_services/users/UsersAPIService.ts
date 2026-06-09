@@ -30,19 +30,27 @@ export const usersApi: IUsersAPIService = {
 
         return {
             success: false,
-            message,
-            data: null
+            message
         };
     }
   },
 
-  async getMe(): Promise<UserDto | null> {
+  async getMe(): Promise<UserDto> {
     try{
       const res = await apiClient.get<UserDto>("users/me");
       return res.data;
     } catch(error){
       console.error("Error loading current user: ", error);
-      return null;
+      return {
+        id: 0,
+        username: "",
+        email: "",
+        role: "hiker",
+        first_name: "",
+        last_name: "",
+        bio: "",
+        avatar_url: ""
+      };
     }
   },
 
@@ -59,13 +67,20 @@ export const usersApi: IUsersAPIService = {
     }
   },
 
-  async getPublicById(id: number): Promise<PublicUser | null> {
+  async getPublicById(id: number): Promise<PublicUser> {
     try{
       const res = await apiClient.get<PublicUser>(`users/${id}`);
       return res.data;
     } catch(error){
       console.error("Error loading public user: ", error);
-      return null;
+      return {
+        id: 0,
+        username: "",
+        first_name: "",
+        last_name: "",
+        bio: "",
+        avatar_url: ""
+      };
     }
   },
 
@@ -106,8 +121,7 @@ export const usersApi: IUsersAPIService = {
 
       return {
         success: false,
-        message,
-        data: null
+        message
       }
     }
   },
@@ -132,8 +146,7 @@ export const usersApi: IUsersAPIService = {
 
       return {
         success: false,
-        message,
-        data: null,
+        message
       };
     }
   },

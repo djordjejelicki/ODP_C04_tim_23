@@ -6,15 +6,15 @@ import type { ApiResponse } from "../../types/common/ApiResponse";
 export interface IUsersAPIService {
     getAll(): Promise<UserDto[]>;
     updateRole(id: number, role: UserRole): Promise<ApiResponse>;
-    getMe(): Promise<UserDto | null>;
+    getMe(): Promise<UserDto>;
     searchPublic(query: string): Promise<PublicUser[]>;
-    getPublicById(id: number): Promise<PublicUser | null>;
+    getPublicById(id: number): Promise<PublicUser>;
     updateProfile(
         username: string,
         email: string,
         first_name: string,
         last_name: string,
-        bio: string | null,
+        bio: string,
         avatar: File | null
     ): Promise<ApiResponse>;
     changePassword(

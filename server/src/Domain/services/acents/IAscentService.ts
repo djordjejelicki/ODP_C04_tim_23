@@ -11,7 +11,7 @@ export interface IAscentService {
         trail_id: number,
         ascent_date: Date,
         duration_min: number,
-        note: string | null,
+        note: string,
         rating: number
     ): Promise<ServiceResult>;
     izmeniUspon(
@@ -19,7 +19,7 @@ export interface IAscentService {
         id: number,
         ascent_date: Date,
         duration_min: number,
-        note: string | null,
+        note: string,
         rating: number
     ): Promise<ServiceResult>;
     obrisiUspon(user_id: number, id: number): Promise<ServiceResult>;

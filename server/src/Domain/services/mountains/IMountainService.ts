@@ -8,17 +8,17 @@ export interface IMountainService {
     createPlanina(
         name: string,
         country: string,
-        region: string | null,
+        region: string,
         height: number,
-        description: string | null
+        description: string
     ) : Promise<ServiceResult>;
     updatePlanina(
         id: number,
         name: string,
         country: string,
-        region: string | null,
+        region: string,
         height: number,
-        description: string | null
+        description: string
     ): Promise<ServiceResult>;
     deletePlanina(id: number): Promise<ServiceResult>;
 }

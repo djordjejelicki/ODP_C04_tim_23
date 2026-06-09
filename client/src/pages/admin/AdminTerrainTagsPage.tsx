@@ -26,7 +26,7 @@ export default function AdminTerrainTagsPage({ terrainTagApi }: AdminTerrainTags
         e.preventDefault();
         setMessage("");
 
-        const validation = validateTerrainTag(name, description || null);
+        const validation = validateTerrainTag(name, description || "");
         if (!validation.valid){
             setMessage(validation.message);
             return;
@@ -34,7 +34,7 @@ export default function AdminTerrainTagsPage({ terrainTagApi }: AdminTerrainTags
 
         const result = await terrainTagApi.create(
             name,
-            description || null
+            description || ""
         );
 
         if (!result.success){
@@ -117,7 +117,7 @@ export default function AdminTerrainTagsPage({ terrainTagApi }: AdminTerrainTags
                                     </h2>
 
                                     <p className="text-gray-600">
-                                        {tag.description ?? "No description"}
+                                        {tag.description || "No description"}
                                     </p>
                                 </div>
 

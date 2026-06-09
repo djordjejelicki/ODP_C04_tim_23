@@ -5,7 +5,7 @@ import type { TrailDifficulty } from "../types/trails/TrailDifficulty";
 export const validateTrail = (
     mountain_id: number,
     name: string,
-    description: string | null,
+    description: string,
     length_km: number,
     difficulty: string,
     est_duration_min: number,
@@ -24,7 +24,7 @@ export const validateTrail = (
         return { valid: false, message: "Trail name must be between 2 and 120 characters." };
     }
 
-    if ( description !== null && description.length > 2000) {
+    if ( description.length > 2000 ) {
         return { valid: false, message: "Trail description cannot be longer than 2000 characters." };
     }
 
@@ -44,7 +44,7 @@ export const validateTrail = (
         return { valid: false, message: "Elevation gain must be 0 or greater." };
     }
 
-    if ( !isEditing && image === null) {
+    if ( !isEditing && !image) {
         return { valid: false, message: "Trail image is required." };
     }
 

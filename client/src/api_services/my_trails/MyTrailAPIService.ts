@@ -1,6 +1,5 @@
 import { apiClient } from "../apiClient";
 import type { IMyTrailAPIService } from "./IMyTrailAPIService";
-import type { UserTrail } from "../../types/my_trails/UserTrail";
 import type { UserTrailStatus } from "../../types/my_trails/UserTrailStatus";
 import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
 import type { ApiResponse } from "../../types/common/ApiResponse";
@@ -16,9 +15,9 @@ export const myTrailApi: IMyTrailAPIService = {
             return [];
         }
     },
-    async add(trail_id: number, status: UserTrailStatus): Promise<ApiResponse<UserTrail>> {
+    async add(trail_id: number, status: UserTrailStatus): Promise<ApiResponse> {
         try{
-            const res = await apiClient.post<ApiResponse<UserTrail>>("my-trails", {trail_id, status});
+            const res = await apiClient.post<ApiResponse>("my-trails", {trail_id, status});
             return res.data;
         } catch(error){
             let message = "Failed to add trail to your list";
@@ -29,8 +28,7 @@ export const myTrailApi: IMyTrailAPIService = {
 
             return {
                 success: false,
-                message,
-                data: null
+                message
             };
         }
     },
@@ -47,8 +45,7 @@ export const myTrailApi: IMyTrailAPIService = {
 
             return {
                 success: false,
-                message,
-                data: null
+                message
             };
         }
     },
@@ -65,8 +62,7 @@ export const myTrailApi: IMyTrailAPIService = {
 
             return {
                 success: false,
-                message,
-                data: null
+                message
             };
         }
     }

@@ -6,6 +6,6 @@ export type AuditLog = {
     action: AuditAction;
     entity: string;
     entity_id: number;
-    details: string | null;
-    created_at: string | null;
+    details: string;
+    created_at: string;
 };

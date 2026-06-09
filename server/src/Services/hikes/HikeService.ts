@@ -53,7 +53,7 @@ export class HikeService implements IHikeService{
         organizer_id: number, 
         trail_id: number, 
         name: string, 
-        description: string | null, 
+        description: string, 
         scheduled_at: Date, 
         max_participants: number
     ): Promise<ServiceResult> {
@@ -119,7 +119,6 @@ export class HikeService implements IHikeService{
             hike_id,
             user.id,
             HikeParticipantStatus.INVITED,
-            null
         );
 
         const uspesno =  await this.hikeParticipantRepository.add(participant);
@@ -158,11 +157,10 @@ export class HikeService implements IHikeService{
                     user_id,
                     hike.trail_id,
                     UserTrailStatus.WANT_TO_HIKE,
-                    null
                 );
 
                 const dodataRuta = await this.userTrailRepository.add(novaRuta);
-                if(dodataRuta.user_id !== 0){
+                if(dodataRuta.user_id === 0){
                     return ServiceResult.fail("Invitation accepted , but failed to add trail to your list");
                 }
 
@@ -202,6 +200,8 @@ export class HikeService implements IHikeService{
                 (item) => item.hike_id === hike.id
             );
 
+            const isOrginizer = hike.organizer_id === userId;
+
             details.push(
                 new HikeWithUserStatusDto(
                     hike.id,
@@ -212,8 +212,8 @@ export class HikeService implements IHikeService{
                     hike.description,
                     hike.scheduled_at,
                     hike.max_participants,
-                    participation ? participation.status : null
-
+                    participation ? participation.status : HikeParticipantStatus.NONE,
+                    isOrginizer
                 )
             );
         }
@@ -267,7 +267,7 @@ export class HikeService implements IHikeService{
         organizer_id: number, 
         trail_id: number, 
         name: string, 
-        description: string | null, 
+        description: string, 
         scheduled_at: Date, 
         max_participants: number
     ): Promise<ServiceResult> {

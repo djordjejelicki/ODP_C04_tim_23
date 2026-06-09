@@ -15,7 +15,7 @@ export interface IHikeService {
         organizer_id: number,
         trail_id: number,
         name: string,
-        description: string | null,
+        description: string,
         scheduled_at: Date,
         max_participants: number
     ): Promise<ServiceResult>;
@@ -32,7 +32,7 @@ export interface IHikeService {
         organizer_id: number,
         trail_id: number,
         name: string,
-        description: string | null,
+        description: string,
         scheduled_at: Date,
         max_participants: number
     ): Promise<ServiceResult>;

@@ -51,7 +51,7 @@ export class AscentController {
                 Number(trail_id),
                 ascent_date,
                 Number(duration_min),
-                note ?? null,
+                note ?? "",
                 Number(rating)
             );
 
@@ -65,7 +65,7 @@ export class AscentController {
                 Number(trail_id),
                 new Date(ascent_date),
                 Number(duration_min),
-                note ?? null,
+                note ?? "",
                 Number(rating)
             );
 
@@ -128,7 +128,7 @@ export class AscentController {
                 Number(trail_id ?? 1),
                 ascent_date,
                 Number(duration_min),
-                note ?? null,
+                note ?? "",
                 Number(rating)
             );
 
@@ -142,7 +142,7 @@ export class AscentController {
                 id,
                 new Date(ascent_date),
                 Number(duration_min),
-                note ?? null,
+                note ?? "",
                 Number(rating)
             );
 

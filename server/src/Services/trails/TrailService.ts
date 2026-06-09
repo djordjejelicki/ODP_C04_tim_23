@@ -115,7 +115,7 @@ export class TrailService implements ITrailService {
     async createRuta(
         mountain_id: number, 
         name: string, 
-        description: string | null, 
+        description: string, 
         length_km: number, 
         difficulty: TrailDifficulty, 
         est_duration_min: number, 
@@ -141,7 +141,6 @@ export class TrailService implements ITrailService {
             est_duration_min,
             elevation_m,
             image_url,
-            null
         );
 
         const kreiranaRuta =  await this.trailRepository.create(novaRuta);
@@ -161,7 +160,7 @@ export class TrailService implements ITrailService {
         id: number, 
         mountain_id: number, 
         name: string, 
-        description: string | null, 
+        description: string, 
         length_km: number, 
         difficulty: TrailDifficulty, 
         est_duration_min: number, 

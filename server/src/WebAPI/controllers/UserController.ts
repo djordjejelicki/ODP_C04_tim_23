@@ -35,7 +35,7 @@ export class UserController {
       res.status(200).json(korisniciPodaci);
       return;
     } catch {
-      res.status(500).json({ success: false, message: "Internal server error", data: null });
+      res.status(500).json({ success: false, message: "Internal server error" });
     }
   }
 
@@ -46,17 +46,17 @@ export class UserController {
       const {role} = req.body;
 
       if (!adminId){
-        res.status(401).json({ success: false, message: "Unauthorized access", data: null });
+        res.status(401).json({ success: false, message: "Unauthorized access"});
         return;
       }
 
       if (!Number.isInteger(id) || id <= 0){
-        res.status(400).json({ success: false, message: "Invalid user id", data: null });
+        res.status(400).json({ success: false, message: "Invalid user id"});
         return;
       }
 
       if (adminId === id){
-        res.status(400).json({ success: false, message: "You can not change your own role", data: null });
+        res.status(400).json({ success: false, message: "You can not change your own role"});
         return;
       }
 
@@ -64,7 +64,7 @@ export class UserController {
       const validRole = normalizedRole === UserRole.ADMIN || normalizedRole === UserRole.HIKER;
 
       if (!validRole) {
-        res.status(400).json({ success: false, message: "Invalid role", data: null});
+        res.status(400).json({ success: false, message: "Invalid role" });
         return;
       }
 
@@ -77,7 +77,7 @@ export class UserController {
       
       res.status(200).json(result);
     } catch {
-      res.status(500).json({ success: false, message: "Internal server error", data: null });
+      res.status(500).json({ success: false, message: "Internal server error"});
     }
   }
 
@@ -156,14 +156,14 @@ export class UserController {
 
       const avatarUrl = req.file
       ? `/uploads/avatars/${req.file.filename}`
-      : null;
+      : "";
 
       const validation = validateUpdateProfile(
         username,
         email,
         first_name,
         last_name,
-        bio ?? null
+        bio ?? ""
       );
 
       if (!validation.valid){
@@ -177,7 +177,7 @@ export class UserController {
         email,
         first_name,
         last_name,
-        bio ?? null,
+        bio ?? "",
         avatarUrl
       );
 
@@ -205,11 +205,7 @@ export class UserController {
 
       const validation = validateChangePassword(currentPassword, newPassword);
       if (!validation.valid){
-        res.status(400).json({
-          success: false,
-          message: validation.message,
-          data: null
-        })
+        res.status(400).json({ success: false, message: validation.message});
         return;
       }
 

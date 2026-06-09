@@ -80,7 +80,7 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
         const validation = validateTrail(
             Number(mountainId), 
             name, 
-            description || null,
+            description || "",
             Number(lengthKm),
             difficulty,
             Number(estDurationMin),
@@ -101,7 +101,7 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
             ? await trailApi.create(
                 Number(mountainId),
                 name,
-                description || null,
+                description || "",
                 Number(lengthKm),
                 difficulty,
                 Number(estDurationMin),
@@ -113,7 +113,7 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
                 editingId,
                 Number(mountainId),
                 name,
-                description || null,
+                description || "",
                 Number(lengthKm),
                 difficulty,
                 Number(estDurationMin),
@@ -136,7 +136,7 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
     const handleEdit = async (trail: Trail) => {
         const details = await trailApi.getById(trail.id);
 
-        if (!details){
+        if (details.id === 0){
             setMessage("Failed to load trail details.");
             return;
         }
@@ -144,7 +144,7 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
         setEditingId(trail.id);
         setMountainId(String(details.mountain_id));
         setName(details.name);
-        setDescription(details.description ?? "");
+        setDescription(details.description);
         setLengthKm(String(details.length_km));
         setDifficulty(details.difficulty);
         setEstDurationMin(String(details.est_duration_min));

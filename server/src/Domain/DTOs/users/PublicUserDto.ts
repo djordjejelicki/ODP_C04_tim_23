@@ -4,7 +4,7 @@ export class PublicUserDto {
         public username: string = "",
         public first_name: string = "",
         public last_name: string = "",
-        public bio: string | null = null,
-        public avatar_url: string | null = null
+        public bio: string = "",
+        public avatar_url: string = ""
     ) {}
 }

@@ -33,7 +33,7 @@ export default function UserPublicProfilePage({ usersApi }: UserPublicProfilePag
     }, [id, usersApi]);
 
     const handleInvite = () => {
-        if (!user) return;
+        if (!user || user.id === 0) return;
         navigate(`/hikes?inviteUsername=${encodeURIComponent(user.username)}`);
     };
 
@@ -45,7 +45,7 @@ export default function UserPublicProfilePage({ usersApi }: UserPublicProfilePag
         );
     }
 
-    if (!user){
+    if (!user || user.id === 0){
         return (
             <main className="min-h-screen bg-slate-100 p-10">
                 <p>User not found.</p>

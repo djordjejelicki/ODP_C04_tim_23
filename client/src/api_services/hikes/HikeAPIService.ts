@@ -1,10 +1,9 @@
 import { apiClient } from "../apiClient";
 import type { IHikeAPIService } from "./IHikeAPIService";
-import type { HikeParticipantStatus } from "../../types/hikes/HikeParticipantStatus";
 import type { HikeWithUserStatus } from "../../types/hikes/HikeWithUserStatus";
+import type { HikeParticipantStatus } from "../../types/hikes/HikeParticipantStatus";
 import type { HikeDetails } from "../../types/hikes/HikeDetails";
 import type { ApiResponse } from "../../types/common/ApiResponse";
-import type { Hike } from "../../types/hikes/Hike";
 import axios from "axios";
 
 export const hikeApi: IHikeAPIService = {
@@ -24,9 +23,9 @@ export const hikeApi: IHikeAPIService = {
         description: string | null, 
         scheduled_at: string, 
         max_participants: number
-    ): Promise<ApiResponse<Hike>> {
+    ): Promise<ApiResponse> {
         try{
-            const res = await apiClient.post<ApiResponse<Hike>>("hikes", {
+            const res = await apiClient.post<ApiResponse>("hikes", {
                 trail_id,
                 name,
                 description,
@@ -44,7 +43,6 @@ export const hikeApi: IHikeAPIService = {
             return {
                 success: false,
                 message,
-                data: null
             };
         }
     },
@@ -63,7 +61,6 @@ export const hikeApi: IHikeAPIService = {
             return {
                 success: false,
                 message,
-                data: null
             };
         }
     },
@@ -81,19 +78,29 @@ export const hikeApi: IHikeAPIService = {
 
             return {
                 success: false,
-                message,
-                data: null
+                message
             };
         }
     },
 
-    async getById(id: number): Promise<HikeDetails | null> {
+    async getById(id: number): Promise<HikeDetails> {
         try{
             const res = await apiClient.get<HikeDetails>(`hikes/${id}`);
             return res.data;
         } catch(error){
             console.error("Error loading hike details: ", error);
-            return null;
+            return {
+                id: 0,
+                organizer_id: 0,
+                organizer_username: "",
+                trail_id: 0,
+                trail_name: "",
+                name: "",
+                description: "",
+                scheduled_at: "",
+                max_participants: 0,
+                participants: []
+            };
         }
     },
 
@@ -101,7 +108,7 @@ export const hikeApi: IHikeAPIService = {
         id: number, 
         trail_id: number, 
         name: string, 
-        description: string | null, 
+        description: string, 
         scheduled_at: string, 
         max_participants: number
     ): Promise<ApiResponse> {
@@ -123,8 +130,7 @@ export const hikeApi: IHikeAPIService = {
 
             return {
                 success: false,
-                message,
-                data: null
+                message
             };
         }
     },
@@ -142,8 +148,7 @@ export const hikeApi: IHikeAPIService = {
 
             return {
                 success: false,
-                message,
-                data: null
+                message
             };
         }
     },
@@ -161,8 +166,7 @@ export const hikeApi: IHikeAPIService = {
 
             return {
                 success: false,
-                message,
-                data: null
+                message
             };
         }
     },

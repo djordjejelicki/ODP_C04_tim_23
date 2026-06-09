@@ -5,7 +5,7 @@ import { ValidationResault } from "../../Domain/types/ValidationResult";
 export const validateTrail = (
     mountain_id: number, 
     name: string,
-    description: string | null,
+    description: string,
     length_km: number,
     difficulty: string,
     est_duration_min: number,
@@ -21,7 +21,7 @@ export const validateTrail = (
         return { valid: false, message: "Trail name must be between 2 and 120 characters." };
     }
 
-    if (description !== null && (typeof description !== "string" || description.length > 2000)){
+    if (typeof description !== "string" || description.length > 2000){
         return { valid: false, message: "Trail description cannot be longer than 2000 characters."};
     }
 

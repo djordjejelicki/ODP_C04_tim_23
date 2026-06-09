@@ -1,4 +1,5 @@
 export const HIKE_PARTICIPANT_STATUS = {
+    NONE: "none",
     INVITED: "invited",
     CONFIRMED: "confirmed",
     DECLINED: "declined"

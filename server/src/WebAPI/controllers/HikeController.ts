@@ -54,7 +54,7 @@ export class HikeController {
             const rezultat = validateHike(
                 Number(trail_id),
                 name,
-                description ?? null,
+                description ?? "",
                 scheduled_at,
                 Number(max_participants)
             );
@@ -68,7 +68,7 @@ export class HikeController {
                 userId,
                 Number(trail_id),
                 name,
-                description ?? null,
+                description ?? "",
                 new Date(scheduled_at),
                 Number(max_participants)
             );
@@ -221,7 +221,7 @@ export class HikeController {
             const rezultat = validateHike(
                 Number(trail_id),
                 name,
-                description ?? null,
+                description ?? "",
                 scheduled_at,
                 Number(max_participants)
             );
@@ -236,7 +236,7 @@ export class HikeController {
                 organizerId,
                 Number(trail_id),
                 name,
-                description ?? null,
+                description ?? "",
                 new Date(scheduled_at),
                 Number(max_participants)
             );

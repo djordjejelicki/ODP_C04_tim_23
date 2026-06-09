@@ -55,9 +55,9 @@ export class MountainController {
             const rezultat = validateMountain(
                 name,
                 country,
-                region??null,
+                region ?? "",
                 Number(height),
-                description??null
+                description ?? ""
             );
 
             if (!rezultat.valid) {
@@ -68,9 +68,9 @@ export class MountainController {
             const result = await this.mountainService.createPlanina(
                 name,
                 country,
-                region ?? null,
+                region ?? "",
                 Number(height),
-                description ?? null
+                description ?? ""
             );
 
             if (!result.success) {
@@ -97,9 +97,9 @@ export class MountainController {
             const rezultat = validateMountain(
                 name,
                 country,
-                region ?? null,
+                region ?? "",
                 Number(height),
-                description ?? null
+                description ?? ""
             );
 
             if (!rezultat.valid){
@@ -111,9 +111,9 @@ export class MountainController {
                 id,
                 name,
                 country,
-                region ?? null,
+                region ?? "",
                 Number(height),
-                description ?? null
+                description ?? ""
             );
 
             if (!result.success){

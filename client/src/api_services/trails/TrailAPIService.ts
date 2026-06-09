@@ -17,13 +17,27 @@ export const trailApi: ITrailAPIService = {
         }    
     },
 
-    async getById(id: number): Promise<TrailDetails | null> {
+    async getById(id: number): Promise<TrailDetails> {
         try{
             const res = await apiClient.get<TrailDetails>(`trails/${id}`);
             return res.data;
         } catch(error){
             console.error("Error loading trail details: ", error);
-            return null;
+            return {
+                id: 0,
+                mountain_id: 0,
+                name: "",
+                description: "",
+                length_km: 0,
+                difficulty: "easy",
+                est_duration_min: 0,
+                elevation_m: 0,
+                image_url: "",
+                created_at: "",
+                average_rating: 0,
+                terrain_tags: [],
+                mountain_name: ""
+            };
         }
     },
 
@@ -37,7 +51,7 @@ export const trailApi: ITrailAPIService = {
         elevation_m: number, 
         image: File | null, 
         terrain_tag_ids: number[]
-    ): Promise<ApiResponse<Trail>> {
+    ): Promise<ApiResponse> {
         try{
 
             const formData = new FormData();
@@ -58,7 +72,7 @@ export const trailApi: ITrailAPIService = {
                 formData.append("image", image);
             }
 
-            const res =  await apiClient.post<ApiResponse<Trail>>("trails", formData, {
+            const res =  await apiClient.post<ApiResponse>("trails", formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
@@ -73,8 +87,7 @@ export const trailApi: ITrailAPIService = {
 
             return {
                 success: false,
-                message,
-                data: null
+                message
             };
         }
     },
@@ -127,8 +140,7 @@ export const trailApi: ITrailAPIService = {
 
             return {
                 success: false,
-                message,
-                data: null
+                message
             };
         }
     },
@@ -145,8 +157,7 @@ export const trailApi: ITrailAPIService = {
 
             return {
                 success: false,
-                message,
-                data: null
+                message
             };
         }
     },

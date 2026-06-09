@@ -1,5 +1,4 @@
 import { Ascent } from "../../models/Ascent";
-import { AscentDetailsDto } from "../../DTOs/ascents/AscentDetailsDto";
 
 export interface IAscentRepository {
     getByUser(user_id: number): Promise<Ascent[]>;
@@ -9,5 +8,5 @@ export interface IAscentRepository {
     delete(id: number): Promise<boolean>;
     existsByTrail(trail_id: number): Promise<boolean>;
     existsByUserAndTrail(user_id: number, trail_id: number): Promise<boolean>;
-    getAverageRatingByTrail(trail_id: number): Promise<number | null>;
+    getAverageRatingByTrail(trail_id: number): Promise<number>;
 }

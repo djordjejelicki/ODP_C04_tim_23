@@ -275,7 +275,7 @@ export class UserRepository implements IUserRepository {
           row.last_name,
           row.bio,
           row.avatar_url,
-          row.created_at
+          row.created_at 
         )
       );
     } catch(error){
@@ -290,8 +290,8 @@ export class UserRepository implements IUserRepository {
     email: string, 
     first_name: string, 
     last_name: string, 
-    bio: string | null, 
-    avatar_url: string | null
+    bio: string, 
+    avatar_url: string
   ): Promise<boolean> {
     try{
       const query = `

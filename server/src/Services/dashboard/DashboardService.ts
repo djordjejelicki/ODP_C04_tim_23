@@ -40,7 +40,7 @@ export class DashboardService implements IDashboardService {
             }
         }
 
-        let favoriteMountain: string | null = null;
+        let favoriteMountain = "";
         let maxCount = 0;
 
         for (const [mountainName, count] of mountainCounts){

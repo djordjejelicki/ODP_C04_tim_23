@@ -6,8 +6,9 @@ export type HikeWithUserStatus = {
     trail_id: number;
     trail_name: string;
     name: string;
-    description: string | null;
+    description: string;
     scheduled_at: string;
     max_participants: number;
-    current_user_status: HikeParticipantStatus | null;
+    current_user_status: HikeParticipantStatus;
+    is_organizer: boolean
 };

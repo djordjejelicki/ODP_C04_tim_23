@@ -50,7 +50,7 @@ export default function AscentsPage({ ascentApi, myTrailApi }: AscentsPageProps)
             Number(trailId),
             ascentDate,
             Number(durationMin),
-            note || null,
+            note || "",
             Number(rating)
         );
         if(!validation.valid){
@@ -64,14 +64,14 @@ export default function AscentsPage({ ascentApi, myTrailApi }: AscentsPageProps)
                     Number(trailId),
                     ascentDate,
                     Number(durationMin),
-                    note || null,
+                    note || "",
                     Number(rating)
                 )
                 : await ascentApi.update(
                     editingId,
                     ascentDate,
                     Number(durationMin),
-                    note || null,
+                    note || "",
                     Number(rating),
                     Number(trailId)
                 );
@@ -103,7 +103,7 @@ export default function AscentsPage({ ascentApi, myTrailApi }: AscentsPageProps)
         setTrailId(String(ascent.trail_id));
         setAscentDate(String(ascent.ascent_date).slice(0, 10));
         setDurationMin(String(ascent.duration_min));
-        setNote(ascent.note ?? "");
+        setNote(ascent.note);
         setRating(String(ascent.rating));
         setMessage("");
     };

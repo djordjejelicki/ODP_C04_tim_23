@@ -53,7 +53,7 @@ export class AscentService implements IAscentService {
         trail_id: number, 
         ascent_date: Date, 
         duration_min: number, 
-        note: string | null, 
+        note: string, 
         rating: number
     ): Promise<ServiceResult> {
         const userTrail = await this.userTrailRepository.getOne(user_id, trail_id);
@@ -92,7 +92,7 @@ export class AscentService implements IAscentService {
         id: number, 
         ascent_date: Date, 
         duration_min: number, 
-        note: string | null, 
+        note: string, 
         rating: number
     ): Promise<ServiceResult> {
         

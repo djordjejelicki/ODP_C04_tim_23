@@ -5,6 +5,6 @@ export class HikeParticipant {
         public hike_id: number = 0,
         public user_id: number = 0,
         public status: HikeParticipantStatus = HikeParticipantStatus.INVITED,
-        public responded_at: Date | null = null
+        public responded_at: Date = new Date()
     ){}
 }

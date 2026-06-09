@@ -13,7 +13,7 @@ export class AuditLogService implements IAuditLogService{
         return await this.auditLogRepository.getAll();
     }
 
-    async createLog(user_id: number, action: AuditAction, entity: string, entity_id: number, details: string | null): Promise<AuditLog> {
+    async createLog(user_id: number, action: AuditAction, entity: string, entity_id: number, details: string): Promise<AuditLog> {
         const log = new AuditLog(
             0,
             user_id,
@@ -21,7 +21,6 @@ export class AuditLogService implements IAuditLogService{
             entity,
             entity_id,
             details,
-            null
         );
 
         return await this.auditLogRepository.create(log);

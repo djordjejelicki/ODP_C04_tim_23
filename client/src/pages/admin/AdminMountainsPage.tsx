@@ -40,7 +40,7 @@ export default function AdminMountainsPage({ mountainApi }: AdminMountainsPagePr
         e.preventDefault();
         setMessage("");
 
-        const validation = validateMountain(name, country, region || null, Number(height), description || null);
+        const validation = validateMountain(name, country, region, Number(height), description);
         if (!validation.valid){
             setMessage(validation.message);
             return;
@@ -51,17 +51,17 @@ export default function AdminMountainsPage({ mountainApi }: AdminMountainsPagePr
                 ? await mountainApi.create(
                     name,
                     country,
-                    region || null,
+                    region,
                     Number(height),
-                    description || null
+                    description
                 )
                 : await mountainApi.update(
                     editingId,
                     name,
                     country,
-                    region || null,
+                    region,
                     Number(height),
-                    description || null
+                    description
                 );
 
         if (!result.success){

@@ -4,7 +4,7 @@ export const validateAscent = (
     trail_id: number,
     ascent_date: string,
     duration_min: number,
-    note: string | null,
+    note: string,
     rating: number
 ): ValidationResault => {
     
@@ -31,7 +31,7 @@ export const validateAscent = (
         return { valid: false, message: "Duration must be a positive whole number." };
     }
 
-    if (note !== null && (typeof note !== "string" || note.length > 2000)){
+    if (typeof note !== "string" || note.length > 2000){
         return { valid: false, message: "Note cannot be longer than 2000 characters." };
     }
 

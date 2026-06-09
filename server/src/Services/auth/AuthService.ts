@@ -37,7 +37,7 @@ export class AuthService implements IAuthService {
     password: string,
     first_name: string,
     last_name: string,
-    avatar_url: string | null
+    avatar_url: string 
   ): Promise<AuthResultDto> {
     const existingUser = await this.userRepository.getByUsername(username);
     
@@ -63,9 +63,8 @@ export class AuthService implements IAuthService {
         hashedPassword,
         first_name,
         last_name,
-        null,
+        "",
         avatar_url,
-        null
       )
     );
 

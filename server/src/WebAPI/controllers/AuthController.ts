@@ -57,7 +57,7 @@ export class AuthController {
     try {
       const { username, email, password, first_name, last_name } = req.body;
 
-      const avatarUrl = req.file ? `/uploads/avatars/${req.file.filename}` : null;
+      const avatarUrl = req.file ? `/uploads/avatars/${req.file.filename}` : "";
       
       const rezultat = validateRegister(username, email, password, first_name, last_name);
 

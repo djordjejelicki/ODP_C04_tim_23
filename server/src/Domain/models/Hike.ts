@@ -4,8 +4,8 @@ export class Hike {
         public organizer_id: number = 0,
         public trail_id: number = 0,
         public name: string = "",
-        public description: string | null = null,
-        public scheduled_at: Date | null = null,
+        public description: string = "",
+        public scheduled_at: Date = new Date(),
         public max_participants: number = 0
     ){}
 }

@@ -1,5 +1,4 @@
 import { TrailCatalogDto } from "../../DTOs/trails/TrailCatalogDto";
-import { Trail } from "../../models/Trail";
 import { TrailDetailsDto } from "../../DTOs/trails/TrailDetailsDto";    
 import { TrailDifficulty } from "../../enums/TrailDifficulty";
 import { ServiceResult } from "../../common/ServiceResult";
@@ -10,7 +9,7 @@ export interface ITrailService {
     createRuta(
         mountain_id: number,
         name: string,
-        description: string | null,
+        description: string,
         length_km: number,
         difficulty: TrailDifficulty,
         est_duration_min: number,
@@ -22,7 +21,7 @@ export interface ITrailService {
         id: number,
         mountain_id: number,
         name: string,
-        description: string | null,
+        description: string,
         lenght_km: number,
         difficulty: TrailDifficulty,
         est_duration_min: number,

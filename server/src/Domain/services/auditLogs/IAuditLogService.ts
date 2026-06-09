@@ -8,6 +8,6 @@ export interface IAuditLogService {
         action: AuditAction,
         entity: string,
         entity_id: number,
-        details: string | null
+        details: string
     ): Promise<AuditLog>;
 }

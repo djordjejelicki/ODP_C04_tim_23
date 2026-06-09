@@ -74,10 +74,10 @@ export default function TrailsPage({ trailApi, mountainApi, terrainTagApi }: Tra
 
     const sortedTrails = [...filteredTrails].sort((a,b) => {
         if (sortBy === "rating_desc"){
-            return (b.average_rating ?? 0) - (a.average_rating ?? 0);
+            return b.average_rating - a.average_rating;
         }
         if (sortBy === "rating_asc"){
-            return (a.average_rating ?? 0) - (b.average_rating ?? 0);
+            return a.average_rating - b.average_rating;
         }
         if (sortBy === "length_asc"){
             return a.length_km - b.length_km;

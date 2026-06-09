@@ -18,7 +18,7 @@ export class TerrainTagService implements ITerrrainTagService{
         return await this.terrainTagRepository.getById(id);
     }
 
-    async createTipTerena(name: string, description: string | null): Promise<ServiceResult> {
+    async createTipTerena(name: string, description: string): Promise<ServiceResult> {
 
         if (!name || name.trim().length < 2){
             return ServiceResult.fail("Terrain tag must be at least 2 characters long");

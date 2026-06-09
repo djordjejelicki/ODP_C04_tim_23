@@ -3,7 +3,7 @@ import { ValidationResault } from "../../Domain/types/ValidationResult";
 export const validateHike = (
     trail_id: number,
     name: string,
-    description: string | null,
+    description: string,
     scheduled_at: string,
     max_participants: number
 ): ValidationResault => {
@@ -16,7 +16,7 @@ export const validateHike = (
         return { valid: false, message: "Hike name must be between 2 and 120 characters." };
     }
 
-    if (description !== null && (typeof description !== "string" || description.length > 2000)) {
+    if (typeof description !== "string" || description.length > 2000) {
         return { valid: false, message: "Description cannot be longer than 2000 characters." };
     }
 

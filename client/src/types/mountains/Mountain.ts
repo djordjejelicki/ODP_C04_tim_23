@@ -2,8 +2,8 @@ export type Mountain = {
     id: number;
     name: string;
     country: string;
-    region: string | null;
+    region: string;
     height: number;
-    description: string | null;
-    created_at: string | null;
+    description: string;
+    created_at: string;
 };

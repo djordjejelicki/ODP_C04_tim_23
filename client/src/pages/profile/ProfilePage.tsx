@@ -34,7 +34,7 @@ export default function ProfilePage({ usersApi }: ProfilePageProps){
                 setEmail(data.email);
                 setFirstName(data.first_name);
                 setLastName(data.last_name);
-                setBio(data.bio ?? "");
+                setBio(data.bio);
             }
         };
 
@@ -50,7 +50,7 @@ export default function ProfilePage({ usersApi }: ProfilePageProps){
             email,
             firstName,
             lastName,
-            bio || null
+            bio || ""
         );
 
         if (!validation.valid){
@@ -63,7 +63,7 @@ export default function ProfilePage({ usersApi }: ProfilePageProps){
             email,
             firstName,
             lastName,
-            bio || null,
+            bio || "",
             avatar
         );
 
