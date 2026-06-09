@@ -75,6 +75,7 @@ export default function ProfilePage({ usersApi }: ProfilePageProps){
         setMessage(result.message);
         const updatedUser = await usersApi.getMe();
         setUser(updatedUser); 
+        setAvatar(null);
     }
 
     const handleChangePassword = async (e: React.FormEvent) => {
@@ -112,6 +113,10 @@ export default function ProfilePage({ usersApi }: ProfilePageProps){
             </main> 
         );
     }
+
+    const avatarPreviewUrl = avatar
+        ? URL.createObjectURL(avatar)
+        : getAvatarUrl(user.avatar_url);
 
     return(
        <main className="min-h-screen bg-slate-100">
@@ -206,6 +211,13 @@ export default function ProfilePage({ usersApi }: ProfilePageProps){
                             onChange={(e) => setAvatar(e.target.files?.[0] ?? null)}
                             className="hidden"
                         />
+                        {avatar && (
+                            <img
+                                src={avatarPreviewUrl}
+                                alt="Avatar preview"
+                                className="mt-4 mx-auto w-32 h-32 rounded-full object-cover border-4 border-orange-100"
+                            />
+                        )}
                     </label>
 
                     <button className="md:col-span-2 rounded-lg bg-orange-700 text-white py-2 font-semibold hover:bg-orange-800">

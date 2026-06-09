@@ -9,6 +9,7 @@ import type { ITerrainTagAPIService } from "../../api_services/terrain_tags/ITer
 import { getImageUrl } from "../../helpers/get_image_url";
 import { validateTrail } from "../../validators/trailValidator";
 import { TRAIL_DIFFICULTIES } from "../../types/trails/TrailDifficulty";
+import { ConfirmDialog } from "../../components/shared/ConfirmDialog";
 
 type AdminTrailsPageProps = {
     trailApi: ITrailAPIService;
@@ -33,6 +34,8 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
     const [image, setImage] = useState<File | null>(null);
     const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
     const [message, setMessage] = useState("");
+
+    const [deleteId, setDeleteId] = useState(0);
 
     const loadData = async () => {
         const trailsData = await trailApi.getAll();
@@ -173,6 +176,19 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
 
     return(
         <main className="min-h-screen bg-slate-100">
+            {deleteId !== 0 &&  (
+                <ConfirmDialog
+                    title="Delete trail"
+                    message="Are you sure you want to delete this trail?"
+                    confirmText="Delete"
+                    cancelText="Cancel"
+                    onCancel={() => setDeleteId(0)}
+                    onConfirm={async () => {
+                        await handleDelete(deleteId);
+                        setDeleteId(0);
+                    }}
+                />
+            )}
             <section className="max-w-6xl mx-auto px-6 py-10">
                 <h1 className="text-4xl font-bold text-gray-900">
                     Manage Trails
@@ -354,7 +370,7 @@ export default function AdminTrailsPage({ trailApi, mountainApi, terrainTagApi }
                                     </button>
 
                                     <button
-                                        onClick={() => handleDelete(trail.id)}
+                                        onClick={() => setDeleteId(trail.id)}
                                         className="rounded-lg bg-red-700 text-white px-4 py-2 hover:bg-red-800"
                                     >
                                         Delete

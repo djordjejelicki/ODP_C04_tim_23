@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { Mountain } from "../../types/mountains/Mountain";
 import type { IMountainAPIService } from "../../api_services/mountains/IMountainAPIService";
 import { validateMountain } from "../../validators/mountainValidator";
+import { ConfirmDialog } from "../../components/shared/ConfirmDialog";
 
 type AdminMountainsPageProps = {
     mountainApi: IMountainAPIService;
@@ -17,6 +18,8 @@ export default function AdminMountainsPage({ mountainApi }: AdminMountainsPagePr
     const [height, setHeight] = useState("");
     const [description, setDescription] = useState("");
     const [message, setMessage] = useState("");
+
+    const [deleteId, setDeleteId] = useState(0);
 
     const loadMountains = async () => {
         const data = await mountainApi.getAll();
@@ -95,11 +98,24 @@ export default function AdminMountainsPage({ mountainApi }: AdminMountainsPagePr
         }
 
         setMessage(result.message);
-        loadMountains();
+        await loadMountains();
     };
 
     return(
         <main className="min-h-screen bg-slate-100">
+            {deleteId !== 0 &&  (
+                <ConfirmDialog
+                    title="Delete mountain"
+                    message="Are you sure you want to delete this mountain?"
+                    confirmText="Delete"
+                    cancelText="Cancel"
+                    onCancel={() => setDeleteId(0)}
+                    onConfirm={async () => {
+                        await handleDelete(deleteId);
+                        setDeleteId(0);
+                    }}
+                />
+            )}
             <section className="max-w-6xl mx-auto px-6 py-10">
                 <h1 className="text-4xl font-bold text-gray-900">
                     Manage Mountains
@@ -208,7 +224,7 @@ export default function AdminMountainsPage({ mountainApi }: AdminMountainsPagePr
                                         Edit
                                     </button>
                                     <button
-                                        onClick={() => handleDelete(mountain.id)}
+                                        onClick={() => setDeleteId(mountain.id)}
                                         className="rounded-lg bg-red-700 text-white px-4 py-2 hover:bg-red-800"
                                     >
                                         Delete

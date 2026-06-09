@@ -113,6 +113,7 @@ export default function HikesPage({ hikeApi, myTrailApi }: HikesPageProps){
 
         if (!result.success) {
             setMessage(result.message);
+            await loadData();
             return;
         }
 

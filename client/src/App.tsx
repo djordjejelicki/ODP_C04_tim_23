@@ -44,12 +44,12 @@ function App() {
       <Route path="/register" element={<RegisterPage authApi={authApi} />} />
 
       <Route element={<AppLayout />}>
+        <Route path="/" element={<Navigate to="/trails" replace />} />  
         <Route path="/trails" element={<TrailsPage trailApi={trailApi} mountainApi={mountainApi} terrainTagApi={terrainTagApi}/>} />
         <Route path="/trails/:id" element={<TrailDetailsPage trailApi={trailApi} myTrailApi={myTrailApi} ascentApi={ascentApi}/>} />
         <Route path="/mountains" element={<MountainsPage mountainApi={mountainApi}/>} />
         <Route path="/users" element={<UsersPage usersApi={usersApi}/>} />
         <Route path="/users/:id" element={<UserPublicProfilePage usersApi={usersApi} />} />
-        <Route path="/" element={<Navigate to="/trails" replace />} />  
         <Route path="/my-trails" element = {
           <ProtectedRoute>
             <MyTrailsPage myTrailApi={myTrailApi}/>

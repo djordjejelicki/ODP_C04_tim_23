@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { TerrainTag } from "../../types/terrain_tags/TerrainTag";
 import type { ITerrainTagAPIService } from "../../api_services/terrain_tags/ITerrainTagAPIService";
 import { validateTerrainTag } from "../../validators/terrainTagValidator";
+import { ConfirmDialog } from "../../components/shared/ConfirmDialog";
 
 type AdminTerrainTagsPageProps = {
     terrainTagApi: ITerrainTagAPIService;
@@ -12,6 +13,8 @@ export default function AdminTerrainTagsPage({ terrainTagApi }: AdminTerrainTags
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [message, setMessage] = useState("");
+
+    const [deleteId, setDeleteId] = useState(0);
 
     const loadTags = async () => {
         const data = await terrainTagApi.getAll();
@@ -64,6 +67,19 @@ export default function AdminTerrainTagsPage({ terrainTagApi }: AdminTerrainTags
 
     return(
         <main className="min-h-screen bg-slate-100">
+            {deleteId !== 0 &&  (
+                <ConfirmDialog
+                    title="Delete terrain tag"
+                    message="Are you sure you want to delete this terrain tag?"
+                    confirmText="Delete"
+                    cancelText="Cancel"
+                    onCancel={() => setDeleteId(0)}
+                    onConfirm={async () => {
+                        await handleDelete(deleteId);
+                        setDeleteId(0);
+                    }}
+                />
+            )}
             <section className="max-w-6xl mx-auto px-6 py-10">
                 <h1 className="text-4xl font-bold text-gray-900">
                     Manage Terrain Tags
@@ -122,7 +138,7 @@ export default function AdminTerrainTagsPage({ terrainTagApi }: AdminTerrainTags
                                 </div>
 
                                 <button
-                                    onClick={() => handleDelete(tag.id)}
+                                    onClick={() => setDeleteId(tag.id)}
                                     className="rounded-lg bg-red-700 text-white px-4 py-2 hover:bg-red-800"
                                 >
                                     Delete

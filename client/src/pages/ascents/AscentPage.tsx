@@ -5,6 +5,7 @@ import type { IMyTrailAPIService } from "../../api_services/my_trails/IMyTrailAP
 import type { UserTrailDetails } from "../../types/my_trails/UserTrailDetails";
 import { formatDate } from "../../helpers/format_date";
 import { validateAscent } from "../../validators/ascentValidator";
+import { ConfirmDialog } from "../../components/shared/ConfirmDialog";
 
 type AscentsPageProps = {
     ascentApi: IAscentAPIService;
@@ -21,6 +22,8 @@ export default function AscentsPage({ ascentApi, myTrailApi }: AscentsPageProps)
     const [rating, setRating] = useState("");
     const [message, setMessage] = useState("");
     const [editingId, setEditingId] = useState<number | null>(null);
+
+    const [deleteId, setDeleteId] = useState(0);
 
     const loadData = async () => {
         const ascentsData = await ascentApi.getAll();
@@ -110,6 +113,19 @@ export default function AscentsPage({ ascentApi, myTrailApi }: AscentsPageProps)
 
     return (
             <main className="min-h-screen bg-slate-100">
+                {deleteId !== 0 &&  (
+                    <ConfirmDialog
+                        title="Delete ascent"
+                        message="Are you sure you want to delete this ascent?"
+                        confirmText="Delete"
+                        cancelText="Cancel"
+                        onCancel={() => setDeleteId(0)}
+                        onConfirm={async () => {
+                            await handleDelete(deleteId);
+                            setDeleteId(0);
+                        }}
+                    />
+                )}
                 <section className="max-w-6xl mx-auto px-6 py-10">
                     <h1 className="text-4xl font-bold text-gray-900">My Ascents</h1>
                     <p className="text-gray-600 mt-2">Track completed hiking ascents.</p>
@@ -231,7 +247,7 @@ export default function AscentsPage({ ascentApi, myTrailApi }: AscentsPageProps)
                                         </button>
 
                                         <button
-                                            onClick={() => handleDelete(ascent.id)}
+                                            onClick={() => setDeleteId(ascent.id)}
                                             className="rounded-lg bg-red-700 text-white px-4 py-2 hover:bg-red-800"
                                         >
                                             Delete

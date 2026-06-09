@@ -2,7 +2,7 @@ import { Request, Response, Router } from 'express';
 import { IAuthService } from '../../Domain/services/auth/IAuthService';
 import { validateLogin, validateRegister } from '../validators/authValidator';
 import { authenticate } from '../../Middlewares/authentification/AuthMiddleware';
-import { uploadAvatar } from '../../Middlewares/uploads/UploadAvatarMiddleware';
+import { uploadAvatar } from '../../Middlewares/fileUploads/UploadAvatarMiddleware';
 import jwt from "jsonwebtoken";
 
 export class AuthController {

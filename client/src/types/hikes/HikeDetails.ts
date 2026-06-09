@@ -11,4 +11,5 @@ export type HikeDetails = {
     scheduled_at: string;
     max_participants: number;
     participants: HikeParticipantDetials[];
+    confirmed_participants: number;
 };

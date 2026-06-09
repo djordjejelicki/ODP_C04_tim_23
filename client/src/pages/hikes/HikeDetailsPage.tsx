@@ -5,6 +5,7 @@ import type { IHikeAPIService } from "../../api_services/hikes/IHikeAPIService";
 import { formatDate } from "../../helpers/format_date";
 import { useAuth } from "../../hooks/auth/useAuthHook";
 import { validateHike } from "../../validators/hikeValidator";
+import { ConfirmDialog } from "../../components/shared/ConfirmDialog";
 
 type HikeDetailsPageProps = {
     hikeApi: IHikeAPIService;
@@ -24,6 +25,8 @@ export default function HikeDetailsPage({ hikeApi }: HikeDetailsPageProps){
     const [editScheduledAt, setEditScheduledAt] = useState("");
     const [editMaxParticipants, setEditMaxParticipants] = useState("");
     
+    const [showCancelDialog, setShowCancelDialog] = useState(false);
+    const [removeParticipantId, setRemoveParticipantId] = useState(0);
 
     const loadDetails = async () => {
         if (!id) {
@@ -133,6 +136,31 @@ export default function HikeDetailsPage({ hikeApi }: HikeDetailsPageProps){
 
     return (
          <main className="min-h-screen bg-slate-100">
+            {showCancelDialog && (
+                <ConfirmDialog
+                    title="Cancel hike"
+                    message="Are you sure you want to cancel this hike?"
+                    confirmText="Cancel hike"
+                    onCancel={() => setShowCancelDialog(false)}
+                    onConfirm={async () => {
+                        await handleCancel();
+                        setShowCancelDialog(false);
+                    }}
+                />
+            )}
+
+            {removeParticipantId !== 0 && (
+                <ConfirmDialog
+                    title="Remove participant"
+                    message="Are you sure you want to remove this participant?"
+                    confirmText="Remove"
+                    onCancel={() => setRemoveParticipantId(0)}
+                    onConfirm={async () => {
+                        await handleRemoveParticipant(removeParticipantId);
+                        setRemoveParticipantId(0);
+                    }}
+                />
+            )}
             <section className="max-w-5xl mx-auto px-6 py-10">
                 <div className="bg-white rounded-2xl shadow-md p-8 space-y-6">
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -156,7 +184,7 @@ export default function HikeDetailsPage({ hikeApi }: HikeDetailsPageProps){
                                 </button>
 
                                 <button
-                                    onClick={handleCancel}
+                                    onClick={() => setShowCancelDialog(true)}
                                     className="rounded-lg bg-red-700 text-white px-5 py-2 font-semibold hover:bg-red-800"
                                 >
                                     Cancel hike
@@ -241,7 +269,7 @@ export default function HikeDetailsPage({ hikeApi }: HikeDetailsPageProps){
                         <div className="bg-slate-100 rounded-xl p-4">
                             <p className="text-sm text-gray-500">Max participants</p>
                             <p className="font-bold">
-                                {details.max_participants}
+                                {details.confirmed_participants}/{details.max_participants}
                             </p>
                         </div>
                     </div>
@@ -281,7 +309,7 @@ export default function HikeDetailsPage({ hikeApi }: HikeDetailsPageProps){
                                             {isOrganizer && (
                                                 <button
                                                     onClick={() =>
-                                                        handleRemoveParticipant(
+                                                        setRemoveParticipantId(
                                                             participant.user_id
                                                         )
                                                     }

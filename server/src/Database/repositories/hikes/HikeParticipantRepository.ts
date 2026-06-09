@@ -2,6 +2,7 @@ import { IHikeParticipantRepository } from "../../../Domain/repositories/hikes/I
 import { HikeParticipant } from "../../../Domain/models/HikeParticipant";
 import { RowDataPacket, ResultSetHeader } from "mysql2";
 import db from "../../connection/DbConnectionPool";
+import { HikeParticipantStatus } from "../../../Domain/enums/HikeParticipantStatus";
 
 export class HikeParticipantRepository implements IHikeParticipantRepository{
     async add(participant: HikeParticipant): Promise<boolean> {
@@ -148,6 +149,24 @@ export class HikeParticipantRepository implements IHikeParticipantRepository{
         } catch(error){
             console.log("deleteOne hikeParticipant error: ", error);
             return false;
+        }
+    }
+
+    async countConfirmedByHike(hike_id: number): Promise<number> {
+        try{
+            const query = `
+                SELECT COUNT(*) AS count
+                FROM hike_participants
+                WHERE hike_id = ?
+                AND status = ?
+            `;
+
+            const [rows] = await db.execute<RowDataPacket[]>(query, [hike_id, HikeParticipantStatus.CONFIRMED]);
+
+            return Number(rows[0].count);
+        } catch (error){
+            console.log("countConfirmedByHike error: ", error);
+            return 0;
         }
     }
 }

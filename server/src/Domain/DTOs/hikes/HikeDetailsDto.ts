@@ -11,6 +11,7 @@ export class HikeDetailsDto {
         public description: string = "",
         public scheduled_at: Date = new Date(),
         public max_participants: number = 0,
-        public participants: HikeParticipantDetailsDto[] = []
+        public participants: HikeParticipantDetailsDto[] = [],
+        public confirmed_participants: number = 0
     ){}
 }

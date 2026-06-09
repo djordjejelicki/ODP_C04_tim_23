@@ -3,6 +3,7 @@ import type { IUsersAPIService } from "../../api_services/users/IUsersAPIService
 import type { UserDto } from "../../types/users/UserDto";
 import type { UserRole } from "../../types/users/UserRole";
 import { USER_ROLES } from "../../types/users/UserRole";
+import { ConfirmDialog } from "../../components/shared/ConfirmDialog";
 
 type AdminUsersPageProps = {
     userApi: IUsersAPIService;
@@ -11,6 +12,9 @@ type AdminUsersPageProps = {
 export default function AdminUsersPage ({ userApi }: AdminUsersPageProps) {
     const [users, setUsers] = useState<UserDto[]>([]);
     const [message, setMessage] = useState("");
+
+    const [selectedUser, setSelectedUser] = useState<UserDto | null>(null);
+    const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
 
     const loadUsers = async () => {
         const data = await userApi.getAll();
@@ -36,6 +40,27 @@ export default function AdminUsersPage ({ userApi }: AdminUsersPageProps) {
 
     return(
         <main className="min-h-screen bg-slate-100">
+            {selectedUser && selectedRole && (
+                <ConfirmDialog
+                    title="Change role"
+                    message={`Are you sure you want to change ${selectedUser.username}'s role to ${selectedRole}?`}
+                    confirmText="Change role"
+                    cancelText="Cancel"
+                    onCancel={() => {
+                        setSelectedUser(null);
+                        setSelectedRole(null);
+                    }}
+                    onConfirm={async () => {
+                        await handleRoleChange(
+                            selectedUser.id,
+                            selectedRole
+                        );
+
+                        setSelectedUser(null);
+                        setSelectedRole(null);
+                    }}
+                />
+            )}
             <section className="max-w-6xl mx-auto px-6 py-10">
                 <h1 className="text-4xl font-bold text-gray-900">
                     Manage Users
@@ -96,24 +121,20 @@ export default function AdminUsersPage ({ userApi }: AdminUsersPageProps) {
                                     <td className="px-4 py-3">
                                         {user.role === USER_ROLES.ADMIN ? (
                                             <button
-                                                onClick={() =>
-                                                    handleRoleChange(
-                                                        user.id,
-                                                        USER_ROLES.HIKER
-                                                    )
-                                                }
+                                                onClick={() =>{
+                                                    setSelectedUser(user);
+                                                    setSelectedRole(USER_ROLES.HIKER);   
+                                                }}
                                                 className="rounded-lg bg-green-700 text-white px-4 py-2 hover:bg-green-800"
                                             >
                                                 Make hiker
                                             </button>
                                         ) : (
                                             <button
-                                                onClick={() =>
-                                                    handleRoleChange(
-                                                        user.id,
-                                                        USER_ROLES.ADMIN
-                                                    )
-                                                }
+                                                onClick={() =>{
+                                                    setSelectedUser(user);
+                                                    setSelectedRole(USER_ROLES.ADMIN);
+                                                }}
                                                 className="rounded-lg bg-red-700 text-white px-4 py-2 hover:bg-red-800"
                                             >
                                                 Make admin

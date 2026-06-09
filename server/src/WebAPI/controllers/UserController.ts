@@ -4,7 +4,7 @@ import { UserDto } from "../../Domain/DTOs/users/UserDto";
 import { authenticate } from "../../Middlewares/authentification/AuthMiddleware";
 import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
 import { UserRole } from "../../Domain/enums/UserRole";
-import { uploadAvatar } from "../../Middlewares/uploads/UploadAvatarMiddleware";
+import { uploadAvatar } from "../../Middlewares/fileUploads/UploadAvatarMiddleware";
 import { validateUpdateProfile, validateChangePassword } from "../validators/userValidator";
 
 export class UserController {

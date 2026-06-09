@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import type { AuthFormProps } from "../../types/props/auth_form_props/AuthFormProps";
 import { validateRegister } from "../../validators/authValidator";
+import { useAuth } from "../../hooks/auth/useAuthHook";
 
 export function RegisterForm({ authApi }: AuthFormProps) {
   
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [username, setUsername]   = useState("");
   const [email, setEmail]         = useState("");
@@ -45,8 +47,13 @@ export function RegisterForm({ authApi }: AuthFormProps) {
       return;
     }
 
-    navigate("/login");
+    if (response.data){
+      login(response.data);
+      navigate("/trails");
+    }
   }
+
+  const avatarPreviewUrl = avatar ? URL.createObjectURL(avatar) : "";
 
   return (
    <form
@@ -167,6 +174,13 @@ export function RegisterForm({ authApi }: AuthFormProps) {
           onChange={(e) => setAvatar(e.target.files?.[0] ?? null)}
           className="hidden"
         />
+        {avatarPreviewUrl && (
+            <img
+                src={avatarPreviewUrl}
+                alt="Avatar preview"
+                className="mt-4 mx-auto w-32 h-32 rounded-full object-cover border-4 border-orange-100"
+            />
+        )}
       </label>
 
       <button

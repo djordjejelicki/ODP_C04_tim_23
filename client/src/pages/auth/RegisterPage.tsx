@@ -14,7 +14,7 @@ export default function RegisterPage({ authApi }: RegisterPageProps) {
 
   useEffect(() => {
     if (isAuthenticated && user) 
-      navigate(`/${user.role}-dashboard`);
+      navigate(`/trails`);
   }, [isAuthenticated, navigate, user]);
 
   return (

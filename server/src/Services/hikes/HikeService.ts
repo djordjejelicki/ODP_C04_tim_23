@@ -13,6 +13,7 @@ import { ITrailRepository } from "../../Domain/repositories/trails/ITrailReposit
 import { HikeDetailsDto } from "../../Domain/DTOs/hikes/HikeDetailsDto";
 import { HikeParticipantDetailsDto } from "../../Domain/DTOs/hikes/HikeParticipantDetailsDto";
 import { ServiceResult } from "../../Domain/common/ServiceResult";
+import { serialize } from "node:v8";
 
 
 export class HikeService implements IHikeService{
@@ -95,6 +96,16 @@ export class HikeService implements IHikeService{
             return ServiceResult.fail("Only the organizer can invite participants");
         }
 
+        if (hike.scheduled_at < new Date()){
+            return ServiceResult.fail("Cannot invite paricipants to a completed hike");
+        }
+
+        const confirmedCount = await this.hikeParticipantRepository.countConfirmedByHike(hike_id);
+
+        if (confirmedCount >= hike.max_participants) {
+            return ServiceResult.fail("Hike is already full");
+        }
+
         if (username.trim().length < 3){
             return ServiceResult.fail("Invalid username");
         }
@@ -137,6 +148,34 @@ export class HikeService implements IHikeService{
             return ServiceResult.fail("Invitation not found");
         }
 
+        if (postojeci.status !== HikeParticipantStatus.INVITED){
+            return ServiceResult.fail("You have already responded to this invitation");
+        }
+
+        const hike = await this.hikeRepository.getById(hike_id);
+
+        if (hike.id === 0){
+            return ServiceResult.fail("Hike not found");
+        }
+
+        if (hike.scheduled_at < new Date()){
+            return ServiceResult.fail("This hike has already taken place");
+        }
+
+        if (status === HikeParticipantStatus.CONFIRMED){
+            const confirmedCount = await this.hikeParticipantRepository.countConfirmedByHike(hike_id);
+
+            if (confirmedCount >= hike.max_participants){
+                await this.hikeParticipantRepository.updateStatus(
+                    hike_id,
+                    user_id,
+                    HikeParticipantStatus.DECLINED
+                );
+
+                return ServiceResult.fail("Hike is full. Your invitation was declined automatically");
+            }
+        }
+
         const uspesno = await this.hikeParticipantRepository.updateStatus(hike_id, user_id, status);
 
         if(!uspesno){
@@ -144,12 +183,6 @@ export class HikeService implements IHikeService{
         }
 
         if (status === HikeParticipantStatus.CONFIRMED){
-            const hike = await this.hikeRepository.getById(hike_id);
-
-            if (hike.id === 0){
-                return ServiceResult.fail("Hike not found");
-            }
-
             const postojecaRuta = await this.userTrailRepository.getOne(user_id, hike.trail_id);
 
             if (postojecaRuta.user_id === 0){
@@ -160,6 +193,7 @@ export class HikeService implements IHikeService{
                 );
 
                 const dodataRuta = await this.userTrailRepository.add(novaRuta);
+
                 if(dodataRuta.user_id === 0){
                     return ServiceResult.fail("Invitation accepted , but failed to add trail to your list");
                 }
@@ -233,6 +267,8 @@ export class HikeService implements IHikeService{
         const trail = await this.trailRepository.getById(hike.trail_id);
         const participants = await this.hikeParticipantRepository.getByHike(hike_id);
 
+        const confirmedParticipants = await this.hikeParticipantRepository.countConfirmedByHike(hike_id);
+
         const participantDetails: HikeParticipantDetailsDto[] = [];
 
         for (const participant of participants){
@@ -258,7 +294,8 @@ export class HikeService implements IHikeService{
             hike.description,
             hike.scheduled_at,
             hike.max_participants,
-            participantDetails
+            participantDetails,
+            confirmedParticipants
         );
     }
 

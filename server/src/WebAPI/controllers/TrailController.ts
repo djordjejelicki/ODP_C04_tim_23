@@ -5,7 +5,7 @@ import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
 import { UserRole } from "../../Domain/enums/UserRole";
 import { validateTrail } from "../validators/TrailValidator";
 import { TrailDifficulty } from "../../Domain/enums/TrailDifficulty";
-import { uploadTrailImage } from "../../Middlewares/uploads/UploadTrailImageMiddleware";
+import { uploadTrailImage } from "../../Middlewares/fileUploads/UploadTrailImageMiddleware";
 
 export class TrailController {
     private router: Router;

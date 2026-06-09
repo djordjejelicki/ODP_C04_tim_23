@@ -99,7 +99,8 @@ export const hikeApi: IHikeAPIService = {
                 description: "",
                 scheduled_at: "",
                 max_participants: 0,
-                participants: []
+                participants: [],
+                confirmed_participants: 0
             };
         }
     },
