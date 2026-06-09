@@ -209,6 +209,10 @@ export default function AdminMountainsPage({ mountainApi }: AdminMountainsPagePr
                                     <p className="text-sm text-gray-500">
                                         Height: {mountain.height} m
                                     </p>
+                                    
+                                    <p className="text-sm text-orange-700">
+                                        Connected trails: {mountain.trail_count}
+                                    </p>
 
                                     {mountain.description && (
                                         <p className="text-sm text-gray-500 mt-1">

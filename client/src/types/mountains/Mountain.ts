@@ -6,4 +6,5 @@ export type Mountain = {
     height: number;
     description: string;
     created_at: string;
+    trail_count: number;
 };

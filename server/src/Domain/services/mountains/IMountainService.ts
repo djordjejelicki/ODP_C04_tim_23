@@ -1,9 +1,10 @@
 import { Mountain } from "../../models/Mountain";
+import { MountainWithTrailCountDto } from "../../DTOs/mountain/MountainDto";
 import { ServiceResult } from "../../common/ServiceResult";
 
 
 export interface IMountainService {
-    getSvePlanine(): Promise<Mountain[]>;
+    getSvePlanine(): Promise<MountainWithTrailCountDto[]>;
     getPlaninaById(id : number) : Promise<Mountain>;
     createPlanina(
         name: string,

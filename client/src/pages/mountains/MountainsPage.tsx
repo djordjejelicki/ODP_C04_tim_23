@@ -64,6 +64,10 @@ export default function MountainsPage({mountainApi}: MountainsPageProps) {
                                     Height: {mountain.height} m
                                 </p>
 
+                                <p className="text-orange-700 font-semibold">
+                                    Trails: {mountain.trail_count}
+                                </p>
+
                                 {mountain.description && (
                                     <p className="mt-4 text-gray-600">
                                         {mountain.description}

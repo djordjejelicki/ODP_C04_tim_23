@@ -1,4 +1,5 @@
 import { ServiceResult } from "../../Domain/common/ServiceResult";
+import { MountainWithTrailCountDto } from "../../Domain/DTOs/mountain/MountainDto";
 import { Mountain } from "../../Domain/models/Mountain";
 import { IMountainRepository } from "../../Domain/repositories/mountains/IMountainRepository";
 import { ITrailRepository } from "../../Domain/repositories/trails/ITrailRepository";
@@ -10,8 +11,28 @@ export class MountainService implements IMountainService{
         private trailRepository: ITrailRepository
     ){}
 
-    async getSvePlanine(): Promise<Mountain[]> {
-        return await this.mountainRepository.getAll();
+    async getSvePlanine(): Promise<MountainWithTrailCountDto[]> {
+        const mountains =  await this.mountainRepository.getAll();
+        const result: MountainWithTrailCountDto[] = [];
+
+        for (const mountain of mountains) {
+            const trailCount = await this.trailRepository.countByMountainId(mountain.id);
+
+            result.push(
+                new MountainWithTrailCountDto(
+                    mountain.id,
+                    mountain.name,
+                    mountain.country,
+                    mountain.region,
+                    mountain.height,
+                    mountain.description,
+                    mountain.created_at,
+                    trailCount
+                )
+            );
+        }
+
+        return result;
     }
 
     async getPlaninaById(id: number): Promise<Mountain> {

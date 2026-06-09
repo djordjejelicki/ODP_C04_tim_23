@@ -165,4 +165,21 @@ export class TrailRepository implements ITrailRepository {
             return false;
         }
     }
+
+    async countByMountainId(mountain_id: number): Promise<number> {
+        try{
+            const query = `
+                SELECT COUNT(*) AS count
+                FROM trails
+                WHERE mountain_id = ?
+            `;
+
+            const [rows] = await db.execute<RowDataPacket[]>(query, [mountain_id]);
+
+            return Number(rows[0].count);
+        } catch (error) {
+            console.log("countByMountainId error: ", error);
+            return 0;
+        }
+    }
 }
