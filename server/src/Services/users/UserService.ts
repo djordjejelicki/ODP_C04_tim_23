@@ -8,9 +8,14 @@ import { ServiceResult } from "../../Domain/common/ServiceResult";
 import bcrypt from "bcryptjs";
 import fs from "fs";
 import path from "path";
+import { IAuditLogService } from "../../Domain/services/auditLogs/IAuditLogService";
+import { AuditAction } from "../../Domain/enums/AuditAction";
 
 export class UserService implements IUserService {
-  public constructor(private userRepository: IUserRepository) {}
+  public constructor(
+      private userRepository: IUserRepository,
+      private auditLogService: IAuditLogService
+    ) {}
   
   private readonly saltRounds: number = parseInt(
     process.env.SALT_ROUNDS || "10",
@@ -170,6 +175,14 @@ export class UserService implements IUserService {
         this.deleteAvatar(user.avatar_url);
       }
 
+      await this.auditLogService.createLog(
+        id, 
+        AuditAction.UPDATE_PROFILE,
+        "users",
+        id,
+        "Profile updated"
+      );
+
       return ServiceResult.ok("Profile updated successfully");
   }
 
@@ -200,6 +213,14 @@ export class UserService implements IUserService {
     if (!updated){
       return ServiceResult.fail("Failed to update password");
     }
+
+    await this.auditLogService.createLog(
+      id, 
+      AuditAction.CHANGE_PASSOWRD,
+      "users",
+      id,
+      "User changed password"
+    );
 
     return ServiceResult.ok("Password updated successfully");
   }

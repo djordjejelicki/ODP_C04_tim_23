@@ -14,6 +14,8 @@ import { HikeDetailsDto } from "../../Domain/DTOs/hikes/HikeDetailsDto";
 import { HikeParticipantDetailsDto } from "../../Domain/DTOs/hikes/HikeParticipantDetailsDto";
 import { ServiceResult } from "../../Domain/common/ServiceResult";
 import { serialize } from "node:v8";
+import { IAuditLogService } from "../../Domain/services/auditLogs/IAuditLogService";
+import { AuditAction } from "../../Domain/enums/AuditAction";
 
 
 export class HikeService implements IHikeService{
@@ -22,7 +24,8 @@ export class HikeService implements IHikeService{
         private hikeParticipantRepository: IHikeParticipantRepository,
         private userRepository: IUserRepository,
         private userTrailRepository: IUserTrailRepository,
-        private trailRepository: ITrailRepository
+        private trailRepository: ITrailRepository,
+        private auditLogService: IAuditLogService
     ){}
 
     async getSviPohodi(): Promise<Hike[]> {
@@ -81,6 +84,15 @@ export class HikeService implements IHikeService{
             return ServiceResult.fail("Failed to create hike");
         }
 
+
+        await this.auditLogService.createLog(
+            organizer_id, 
+            AuditAction.CREATE_HIKE,
+            "hikes",
+            hike.id,
+            "Hike created"
+        );
+
         return ServiceResult.ok("Hike created successfully");
     }
 
@@ -137,6 +149,14 @@ export class HikeService implements IHikeService{
         if (!uspesno){
             return ServiceResult.fail("Failed to send invitation");
         }
+
+        await this.auditLogService.createLog(
+            organizer_id, 
+            AuditAction.INVITE_PARTICIPANT,
+            "hikes",
+            participant.user_id,
+            "Participant invited"
+        );
 
         return ServiceResult.ok("Participant invited successfully");
     }
@@ -201,8 +221,24 @@ export class HikeService implements IHikeService{
                 return ServiceResult.ok("Invitation accepted successfully. Trail was added to your list")
             }
 
+            await this.auditLogService.createLog(
+                postojeci.user_id, 
+                AuditAction.RESPOND_TO_INVITATION,
+                "hikes",
+                hike.id,
+                "Respond to invitation to hike"
+            );
+
             return ServiceResult.ok("Invitation accepted successfully");
         }
+
+        await this.auditLogService.createLog(
+            postojeci.user_id, 
+            AuditAction.RESPOND_TO_INVITATION,
+            "hikes",
+            hike.id,
+            "Respond to invitation to hike"
+        );
 
         return ServiceResult.ok("Invitation declined successfully");
     }

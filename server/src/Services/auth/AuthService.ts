@@ -28,6 +28,14 @@ export class AuthService implements IAuthService {
       return new AuthResultDto(false, "Invalid username or password");
     }
 
+    const log = await this.auditLogService.createLog(
+      user.id,
+      AuditAction.LOGIN,
+      "auth",
+      user.id,
+      "User logged in"
+    );
+
     return new AuthResultDto(true, "Login successful", user.id, user.username, user.role);
   }
 

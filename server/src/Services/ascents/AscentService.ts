@@ -6,13 +6,16 @@ import { UserTrailStatus } from "../../Domain/enums/UserTrailStatus";
 import { AscentDetailsDto } from "../../Domain/DTOs/ascents/AscentDetailsDto";
 import { ITrailRepository } from "../../Domain/repositories/trails/ITrailRepository";
 import { ServiceResult } from "../../Domain/common/ServiceResult";
+import { IAuditLogService } from "../../Domain/services/auditLogs/IAuditLogService";
+import { AuditAction } from "../../Domain/enums/AuditAction";
 
 export class AscentService implements IAscentService {
     
     public constructor(
         private ascentRepository: IAscentRepository,
         private userTrailRepository: IUserTrailRepository,
-        private trailRepository: ITrailRepository
+        private trailRepository: ITrailRepository,
+        private auditLogService: IAuditLogService
     ){}
 
     async getMojiUsponi(user_id: number): Promise<Ascent[]> {
@@ -84,6 +87,14 @@ export class AscentService implements IAscentService {
             UserTrailStatus.COMPLETED
         );
 
+        await this.auditLogService.createLog(
+            user_id, 
+            AuditAction.CREATE_ASCENT,
+            "ascents",
+            kreiranUspon.id,
+            "Ascent created"
+        );
+
         return ServiceResult.ok("Ascent recorded successfully");
     }
 
@@ -142,6 +153,14 @@ export class AscentService implements IAscentService {
         if (!uspesno){
             return ServiceResult.fail("Failed to delete ascent");
         }
+
+        await this.auditLogService.createLog(
+            user_id, 
+            AuditAction.DELETE_ASCENT,
+            "ascents",
+            id,
+            "Ascent deleted"
+        );
 
         return ServiceResult.ok("Ascent deleted successfully");
     }

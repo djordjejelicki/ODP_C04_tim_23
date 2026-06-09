@@ -92,13 +92,13 @@ const auditLogRepository: IAuditLogRepository = new AuditLogRepository();
 // Services
 const auditLogService: IAuditLogService = new AuditLogService(auditLogRepository);
 const authService: IAuthService = new AuthService(userRepository, auditLogService);
-const userService: IUserService = new UserService(userRepository);
+const userService: IUserService = new UserService(userRepository, auditLogService);
 const mountainService: IMountainService = new MountainService(mountainRepository, trailRepository);
 const trailService: ITrailService = new TrailService(trailRepository, trailTagRepository, ascentRepository, terrainTagRepository, mountainRepository);
 const terrainTagService: ITerrrainTagService = new TerrainTagService(terrainTagRepository, trailTagRepository);
 const userTrailService: IUserTrailService = new UserTrailService(userTrailRepository, ascentRepository, hikeRepository, trailRepository, hikeParticipantRepository, mountainRepository);
-const ascentService: IAscentService = new AscentService(ascentRepository, userTrailRepository, trailRepository);
-const hikeService: IHikeService = new HikeService(hikeRepository, hikeParticipantRepository, userRepository, userTrailRepository, trailRepository);
+const ascentService: IAscentService = new AscentService(ascentRepository, userTrailRepository, trailRepository, auditLogService);
+const hikeService: IHikeService = new HikeService(hikeRepository, hikeParticipantRepository, userRepository, userTrailRepository, trailRepository, auditLogService);
 const dashboardService: IDashboardService = new DashboardService(userTrailRepository, trailRepository, mountainRepository);
 
 // WebAPI routes
